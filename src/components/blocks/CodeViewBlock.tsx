@@ -117,7 +117,7 @@ export function CodeViewBlock({ data, onInteract, className = '' }: CodeViewBloc
                 className={`inline-flex min-h-[48px] items-center gap-1.5 rounded-lg px-3.5 text-xs sm:text-sm font-bold transition-colors ${
                   isRunning
                     ? 'bg-[#E14B63] text-white'
-                    : 'bg-[#009179] text-white hover:bg-[#007a66]'
+                    : 'bg-[#006E5A] text-white hover:bg-[#007a66]'
                 }`}
               >
                 {isRunning ? (

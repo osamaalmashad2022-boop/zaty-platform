@@ -84,11 +84,11 @@ export function PythonTerminal({
                   value={draft}
                   onChange={(e) => setDraft(e.target.value)}
                   placeholder="اكتب القيمة واضغط إرسال..."
-                  className="min-h-[48px] flex-1 rounded-lg border border-[#2EC4B6]/40 bg-[#0F2929] px-3 text-sm text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#009179]"
+                  className="min-h-[48px] flex-1 rounded-lg border border-[#2EC4B6]/40 bg-[#0F2929] px-3 text-sm text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#006E5A]"
                 />
                 <button
                   type="submit"
-                  className="min-h-[48px] rounded-lg bg-[#009179] px-4 text-sm font-bold text-white hover:bg-[#007a66]"
+                  className="min-h-[48px] rounded-lg bg-[#006E5A] px-4 text-sm font-bold text-white hover:bg-[#007a66]"
                 >
                   إرسال
                 </button>

@@ -6,7 +6,7 @@
   --color-orchid-border: #E2ECE9;
   --color-orchid-header: #163A3A;
   --color-orchid-body: #3B5A58;
-  --color-orchid-accent: #009179;
+  --color-orchid-accent: #006E5A;
   --color-orchid-accent-light: #E5F1EE;
   --color-orchid-secondary: #E14B63;
   --color-orchid-secondary-light: #FBEAEC;
@@ -23,7 +23,7 @@
   --orchid-border: #E2ECE9;
   --orchid-header: #163A3A;
   --orchid-body: #3B5A58;
-  --orchid-accent: #009179;
+  --orchid-accent: #006E5A;
   --orchid-accent-light: #E5F1EE;
   --orchid-secondary: #E14B63;
   --orchid-secondary-light: #FBEAEC;
@@ -38,7 +38,12 @@
     color: var(--orchid-body);
     font-family: var(--font-sans);
     scroll-behavior: smooth;
+    scroll-padding-bottom: 6rem;
     -webkit-text-size-adjust: 100%;
+  }
+
+  button, a, input, textarea, select, [role="button"] {
+    scroll-margin-bottom: 6rem;
   }
 
   body {

@@ -48,7 +48,7 @@ export function ListBlock({
           <h3 className="text-lg sm:text-xl font-bold text-[#163A3A]">{data.heading}</h3>
         )}
         {data.mode === 'checkbox' && (
-          <span className="rounded-full bg-[#E5F1EE] px-3 py-1 text-xs font-bold text-[#009179]">
+          <span className="rounded-full bg-[#E5F1EE] px-3 py-1 text-xs font-bold text-[#006E5A]">
             تم {checkedIds.length} من {data.items.length}
           </span>
         )}
@@ -63,8 +63,8 @@ export function ListBlock({
                 <label
                   className={`flex min-h-[48px] w-full cursor-pointer items-start gap-3 rounded-lg border p-3.5 text-right transition-colors ${
                     isChecked
-                      ? 'border-[#009179] bg-[#E5F1EE]'
-                      : 'border-[#E2ECE9] bg-[#F6FAF9] hover:border-[#009179]/50'
+                      ? 'border-[#006E5A] bg-[#E5F1EE]'
+                      : 'border-[#E2ECE9] bg-[#F6FAF9] hover:border-[#006E5A]/50'
                   }`}
                 >
                   <span className="relative mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center">
@@ -78,7 +78,7 @@ export function ListBlock({
                       aria-hidden="true"
                       className={`flex h-5 w-5 items-center justify-center rounded border-2 transition-colors ${
                         isChecked
-                          ? 'border-[#009179] bg-[#009179] text-white'
+                          ? 'border-[#006E5A] bg-[#006E5A] text-white'
                           : 'border-[#3B5A58] bg-white'
                       }`}
                     >
@@ -111,7 +111,7 @@ export function ListBlock({
               key={item.id}
               className="flex items-start gap-3 rounded-lg border border-[#E2ECE9] bg-[#F6FAF9] p-3.5"
             >
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#009179] text-sm font-bold text-white">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#006E5A] text-sm font-bold text-white">
                 {idx + 1}
               </span>
               <div className="flex-1 space-y-1">
@@ -136,7 +136,7 @@ export function ListBlock({
             >
               <span
                 aria-hidden="true"
-                className="mt-2.5 h-2.5 w-2.5 shrink-0 rounded-full bg-[#009179]"
+                className="mt-2.5 h-2.5 w-2.5 shrink-0 rounded-full bg-[#006E5A]"
               />
               <div className="flex-1 space-y-1">
                 <p className="text-[17px] leading-relaxed text-[#163A3A]">

@@ -31,7 +31,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#009179',
+  themeColor: '#006E5A',
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
@@ -46,6 +46,7 @@ export default function RootLayout({
     <html
       lang="ar"
       dir="rtl"
+      data-scroll-behavior="smooth"
       className={`${ibmPlexArabic.variable} ${jetbrainsMono.variable}`}
     >
       <body className="antialiased bg-[#F6FAF9] text-[#3B5A58]">

@@ -11,7 +11,7 @@ export interface MatchingPairsBlockProps extends BlockInteractionProps {
 }
 
 const PAIR_BADGE_COLORS = [
-  'bg-[#009179] text-white',
+  'bg-[#006E5A] text-white',
   'bg-[#163A3A] text-white',
   'bg-[#0D9488] text-white',
   'bg-[#0369A1] text-white',
@@ -159,7 +159,7 @@ export function MatchingPairsBlock({
       className={`rounded-xl border border-[#E2ECE9] bg-[#FFFFFF] p-5 sm:p-6 shadow-[0_4px_6px_-1px_rgb(0_0_0/0.08),0_2px_4px_-2px_rgb(0_0_0/0.08)] space-y-5 ${className}`}
     >
       <div className="space-y-1.5">
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E5F1EE] px-3 py-1 text-xs font-bold text-[#009179]">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E5F1EE] px-3 py-1 text-xs font-bold text-[#006E5A]">
           <Link2 className="h-3.5 w-3.5" aria-hidden="true" />
           <span>نشاط توصيل باللمس</span>
         </span>
@@ -184,15 +184,15 @@ export function MatchingPairsBlock({
             const isRightMatch = checked && matchedRightId === pair.id;
             const isWrongMatch = checked && matchedRightId && matchedRightId !== pair.id;
 
-            let classes = 'border-[#E2ECE9] bg-[#F6FAF9] text-[#163A3A] hover:border-[#009179]';
+            let classes = 'border-[#E2ECE9] bg-[#F6FAF9] text-[#163A3A] hover:border-[#006E5A]';
             if (isRightMatch) {
-              classes = 'border-[#009179] bg-[#E5F1EE] text-[#163A3A]';
+              classes = 'border-[#006E5A] bg-[#E5F1EE] text-[#163A3A]';
             } else if (isWrongMatch) {
               classes = 'border-[#E14B63] bg-[#FBEAEC] text-[#163A3A]';
             } else if (isSelected) {
-              classes = 'border-[#009179] bg-[#E5F1EE] text-[#163A3A] ring-2 ring-[#009179]/30';
+              classes = 'border-[#006E5A] bg-[#E5F1EE] text-[#163A3A] ring-2 ring-[#006E5A]/30';
             } else if (matchedRightId) {
-              classes = 'border-[#009179]/60 bg-white text-[#163A3A]';
+              classes = 'border-[#006E5A]/60 bg-white text-[#163A3A]';
             }
 
             return (
@@ -231,15 +231,15 @@ export function MatchingPairsBlock({
             const isRightMatch = checked && matchedLeftId === pair.id;
             const isWrongMatch = checked && matchedLeftId && matchedLeftId !== pair.id;
 
-            let classes = 'border-[#E2ECE9] bg-[#F6FAF9] text-[#163A3A] hover:border-[#009179]';
+            let classes = 'border-[#E2ECE9] bg-[#F6FAF9] text-[#163A3A] hover:border-[#006E5A]';
             if (isRightMatch) {
-              classes = 'border-[#009179] bg-[#E5F1EE] text-[#163A3A]';
+              classes = 'border-[#006E5A] bg-[#E5F1EE] text-[#163A3A]';
             } else if (isWrongMatch) {
               classes = 'border-[#E14B63] bg-[#FBEAEC] text-[#163A3A]';
             } else if (isSelected) {
-              classes = 'border-[#009179] bg-[#E5F1EE] text-[#163A3A] ring-2 ring-[#009179]/30';
+              classes = 'border-[#006E5A] bg-[#E5F1EE] text-[#163A3A] ring-2 ring-[#006E5A]/30';
             } else if (matchedLeftId) {
-              classes = 'border-[#009179]/60 bg-white text-[#163A3A]';
+              classes = 'border-[#006E5A]/60 bg-white text-[#163A3A]';
             }
 
             return (
@@ -272,7 +272,7 @@ export function MatchingPairsBlock({
           type="button"
           disabled={!allPaired}
           onClick={handleCheck}
-          className="min-h-[48px] flex-1 rounded-lg bg-[#009179] px-5 text-base font-bold text-white hover:bg-[#007a66] disabled:opacity-40"
+          className="min-h-[48px] flex-1 rounded-lg bg-[#006E5A] px-5 text-base font-bold text-white hover:bg-[#007a66] disabled:opacity-40"
         >
           تحقق من التوصيل
         </button>
@@ -294,13 +294,13 @@ export function MatchingPairsBlock({
           role="status"
           className={`rounded-xl border p-4 ${
             isAllCorrect
-              ? 'border-[#009179]/40 bg-[#E5F1EE]'
+              ? 'border-[#006E5A]/40 bg-[#E5F1EE]'
               : 'border-[#E14B63]/40 bg-[#FBEAEC]'
           }`}
         >
           <div className="flex items-start gap-2.5">
             {isAllCorrect ? (
-              <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#009179]" aria-hidden="true" />
+              <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#006E5A]" aria-hidden="true" />
             ) : (
               <XCircle className="mt-0.5 h-5 w-5 shrink-0 text-[#E14B63]" aria-hidden="true" />
             )}

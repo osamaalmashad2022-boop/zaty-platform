@@ -68,13 +68,13 @@ function getStationStatusMeta(
   if (totalCount > 0 && completedCount >= totalCount) {
     return {
       label: 'مكتمل ✓',
-      badgeClass: 'bg-[#E5F1EE] text-[#009179] border-[#009179]/30',
+      badgeClass: 'bg-[#E5F1EE] text-[#006E5A] border-[#006E5A]/30',
     };
   }
   if (completedCount > 0) {
     return {
       label: 'جاري',
-      badgeClass: 'bg-[#009179] text-white border-[#009179]',
+      badgeClass: 'bg-[#006E5A] text-white border-[#006E5A]',
     };
   }
   if (station.access === 'premium') {
@@ -156,7 +156,7 @@ export function HomeClient({ units }: HomeClientProps) {
       <section className="orchid-card p-5 sm:p-7 space-y-5">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="space-y-1.5">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E5F1EE] px-3 py-1 text-xs font-bold text-[#009179]">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E5F1EE] px-3 py-1 text-xs font-bold text-[#006E5A]">
               <Sparkles className="w-3.5 h-3.5" />
               <span>مسار المبرمج الصغير · تالتة إعدادي</span>
             </span>
@@ -182,7 +182,7 @@ export function HomeClient({ units }: HomeClientProps) {
             </div>
 
             <div className="flex items-center gap-2 rounded-xl border border-[#E2ECE9] bg-[#F6FAF9] px-3.5 py-2">
-              <Trophy className="w-5 h-5 text-[#009179]" />
+              <Trophy className="w-5 h-5 text-[#006E5A]" />
               <div className="leading-tight">
                 <div className="text-xs text-[#3B5A58]">نقاط الخبرة</div>
                 <div className="text-base font-bold text-[#163A3A] tabular-nums">
@@ -197,9 +197,9 @@ export function HomeClient({ units }: HomeClientProps) {
         <div className="rounded-xl border border-[#E2ECE9] bg-[#F6FAF9] p-3.5 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">
             {dailyGoalMet ? (
-              <CheckCircle2 className="w-5 h-5 text-[#009179] shrink-0" />
+              <CheckCircle2 className="w-5 h-5 text-[#006E5A] shrink-0" />
             ) : (
-              <Target className="w-5 h-5 text-[#009179] shrink-0" />
+              <Target className="w-5 h-5 text-[#006E5A] shrink-0" />
             )}
             <div>
               <p className="text-sm font-bold text-[#163A3A]">
@@ -247,10 +247,10 @@ export function HomeClient({ units }: HomeClientProps) {
       <section className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Link
           href="/review"
-          className="orchid-card p-4 sm:p-5 flex items-center justify-between gap-4 hover:border-[#009179] transition-colors min-h-[84px]"
+          className="orchid-card p-4 sm:p-5 flex items-center justify-between gap-4 hover:border-[#006E5A] transition-colors min-h-[84px]"
         >
           <div className="flex items-center gap-3.5">
-            <span className="w-12 h-12 rounded-xl bg-[#E5F1EE] text-[#009179] flex items-center justify-center shrink-0">
+            <span className="w-12 h-12 rounded-xl bg-[#E5F1EE] text-[#006E5A] flex items-center justify-center shrink-0">
               <Layers className="w-6 h-6" />
             </span>
             <div>
@@ -264,15 +264,15 @@ export function HomeClient({ units }: HomeClientProps) {
               </p>
             </div>
           </div>
-          <ArrowLeft className="w-5 h-5 text-[#009179] shrink-0" />
+          <ArrowLeft className="w-5 h-5 text-[#006E5A] shrink-0" />
         </Link>
 
         <Link
           href="/exam"
-          className="orchid-card p-4 sm:p-5 flex items-center justify-between gap-4 hover:border-[#009179] transition-colors min-h-[84px]"
+          className="orchid-card p-4 sm:p-5 flex items-center justify-between gap-4 hover:border-[#006E5A] transition-colors min-h-[84px]"
         >
           <div className="flex items-center gap-3.5">
-            <span className="w-12 h-12 rounded-xl bg-[#E5F1EE] text-[#009179] flex items-center justify-center shrink-0">
+            <span className="w-12 h-12 rounded-xl bg-[#E5F1EE] text-[#006E5A] flex items-center justify-center shrink-0">
               <ClipboardCheck className="w-6 h-6" />
             </span>
             <div>
@@ -284,7 +284,7 @@ export function HomeClient({ units }: HomeClientProps) {
               </p>
             </div>
           </div>
-          <ArrowLeft className="w-5 h-5 text-[#009179] shrink-0" />
+          <ArrowLeft className="w-5 h-5 text-[#006E5A] shrink-0" />
         </Link>
       </section>
 
@@ -329,12 +329,12 @@ export function HomeClient({ units }: HomeClientProps) {
                   </div>
 
                   <div className="text-left sm:text-end space-y-1 min-w-[140px]">
-                    <div className="text-xs font-bold text-[#009179] tabular-nums">
+                    <div className="text-xs font-bold text-[#006E5A] tabular-nums">
                       {unitCompleted} / {unitLessons.length} دروس ({unitPct}٪)
                     </div>
                     <div className="w-36 h-2 rounded-full bg-[#E5F1EE] overflow-hidden">
                       <div
-                        className="h-full bg-[#009179] rounded-full transition-all duration-300"
+                        className="h-full bg-[#006E5A] rounded-full transition-all duration-300"
                         style={{ width: `${unitPct}%` }}
                       />
                     </div>
@@ -364,16 +364,16 @@ export function HomeClient({ units }: HomeClientProps) {
                       <li key={station.id}>
                         <Link
                           href={`/station/${station.id}`}
-                          className="group block rounded-xl border border-[#E2ECE9] bg-[#F6FAF9]/70 hover:bg-white hover:border-[#009179] p-4 transition-all min-h-[80px]"
+                          className="group block rounded-xl border border-[#E2ECE9] bg-[#F6FAF9]/70 hover:bg-white hover:border-[#006E5A] p-4 transition-all min-h-[80px]"
                         >
                           <div className="flex items-start justify-between gap-3">
                             <div className="flex items-start gap-3.5 min-w-0">
                               <span
                                 className={`w-11 h-11 rounded-xl flex items-center justify-center font-bold text-base shrink-0 border ${
                                   isDone
-                                    ? 'bg-[#009179] text-white border-[#009179]'
+                                    ? 'bg-[#006E5A] text-white border-[#006E5A]'
                                     : completedCount > 0
-                                      ? 'bg-[#E5F1EE] text-[#009179] border-[#009179]'
+                                      ? 'bg-[#E5F1EE] text-[#006E5A] border-[#006E5A]'
                                       : 'bg-white text-[#163A3A] border-[#E2ECE9]'
                                 }`}
                               >
@@ -386,7 +386,7 @@ export function HomeClient({ units }: HomeClientProps) {
 
                               <div className="space-y-1 min-w-0">
                                 <div className="flex flex-wrap items-center gap-2">
-                                  <h4 className="text-base font-bold text-[#163A3A] group-hover:text-[#009179] transition-colors">
+                                  <h4 className="text-base font-bold text-[#163A3A] group-hover:text-[#006E5A] transition-colors">
                                     المحطة {station.number}: {station.title}
                                   </h4>
                                   <span
@@ -415,7 +415,7 @@ export function HomeClient({ units }: HomeClientProps) {
                                     summary?.bestQuizScore !== undefined && (
                                       <>
                                         <span>·</span>
-                                        <span className="font-bold text-[#009179]">
+                                        <span className="font-bold text-[#006E5A]">
                                           أعلى درجة اختبار:{' '}
                                           {summary.bestQuizScore}٪
                                         </span>
@@ -425,14 +425,14 @@ export function HomeClient({ units }: HomeClientProps) {
                               </div>
                             </div>
 
-                            <ArrowLeft className="w-5 h-5 text-[#3B5A58] group-hover:text-[#009179] shrink-0 mt-1" />
+                            <ArrowLeft className="w-5 h-5 text-[#3B5A58] group-hover:text-[#006E5A] shrink-0 mt-1" />
                           </div>
 
                           {/* Station progress bar */}
                           <div className="mt-3 flex items-center gap-3">
                             <div className="flex-1 h-2 rounded-full bg-[#E2ECE9] overflow-hidden">
                               <div
-                                className="h-full bg-[#009179] rounded-full transition-all duration-300"
+                                className="h-full bg-[#006E5A] rounded-full transition-all duration-300"
                                 style={{ width: `${pct}%` }}
                               />
                             </div>

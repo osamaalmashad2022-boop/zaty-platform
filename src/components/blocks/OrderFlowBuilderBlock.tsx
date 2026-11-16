@@ -58,11 +58,11 @@ function FlowchartNodeVisual({
 }) {
   const strokeColor =
     status === 'correct'
-      ? '#009179'
+      ? '#006E5A'
       : status === 'wrong'
         ? '#E14B63'
         : status === 'selected'
-          ? '#009179'
+          ? '#006E5A'
           : '#163A3A';
   const fillColor =
     status === 'correct'
@@ -230,7 +230,7 @@ export function OrderFlowBuilderBlock({
       className={`rounded-xl border border-[#E2ECE9] bg-[#FFFFFF] p-5 sm:p-6 shadow-[0_4px_6px_-1px_rgb(0_0_0/0.08),0_2px_4px_-2px_rgb(0_0_0/0.08)] space-y-5 ${className}`}
     >
       <div className="space-y-1.5">
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E5F1EE] px-3 py-1 text-xs font-bold text-[#009179]">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E5F1EE] px-3 py-1 text-xs font-bold text-[#006E5A]">
           {data.mode === 'flowchart' ? (
             <>
               <Workflow className="h-3.5 w-3.5" aria-hidden="true" />
@@ -275,11 +275,11 @@ export function OrderFlowBuilderBlock({
               <div
                 className={`flex items-center gap-2 rounded-xl border p-2.5 transition-colors ${
                   status === 'correct'
-                    ? 'border-[#009179] bg-[#E5F1EE]/50'
+                    ? 'border-[#006E5A] bg-[#E5F1EE]/50'
                     : status === 'wrong'
                       ? 'border-[#E14B63] bg-[#FBEAEC]/50'
                       : status === 'selected'
-                        ? 'border-[#009179] bg-[#E5F1EE]/60'
+                        ? 'border-[#006E5A] bg-[#E5F1EE]/60'
                         : 'border-[#E2ECE9] bg-[#F6FAF9]'
                 }`}
               >
@@ -317,7 +317,7 @@ export function OrderFlowBuilderBlock({
                     aria-label={`تحريك العنصر ${idx + 1} لأعلى`}
                     disabled={idx === 0}
                     onClick={() => swapPositions(idx, idx - 1)}
-                    className="flex min-h-[48px] min-w-[48px] items-center justify-center rounded-lg border border-[#E2ECE9] bg-white text-[#163A3A] hover:border-[#009179] disabled:opacity-35"
+                    className="flex min-h-[48px] min-w-[48px] items-center justify-center rounded-lg border border-[#E2ECE9] bg-white text-[#163A3A] hover:border-[#006E5A] disabled:opacity-35"
                   >
                     <ArrowUp className="h-4 w-4" aria-hidden="true" />
                   </button>
@@ -326,7 +326,7 @@ export function OrderFlowBuilderBlock({
                     aria-label={`تحريك العنصر ${idx + 1} لأسفل`}
                     disabled={idx === orderedItems.length - 1}
                     onClick={() => swapPositions(idx, idx + 1)}
-                    className="flex min-h-[48px] min-w-[48px] items-center justify-center rounded-lg border border-[#E2ECE9] bg-white text-[#163A3A] hover:border-[#009179] disabled:opacity-35"
+                    className="flex min-h-[48px] min-w-[48px] items-center justify-center rounded-lg border border-[#E2ECE9] bg-white text-[#163A3A] hover:border-[#006E5A] disabled:opacity-35"
                   >
                     <ArrowDown className="h-4 w-4" aria-hidden="true" />
                   </button>
@@ -335,7 +335,7 @@ export function OrderFlowBuilderBlock({
 
               {data.mode === 'flowchart' && idx < orderedItems.length - 1 && (
                 <div className="flex justify-center" aria-hidden="true">
-                  <ArrowDown className="h-4 w-4 text-[#009179]" />
+                  <ArrowDown className="h-4 w-4 text-[#006E5A]" />
                 </div>
               )}
             </li>
@@ -347,7 +347,7 @@ export function OrderFlowBuilderBlock({
         <button
           type="button"
           onClick={handleCheck}
-          className="min-h-[48px] flex-1 rounded-lg bg-[#009179] px-5 text-base font-bold text-white hover:bg-[#007a66]"
+          className="min-h-[48px] flex-1 rounded-lg bg-[#006E5A] px-5 text-base font-bold text-white hover:bg-[#007a66]"
         >
           تحقق من الترتيب
         </button>
@@ -367,13 +367,13 @@ export function OrderFlowBuilderBlock({
           role="status"
           className={`rounded-xl border p-4 ${
             isAllCorrect
-              ? 'border-[#009179]/40 bg-[#E5F1EE]'
+              ? 'border-[#006E5A]/40 bg-[#E5F1EE]'
               : 'border-[#E14B63]/40 bg-[#FBEAEC]'
           }`}
         >
           <div className="flex items-start gap-2.5">
             {isAllCorrect ? (
-              <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#009179]" aria-hidden="true" />
+              <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#006E5A]" aria-hidden="true" />
             ) : (
               <XCircle className="mt-0.5 h-5 w-5 shrink-0 text-[#E14B63]" aria-hidden="true" />
             )}

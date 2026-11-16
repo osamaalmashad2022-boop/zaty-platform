@@ -186,7 +186,7 @@ export function StationQuizClient({
       <div>
         <Link
           href={`/station/${stationId}`}
-          className="inline-flex items-center gap-2 min-h-[48px] text-sm font-bold text-[#009179] hover:text-[#163A3A]"
+          className="inline-flex items-center gap-2 min-h-[48px] text-sm font-bold text-[#006E5A] hover:text-[#163A3A]"
         >
           <ArrowRight className="w-4 h-4 shrink-0" />
           <span>العودة إلى {stationTitle}</span>
@@ -197,7 +197,7 @@ export function StationQuizClient({
       <section className="orchid-card p-5 sm:p-6 space-y-4">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="space-y-1">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E5F1EE] px-3 py-1 text-xs font-bold text-[#009179]">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E5F1EE] px-3 py-1 text-xs font-bold text-[#006E5A]">
               <ListChecks className="w-3.5 h-3.5" />
               <span>اختبار المحطة · أسئلة الكتاب الرسمية</span>
             </span>
@@ -218,8 +218,8 @@ export function StationQuizClient({
               onClick={() => handleModeSwitch('quick')}
               className={`min-h-[48px] px-4 rounded-xl border text-sm font-bold transition-colors ${
                 mode === 'quick'
-                  ? 'bg-[#009179] text-white border-[#009179]'
-                  : 'bg-[#F6FAF9] text-[#163A3A] border-[#E2ECE9] hover:border-[#009179]'
+                  ? 'bg-[#006E5A] text-white border-[#006E5A]'
+                  : 'bg-[#F6FAF9] text-[#163A3A] border-[#E2ECE9] hover:border-[#006E5A]'
               }`}
             >
               جولة سريعة (١٠ أسئلة منتقاة)
@@ -229,8 +229,8 @@ export function StationQuizClient({
               onClick={() => handleModeSwitch('full')}
               className={`min-h-[48px] px-4 rounded-xl border text-sm font-bold transition-colors ${
                 mode === 'full'
-                  ? 'bg-[#009179] text-white border-[#009179]'
-                  : 'bg-[#F6FAF9] text-[#163A3A] border-[#E2ECE9] hover:border-[#009179]'
+                  ? 'bg-[#006E5A] text-white border-[#006E5A]'
+                  : 'bg-[#F6FAF9] text-[#163A3A] border-[#E2ECE9] hover:border-[#006E5A]'
               }`}
             >
               جولة كاملة لكل أسئلة الكتاب ({items.length} سؤالًا)
@@ -241,10 +241,10 @@ export function StationQuizClient({
 
       {/* Score Breakdown after Submit */}
       {submitted && gradedResults && (
-        <section className="orchid-card p-5 sm:p-6 space-y-5 border-[#009179]/40 animate-card-enter">
+        <section className="orchid-card p-5 sm:p-6 space-y-5 border-[#006E5A]/40 animate-card-enter">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="space-y-1">
-              <div className="inline-flex items-center gap-1.5 text-sm font-bold text-[#009179]">
+              <div className="inline-flex items-center gap-1.5 text-sm font-bold text-[#006E5A]">
                 <Sparkles className="w-4 h-4" />
                 <span>
                   نتيجتك: {gradedResults.score} من {gradedResults.total}
@@ -259,7 +259,7 @@ export function StationQuizClient({
               </h2>
             </div>
 
-            <div className="w-20 h-20 rounded-2xl bg-[#E5F1EE] text-[#009179] flex flex-col items-center justify-center shrink-0">
+            <div className="w-20 h-20 rounded-2xl bg-[#E5F1EE] text-[#006E5A] flex flex-col items-center justify-center shrink-0">
               <span className="text-2xl font-bold tabular-nums">
                 {gradedResults.percentage}٪
               </span>
@@ -267,8 +267,8 @@ export function StationQuizClient({
           </div>
 
           {gradedResults.wrongItems.length === 0 ? (
-            <div className="rounded-xl bg-[#E5F1EE] border border-[#009179]/30 p-4 flex items-center gap-3 text-[#163A3A]">
-              <CheckCircle2 className="w-6 h-6 text-[#009179] shrink-0" />
+            <div className="rounded-xl bg-[#E5F1EE] border border-[#006E5A]/30 p-4 flex items-center gap-3 text-[#163A3A]">
+              <CheckCircle2 className="w-6 h-6 text-[#006E5A] shrink-0" />
               <p className="text-sm font-semibold">
                 لا توجد أي أخطاء في هذه الجولة! مستعد للمحطة التالية أو للامتحان الشامل.
               </p>
@@ -321,7 +321,7 @@ export function StationQuizClient({
                           </span>
                         </div>
                         <div className="rounded-lg bg-[#E5F1EE] text-[#163A3A] px-3 py-2">
-                          <span className="font-bold text-[#009179]">
+                          <span className="font-bold text-[#006E5A]">
                             الإجابة الصحيحة:{' '}
                           </span>
                           <span>{correctTexts.join('، ')}</span>
@@ -336,7 +336,7 @@ export function StationQuizClient({
                       <div className="pt-1">
                         <Link
                           href={`/lesson/${item.microLessonId}`}
-                          className="inline-flex items-center gap-2 min-h-[48px] px-4 py-2 rounded-lg bg-white border border-[#009179] text-sm font-bold text-[#009179] hover:bg-[#E5F1EE] transition-colors"
+                          className="inline-flex items-center gap-2 min-h-[48px] px-4 py-2 rounded-lg bg-white border border-[#006E5A] text-sm font-bold text-[#006E5A] hover:bg-[#E5F1EE] transition-colors"
                         >
                           <span>راجع الدرس اللي فيه النقطة دي</span>
                           <ArrowLeft className="w-4 h-4 shrink-0" />
@@ -374,7 +374,7 @@ export function StationQuizClient({
             return (
               <article key={item.id} className="orchid-card p-5 space-y-4">
                 <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
-                  <span className="font-bold text-[#009179]">
+                  <span className="font-bold text-[#006E5A]">
                     سؤال {idx + 1} من {activeItems.length}
                   </span>
                   <span className="text-[#3B5A58] bg-[#F6FAF9] px-2.5 py-0.5 rounded-full border border-[#E2ECE9]">
@@ -411,13 +411,13 @@ export function StationQuizClient({
                         onClick={() => handleToggleOption(item, opt.id)}
                         className={`w-full min-h-[48px] px-4 py-3 rounded-xl border text-right text-sm sm:text-base font-medium transition-colors flex items-center justify-between gap-3 ${
                           isSelected
-                            ? 'bg-[#E5F1EE] border-[#009179] text-[#163A3A] font-bold'
-                            : 'bg-[#F6FAF9] border-[#E2ECE9] text-[#3B5A58] hover:border-[#009179] hover:bg-white'
+                            ? 'bg-[#E5F1EE] border-[#006E5A] text-[#163A3A] font-bold'
+                            : 'bg-[#F6FAF9] border-[#E2ECE9] text-[#3B5A58] hover:border-[#006E5A] hover:bg-white'
                         }`}
                       >
                         <span>{opt.text}</span>
                         {isSelected && (
-                          <CheckCircle2 className="w-5 h-5 text-[#009179] shrink-0" />
+                          <CheckCircle2 className="w-5 h-5 text-[#006E5A] shrink-0" />
                         )}
                       </button>
                     );

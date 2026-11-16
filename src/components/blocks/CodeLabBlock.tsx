@@ -230,7 +230,7 @@ export function CodeLabBlock({
     >
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E5F1EE] px-3 py-1 text-xs font-bold text-[#009179]">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E5F1EE] px-3 py-1 text-xs font-bold text-[#006E5A]">
           <Code2 className="h-3.5 w-3.5" aria-hidden="true" />
           <span>
             {data.mode === 'fillLine'
@@ -242,9 +242,9 @@ export function CodeLabBlock({
         <button
           type="button"
           onClick={() => setShowHint((prev) => !prev)}
-          className="inline-flex min-h-[48px] items-center gap-1.5 rounded-lg border border-[#E2ECE9] bg-[#F6FAF9] px-3.5 text-xs sm:text-sm font-bold text-[#163A3A] hover:border-[#009179]"
+          className="inline-flex min-h-[48px] items-center gap-1.5 rounded-lg border border-[#E2ECE9] bg-[#F6FAF9] px-3.5 text-xs sm:text-sm font-bold text-[#163A3A] hover:border-[#006E5A]"
         >
-          <Lightbulb className="h-4 w-4 text-[#009179]" aria-hidden="true" />
+          <Lightbulb className="h-4 w-4 text-[#006E5A]" aria-hidden="true" />
           <span>{showHint ? 'إخفاء التلميح' : 'تلميح'}</span>
         </button>
       </div>
@@ -256,15 +256,15 @@ export function CodeLabBlock({
       <FormattedText text={data.prompt} />
 
       {data.mode === 'fillLine' && hasFillMarker && (
-        <p className="rounded-lg border border-[#009179]/25 bg-[#E5F1EE]/70 px-3.5 py-2.5 text-sm font-medium text-[#163A3A]">
+        <p className="rounded-lg border border-[#006E5A]/25 bg-[#E5F1EE]/70 px-3.5 py-2.5 text-sm font-medium text-[#163A3A]">
           ابحث عن علامة <code dir="ltr" className="font-mono font-bold">___</code> داخل الكود
           واستبدلها بالإجابة الصحيحة.
         </p>
       )}
 
       {showHint && (
-        <div className="rounded-xl border border-[#009179]/35 bg-[#E5F1EE] p-4 text-sm sm:text-base text-[#163A3A]">
-          <p className="font-bold text-[#009179] mb-1">تلميح سريع:</p>
+        <div className="rounded-xl border border-[#006E5A]/35 bg-[#E5F1EE] p-4 text-sm sm:text-base text-[#163A3A]">
+          <p className="font-bold text-[#006E5A] mb-1">تلميح سريع:</p>
           <FormattedText text={data.hint} />
         </div>
       )}
@@ -358,7 +358,7 @@ export function CodeLabBlock({
           type="button"
           onClick={handleCheckSolution}
           disabled={isRunning || isChecking}
-          className="inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-lg bg-[#009179] px-4 text-base font-bold text-white hover:bg-[#007a66] disabled:opacity-40"
+          className="inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-lg bg-[#006E5A] px-4 text-base font-bold text-white hover:bg-[#007a66] disabled:opacity-40"
         >
           <CheckCircle2 className="h-5 w-5" aria-hidden="true" />
           <span>{isChecking ? 'جاري الفحص...' : 'تحقق من الحل'}</span>
@@ -382,14 +382,14 @@ export function CodeLabBlock({
           role="status"
           className={`rounded-xl border p-4 space-y-3 ${
             evalResult.allPassed
-              ? 'border-[#009179]/40 bg-[#E5F1EE]'
+              ? 'border-[#006E5A]/40 bg-[#E5F1EE]'
               : 'border-[#E14B63]/40 bg-[#FBEAEC]'
           }`}
         >
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               {evalResult.allPassed ? (
-                <CheckCircle2 className="h-5 w-5 text-[#009179]" aria-hidden="true" />
+                <CheckCircle2 className="h-5 w-5 text-[#006E5A]" aria-hidden="true" />
               ) : (
                 <XCircle className="h-5 w-5 text-[#E14B63]" aria-hidden="true" />
               )}
@@ -407,13 +407,13 @@ export function CodeLabBlock({
                 key={res.checkId}
                 className={`rounded-lg border px-3.5 py-2.5 text-sm ${
                   res.passed
-                    ? 'border-[#009179]/30 bg-white text-[#163A3A]'
+                    ? 'border-[#006E5A]/30 bg-white text-[#163A3A]'
                     : 'border-[#E14B63]/30 bg-white text-[#163A3A]'
                 }`}
               >
                 <div className="flex items-center justify-between gap-2 font-bold">
                   <span>{res.label || `اختبار ${idx + 1}`}</span>
-                  <span className={res.passed ? 'text-[#009179]' : 'text-[#E14B63]'}>
+                  <span className={res.passed ? 'text-[#006E5A]' : 'text-[#E14B63]'}>
                     {res.passed ? 'نجح ✓' : 'لم يطابق ✗'}
                   </span>
                 </div>
@@ -432,9 +432,9 @@ export function CodeLabBlock({
           <button
             type="button"
             onClick={() => setShowSolution((prev) => !prev)}
-            className="inline-flex min-h-[48px] items-center gap-2 rounded-lg border border-[#E2ECE9] bg-[#F6FAF9] px-4 text-sm font-bold text-[#163A3A] hover:border-[#009179]"
+            className="inline-flex min-h-[48px] items-center gap-2 rounded-lg border border-[#E2ECE9] bg-[#F6FAF9] px-4 text-sm font-bold text-[#163A3A] hover:border-[#006E5A]"
           >
-            <Eye className="h-4 w-4 text-[#009179]" aria-hidden="true" />
+            <Eye className="h-4 w-4 text-[#006E5A]" aria-hidden="true" />
             <span>{showSolution ? 'إخفاء الحل النموذجي' : 'عرض الحل النموذجي للمساعدة'}</span>
           </button>
 

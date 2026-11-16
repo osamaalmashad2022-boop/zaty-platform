@@ -107,7 +107,7 @@ export function AppShell({ children, title, backHref, backLabel }: AppShellProps
             {backHref ? (
               <Link
                 href={backHref}
-                className="min-h-[48px] px-2 -mr-2 inline-flex items-center gap-1.5 text-sm font-semibold text-[#009179] hover:text-[#163A3A]"
+                className="min-h-[48px] px-2 -mr-2 inline-flex items-center gap-1.5 text-sm font-semibold text-[#006E5A] hover:text-[#163A3A]"
               >
                 <ArrowRight className="w-4 h-4 shrink-0" />
                 <span>{backLabel ?? 'رجوع'}</span>
@@ -117,7 +117,7 @@ export function AppShell({ children, title, backHref, backLabel }: AppShellProps
                 href="/"
                 className="flex items-center gap-3 min-h-[48px] focus-visible:rounded-lg"
               >
-                <span className="w-10 h-10 rounded-xl bg-[#009179] text-white flex items-center justify-center shadow-sm shrink-0">
+                <span className="w-10 h-10 rounded-xl bg-[#006E5A] text-white flex items-center justify-center shadow-sm shrink-0">
                   <Code2 className="w-5 h-5" />
                 </span>
                 <span className="flex flex-col leading-tight">
@@ -143,7 +143,7 @@ export function AppShell({ children, title, backHref, backLabel }: AppShellProps
                   href={item.href}
                   className={`min-h-[48px] px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-semibold transition-colors ${
                     active
-                      ? 'bg-[#E5F1EE] text-[#009179]'
+                      ? 'bg-[#E5F1EE] text-[#006E5A]'
                       : 'text-[#3B5A58] hover:bg-[#F6FAF9] hover:text-[#163A3A]'
                   }`}
                 >
@@ -165,8 +165,8 @@ export function AppShell({ children, title, backHref, backLabel }: AppShellProps
                 <span>بدون نت</span>
               </span>
             ) : (
-              <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-[#E5F1EE] text-[#009179] px-3 py-1 text-xs font-semibold">
-                <span className="w-2 h-2 rounded-full bg-[#009179]" />
+              <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-[#E5F1EE] text-[#006E5A] px-3 py-1 text-xs font-semibold">
+                <span className="w-2 h-2 rounded-full bg-[#006E5A]" />
                 <span>جاهز للمذاكرة</span>
               </span>
             )}
@@ -175,7 +175,7 @@ export function AppShell({ children, title, backHref, backLabel }: AppShellProps
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 w-full max-w-5xl mx-auto px-4 pt-5 pb-28 md:pb-10">
+      <main className="flex-1 w-full max-w-5xl mx-auto px-4 pt-5 pb-32 md:pb-12">
         {children}
       </main>
 
@@ -193,7 +193,7 @@ export function AppShell({ children, title, backHref, backLabel }: AppShellProps
                 key={item.href}
                 href={item.href}
                 className={`flex flex-col items-center justify-center gap-1 min-h-[48px] text-xs font-semibold transition-colors ${
-                  active ? 'text-[#009179]' : 'text-[#3B5A58] hover:text-[#163A3A]'
+                  active ? 'text-[#006E5A]' : 'text-[#3B5A58] hover:text-[#163A3A]'
                 }`}
               >
                 <span

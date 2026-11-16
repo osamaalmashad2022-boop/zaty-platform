@@ -4,7 +4,7 @@ import { ArrowRight, Compass } from 'lucide-react';
 export default function NotFound() {
   return (
     <div className="orchid-card p-8 text-center space-y-4 max-w-lg mx-auto my-10">
-      <div className="w-14 h-14 mx-auto rounded-2xl bg-[#E5F1EE] text-[#009179] flex items-center justify-center">
+      <div className="w-14 h-14 mx-auto rounded-2xl bg-[#E5F1EE] text-[#006E5A] flex items-center justify-center">
         <Compass className="w-7 h-7" />
       </div>
       <h1 className="text-2xl font-bold text-[#163A3A]">

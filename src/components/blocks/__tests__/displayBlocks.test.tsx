@@ -114,8 +114,8 @@ describe('Display and media blocks', () => {
 
     const video = container.querySelector('video')!;
     expect(video).toBeTruthy();
-    const track = video.querySelector('track');
-    expect(track?.getAttribute('src')).toBe('/media/caption-1-1.vtt');
+    const track = video.querySelector('track')!;
+    expect(track.getAttribute('src')).toBe('/media/caption-1-1.vtt');
 
     const speedBtn15 = Array.from(container.querySelectorAll('button')).find((b) =>
       b.textContent?.includes('1.5x')
@@ -124,6 +124,12 @@ describe('Display and media blocks', () => {
       speedBtn15.click();
     });
     expect(video.playbackRate).toBe(1.5);
+
+    // Track error must NOT falsely trigger the offline video fallback
+    act(() => {
+      track.dispatchEvent(new Event('error', { bubbles: true }));
+    });
+    expect(container.querySelector('video')).toBeTruthy();
 
     act(() => {
       video.dispatchEvent(new Event('error'));

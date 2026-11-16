@@ -33,7 +33,7 @@ export function ImageBlock({ data, className = '' }: ImageBlockProps) {
           />
         ) : (
           <div className="flex flex-col items-center justify-center gap-2 p-6 text-center text-[#3B5A58]">
-            <ImageOff className="h-8 w-8 text-[#009179]" aria-hidden="true" />
+            <ImageOff className="h-8 w-8 text-[#006E5A]" aria-hidden="true" />
             <p className="text-sm font-medium text-[#163A3A]">{data.alt}</p>
             <p className="text-xs text-[#3B5A58]">
               الصورة التوضيحية غير محمّلة حاليًا في وضع عدم الاتصال.

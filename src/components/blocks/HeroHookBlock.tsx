@@ -22,7 +22,7 @@ export function HeroHookBlock({ data, className = '' }: HeroHookBlockProps) {
       <div className="flex flex-wrap items-center justify-between gap-2">
         {data.stationLabel ? (
           <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E5F1EE] px-3 py-1.5 text-sm font-semibold text-[#163A3A]">
-            <Sparkles className="h-4 w-4 text-[#009179]" aria-hidden="true" />
+            <Sparkles className="h-4 w-4 text-[#006E5A]" aria-hidden="true" />
             <span>{data.stationLabel}</span>
           </span>
         ) : (
@@ -30,7 +30,7 @@ export function HeroHookBlock({ data, className = '' }: HeroHookBlockProps) {
         )}
 
         <span className="inline-flex items-center gap-1.5 rounded-full border border-[#E2ECE9] bg-[#F6FAF9] px-3 py-1.5 text-sm font-medium text-[#3B5A58]">
-          <Clock className="h-4 w-4 text-[#009179]" aria-hidden="true" />
+          <Clock className="h-4 w-4 text-[#006E5A]" aria-hidden="true" />
           <span>{formatDurationMinutes(data.durationMin)}</span>
         </span>
       </div>
@@ -51,8 +51,8 @@ export function HeroHookBlock({ data, className = '' }: HeroHookBlockProps) {
       )}
 
       {/* One-line goal */}
-      <div className="rounded-xl border border-[#009179]/25 bg-[#E5F1EE] p-4">
-        <div className="mb-1.5 flex items-center gap-2 text-sm font-bold text-[#009179]">
+      <div className="rounded-xl border border-[#006E5A]/25 bg-[#E5F1EE] p-4">
+        <div className="mb-1.5 flex items-center gap-2 text-sm font-bold text-[#006E5A]">
           <Target className="h-5 w-5 shrink-0" aria-hidden="true" />
           <span>بعد الدرس ده هتقدر:</span>
         </div>
@@ -63,7 +63,7 @@ export function HeroHookBlock({ data, className = '' }: HeroHookBlockProps) {
 
       {/* Daily-life hook */}
       <div className="rounded-xl border border-[#E2ECE9] bg-[#F6FAF9] p-4">
-        <p className="mb-2 text-xs font-bold tracking-wide text-[#009179]">
+        <p className="mb-2 text-xs font-bold tracking-wide text-[#006E5A]">
           فكّر في الموقف ده الأول:
         </p>
         <FormattedText text={data.hook} />

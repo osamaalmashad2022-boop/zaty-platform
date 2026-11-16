@@ -138,7 +138,8 @@ export function MediaPlayerBlock({ data, className = '' }: MediaPlayerBlockProps
     setCurrentTime(clamped);
   };
 
-  const handleMediaFailure = () => {
+  const handleMediaFailure = (e: React.SyntheticEvent<HTMLMediaElement>) => {
+    if (e.target !== e.currentTarget) return;
     setMediaError(true);
     setIsPlaying(false);
     setShowTranscript(true);
@@ -155,16 +156,16 @@ export function MediaPlayerBlock({ data, className = '' }: MediaPlayerBlockProps
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2 text-[#163A3A]">
           {data.kind === 'video' ? (
-            <Video className="h-5 w-5 text-[#009179]" aria-hidden="true" />
+            <Video className="h-5 w-5 text-[#006E5A]" aria-hidden="true" />
           ) : (
-            <Volume2 className="h-5 w-5 text-[#009179]" aria-hidden="true" />
+            <Volume2 className="h-5 w-5 text-[#006E5A]" aria-hidden="true" />
           )}
           <h3 className="text-base sm:text-lg font-bold">
             {data.title || (data.kind === 'video' ? 'فيديو الشرح' : 'ملخص صوتي')}
           </h3>
         </div>
 
-        <span className="rounded-full bg-[#E5F1EE] px-3 py-1 text-xs font-bold text-[#009179]">
+        <span className="rounded-full bg-[#E5F1EE] px-3 py-1 text-xs font-bold text-[#006E5A]">
           <bdi dir="ltr">{formatSecondsClock(duration || data.durationSec)}</bdi>
         </span>
       </div>
@@ -233,8 +234,8 @@ export function MediaPlayerBlock({ data, className = '' }: MediaPlayerBlockProps
                     onClick={() => handleSpeedChange(rate)}
                     className={`min-h-[48px] min-w-[48px] rounded-lg px-3 text-sm font-bold transition-colors ${
                       active
-                        ? 'bg-[#009179] text-white'
-                        : 'border border-[#E2ECE9] bg-[#F6FAF9] text-[#163A3A] hover:border-[#009179]'
+                        ? 'bg-[#006E5A] text-white'
+                        : 'border border-[#E2ECE9] bg-[#F6FAF9] text-[#163A3A] hover:border-[#006E5A]'
                     }`}
                   >
                     <bdi dir="ltr">{rate}x</bdi>
@@ -247,9 +248,9 @@ export function MediaPlayerBlock({ data, className = '' }: MediaPlayerBlockProps
               <button
                 type="button"
                 onClick={() => setShowTranscript((prev) => !prev)}
-                className="inline-flex min-h-[48px] items-center gap-2 rounded-lg border border-[#E2ECE9] bg-[#F6FAF9] px-4 text-sm font-semibold text-[#163A3A] hover:border-[#009179]"
+                className="inline-flex min-h-[48px] items-center gap-2 rounded-lg border border-[#E2ECE9] bg-[#F6FAF9] px-4 text-sm font-semibold text-[#163A3A] hover:border-[#006E5A]"
               >
-                <FileText className="h-4 w-4 text-[#009179]" aria-hidden="true" />
+                <FileText className="h-4 w-4 text-[#006E5A]" aria-hidden="true" />
                 <span>{showTranscript ? 'إخفاء التفريغ النصي' : 'عرض التفريغ النصي الكامل'}</span>
               </button>
             )}
@@ -284,7 +285,7 @@ export function MediaPlayerBlock({ data, className = '' }: MediaPlayerBlockProps
                     type="button"
                     onClick={handleTogglePlay}
                     aria-label={isPlaying ? 'إيقاف مؤقت' : 'تشغيل الصوت'}
-                    className="flex min-h-[48px] min-w-[48px] items-center justify-center rounded-full bg-[#009179] text-white shadow-sm hover:bg-[#007a66]"
+                    className="flex min-h-[48px] min-w-[48px] items-center justify-center rounded-full bg-[#006E5A] text-white shadow-sm hover:bg-[#007a66]"
                   >
                     {isPlaying ? (
                       <Pause className="h-5 w-5" aria-hidden="true" />
@@ -299,7 +300,7 @@ export function MediaPlayerBlock({ data, className = '' }: MediaPlayerBlockProps
                     aria-label="رجوع 10 ثواني"
                     className="inline-flex min-h-[48px] min-w-[48px] items-center justify-center gap-1 rounded-lg border border-[#E2ECE9] bg-white px-2.5 text-xs font-bold text-[#163A3A]"
                   >
-                    <RotateCcw className="h-4 w-4 text-[#009179]" aria-hidden="true" />
+                    <RotateCcw className="h-4 w-4 text-[#006E5A]" aria-hidden="true" />
                     <span>10ث</span>
                   </button>
 
@@ -309,7 +310,7 @@ export function MediaPlayerBlock({ data, className = '' }: MediaPlayerBlockProps
                     aria-label="تقديم 10 ثواني"
                     className="inline-flex min-h-[48px] min-w-[48px] items-center justify-center gap-1 rounded-lg border border-[#E2ECE9] bg-white px-2.5 text-xs font-bold text-[#163A3A]"
                   >
-                    <RotateCw className="h-4 w-4 text-[#009179]" aria-hidden="true" />
+                    <RotateCw className="h-4 w-4 text-[#006E5A]" aria-hidden="true" />
                     <span>10ث</span>
                   </button>
                 </div>
@@ -324,8 +325,8 @@ export function MediaPlayerBlock({ data, className = '' }: MediaPlayerBlockProps
                         onClick={() => handleSpeedChange(rate)}
                         className={`min-h-[48px] min-w-[48px] rounded-lg px-3 text-sm font-bold transition-colors ${
                           active
-                            ? 'bg-[#009179] text-white'
-                            : 'border border-[#E2ECE9] bg-white text-[#163A3A] hover:border-[#009179]'
+                            ? 'bg-[#006E5A] text-white'
+                            : 'border border-[#E2ECE9] bg-white text-[#163A3A] hover:border-[#006E5A]'
                         }`}
                       >
                         <bdi dir="ltr">{rate}x</bdi>
@@ -344,7 +345,7 @@ export function MediaPlayerBlock({ data, className = '' }: MediaPlayerBlockProps
                   max={duration || data.durationSec || 100}
                   value={Math.min(currentTime, duration || data.durationSec || 100)}
                   onChange={(e) => handleSeek(Number(e.target.value))}
-                  className="h-3 w-full cursor-pointer accent-[#009179]"
+                  className="h-3 w-full cursor-pointer accent-[#006E5A]"
                 />
                 <div className="flex items-center justify-between text-xs font-semibold text-[#3B5A58]">
                   <bdi dir="ltr">{formatSecondsClock(currentTime)}</bdi>
@@ -358,9 +359,9 @@ export function MediaPlayerBlock({ data, className = '' }: MediaPlayerBlockProps
             <button
               type="button"
               onClick={() => setShowTranscript((prev) => !prev)}
-              className="inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-lg border border-[#E2ECE9] bg-white px-4 text-sm font-semibold text-[#163A3A] hover:border-[#009179]"
+              className="inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-lg border border-[#E2ECE9] bg-white px-4 text-sm font-semibold text-[#163A3A] hover:border-[#006E5A]"
             >
-              <FileText className="h-4 w-4 text-[#009179]" aria-hidden="true" />
+              <FileText className="h-4 w-4 text-[#006E5A]" aria-hidden="true" />
               <span>{showTranscript ? 'إخفاء التفريغ النصي' : 'عرض التفريغ النصي الكامل'}</span>
             </button>
           )}

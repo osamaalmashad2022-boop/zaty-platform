@@ -186,7 +186,7 @@ export function StationClient({ station, unitTitle }: StationClientProps) {
       <div>
         <Link
           href="/"
-          className="inline-flex items-center gap-2 min-h-[48px] text-sm font-bold text-[#009179] hover:text-[#163A3A]"
+          className="inline-flex items-center gap-2 min-h-[48px] text-sm font-bold text-[#006E5A] hover:text-[#163A3A]"
         >
           <ArrowRight className="w-4 h-4 shrink-0" />
           <span>العودة للمسار الرئيسي</span>
@@ -198,7 +198,7 @@ export function StationClient({ station, unitTitle }: StationClientProps) {
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="space-y-1.5">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="rounded-md bg-[#009179] text-white px-2.5 py-0.5 text-xs font-bold">
+              <span className="rounded-md bg-[#006E5A] text-white px-2.5 py-0.5 text-xs font-bold">
                 المحطة {station.number}
               </span>
               {unitTitle && (
@@ -222,7 +222,7 @@ export function StationClient({ station, unitTitle }: StationClientProps) {
           {stationSummary?.bestQuizScore !== null &&
             stationSummary?.bestQuizScore !== undefined && (
               <div className="rounded-xl bg-[#E5F1EE] px-4 py-2.5 text-center shrink-0">
-                <div className="text-xs text-[#009179] font-semibold">
+                <div className="text-xs text-[#006E5A] font-semibold">
                   أعلى درجة في الاختبار
                 </div>
                 <div className="text-xl font-bold text-[#163A3A] tabular-nums">
@@ -242,7 +242,7 @@ export function StationClient({ station, unitTitle }: StationClientProps) {
           </div>
           <div className="w-full h-2.5 rounded-full bg-[#E5F1EE] overflow-hidden">
             <div
-              className="h-full bg-[#009179] rounded-full transition-all duration-300"
+              className="h-full bg-[#006E5A] rounded-full transition-all duration-300"
               style={{ width: `${pct}%` }}
             />
           </div>
@@ -257,7 +257,7 @@ export function StationClient({ station, unitTitle }: StationClientProps) {
             <ul className="space-y-1.5 text-sm text-[#3B5A58]">
               {station.objectives.map((obj, idx) => (
                 <li key={idx} className="flex items-start gap-2">
-                  <span className="mt-2 w-1.5 h-1.5 rounded-full bg-[#009179] shrink-0" />
+                  <span className="mt-2 w-1.5 h-1.5 rounded-full bg-[#006E5A] shrink-0" />
                   <span>{obj}</span>
                 </li>
               ))}
@@ -273,7 +273,7 @@ export function StationClient({ station, unitTitle }: StationClientProps) {
             disabled={downloadState === 'downloading'}
             className="orchid-btn-secondary w-full sm:w-auto text-sm"
           >
-            <Download className="w-4 h-4 text-[#009179] shrink-0" />
+            <Download className="w-4 h-4 text-[#006E5A] shrink-0" />
             <span>تنزيل وسائط المحطة للمذاكرة بدون نت</span>
           </button>
 
@@ -283,7 +283,7 @@ export function StationClient({ station, unitTitle }: StationClientProps) {
               className={`text-xs sm:text-sm font-medium ${
                 downloadState === 'error'
                   ? 'text-[#E14B63]'
-                  : 'text-[#009179]'
+                  : 'text-[#006E5A]'
               }`}
             >
               {downloadMessage}
@@ -313,16 +313,16 @@ export function StationClient({ station, unitTitle }: StationClientProps) {
                 {unlocked ? (
                   <Link
                     href={`/lesson/${lesson.id}`}
-                    className={`orchid-card p-4 sm:p-5 flex items-center justify-between gap-4 hover:border-[#009179] transition-colors min-h-[84px] ${
-                      isCompleted ? 'border-[#009179]/40' : ''
+                    className={`orchid-card p-4 sm:p-5 flex items-center justify-between gap-4 hover:border-[#006E5A] transition-colors min-h-[84px] ${
+                      isCompleted ? 'border-[#006E5A]/40' : ''
                     }`}
                   >
                     <div className="flex items-start gap-3.5 min-w-0">
                       <span
                         className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 font-bold ${
                           isCompleted
-                            ? 'bg-[#009179] text-white'
-                            : 'bg-[#E5F1EE] text-[#009179]'
+                            ? 'bg-[#006E5A] text-white'
+                            : 'bg-[#E5F1EE] text-[#006E5A]'
                         }`}
                       >
                         {isCompleted ? (
@@ -334,7 +334,7 @@ export function StationClient({ station, unitTitle }: StationClientProps) {
 
                       <div className="space-y-1 min-w-0">
                         <div className="flex flex-wrap items-center gap-2">
-                          <span className="text-xs font-bold text-[#009179]">
+                          <span className="text-xs font-bold text-[#006E5A]">
                             الدرس {lesson.id}
                           </span>
                           <span className="inline-flex items-center gap-1 text-xs text-[#3B5A58] bg-[#F6FAF9] px-2 py-0.5 rounded-full border border-[#E2ECE9]">
@@ -344,7 +344,7 @@ export function StationClient({ station, unitTitle }: StationClientProps) {
                           <span
                             className={`text-xs font-bold px-2.5 py-0.5 rounded-full ${
                               isCompleted
-                                ? 'bg-[#E5F1EE] text-[#009179]'
+                                ? 'bg-[#E5F1EE] text-[#006E5A]'
                                 : 'bg-[#F6FAF9] text-[#163A3A]'
                             }`}
                           >
@@ -363,7 +363,7 @@ export function StationClient({ station, unitTitle }: StationClientProps) {
                       </div>
                     </div>
 
-                    <ArrowLeft className="w-5 h-5 text-[#009179] shrink-0" />
+                    <ArrowLeft className="w-5 h-5 text-[#006E5A] shrink-0" />
                   </Link>
                 ) : (
                   <div
@@ -410,7 +410,7 @@ export function StationClient({ station, unitTitle }: StationClientProps) {
       {/* Station Quiz & Early Challenge */}
       <section className="orchid-card p-5 sm:p-6 space-y-4">
         <div className="flex items-start gap-3.5">
-          <span className="w-12 h-12 rounded-xl bg-[#E5F1EE] text-[#009179] flex items-center justify-center shrink-0">
+          <span className="w-12 h-12 rounded-xl bg-[#E5F1EE] text-[#006E5A] flex items-center justify-center shrink-0">
             <Award className="w-6 h-6" />
           </span>
           <div className="space-y-1">

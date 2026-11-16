@@ -43,7 +43,7 @@ export function AccordionBlock({ data, onInteract, className = '' }: AccordionBl
               key={item.id}
               className={`overflow-hidden rounded-xl border transition-colors ${
                 isOpen
-                  ? 'border-[#009179] bg-[#F6FAF9]'
+                  ? 'border-[#006E5A] bg-[#F6FAF9]'
                   : 'border-[#E2ECE9] bg-[#FFFFFF]'
               }`}
             >
@@ -55,7 +55,7 @@ export function AccordionBlock({ data, onInteract, className = '' }: AccordionBl
               >
                 <span className="text-[16px] sm:text-[17px] leading-snug">{item.title}</span>
                 <ChevronDown
-                  className={`h-5 w-5 shrink-0 text-[#009179] transition-transform duration-200 ${
+                  className={`h-5 w-5 shrink-0 text-[#006E5A] transition-transform duration-200 ${
                     isOpen ? 'rotate-180' : ''
                   }`}
                   aria-hidden="true"

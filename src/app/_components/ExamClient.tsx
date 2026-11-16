@@ -316,7 +316,7 @@ export function ExamClient({ stations, quizPool }: ExamClientProps) {
       <div className="space-y-6">
         <section className="orchid-card p-5 sm:p-6 space-y-5">
           <div className="space-y-1.5">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E5F1EE] px-3 py-1 text-xs font-bold text-[#009179]">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E5F1EE] px-3 py-1 text-xs font-bold text-[#006E5A]">
               <ClipboardCheck className="w-3.5 h-3.5" />
               <span>وضع الامتحان المختلط</span>
             </span>
@@ -339,7 +339,7 @@ export function ExamClient({ stations, quizPool }: ExamClientProps) {
               <button
                 type="button"
                 onClick={() => setSelectedStations(availableStationIds)}
-                className="text-xs font-bold text-[#009179] hover:underline min-h-[36px] px-2"
+                className="text-xs font-bold text-[#006E5A] hover:underline min-h-[36px] px-2"
               >
                 تحديد الكل
               </button>
@@ -366,7 +366,7 @@ export function ExamClient({ stations, quizPool }: ExamClientProps) {
                     onClick={() => toggleStation(st.id)}
                     className={`min-h-[54px] px-4 py-3 rounded-xl border text-right flex items-center justify-between gap-3 transition-colors ${
                       checked
-                        ? 'bg-[#E5F1EE] border-[#009179] text-[#163A3A]'
+                        ? 'bg-[#E5F1EE] border-[#006E5A] text-[#163A3A]'
                         : 'bg-[#F6FAF9] border-[#E2ECE9] text-[#3B5A58]'
                     }`}
                   >
@@ -379,7 +379,7 @@ export function ExamClient({ stations, quizPool }: ExamClientProps) {
                       </div>
                     </div>
                     {checked && (
-                      <CheckCircle2 className="w-5 h-5 text-[#009179] shrink-0" />
+                      <CheckCircle2 className="w-5 h-5 text-[#006E5A] shrink-0" />
                     )}
                   </button>
                 );
@@ -401,7 +401,7 @@ export function ExamClient({ stations, quizPool }: ExamClientProps) {
                     onClick={() => setQuestionLimit(n)}
                     className={`flex-1 min-h-[48px] rounded-xl border text-sm font-bold ${
                       questionLimit === n
-                        ? 'bg-[#009179] text-white border-[#009179]'
+                        ? 'bg-[#006E5A] text-white border-[#006E5A]'
                         : 'bg-[#F6FAF9] text-[#163A3A] border-[#E2ECE9]'
                     }`}
                   >
@@ -423,7 +423,7 @@ export function ExamClient({ stations, quizPool }: ExamClientProps) {
                     onClick={() => setDurationMinutes(m)}
                     className={`flex-1 min-h-[48px] rounded-xl border text-sm font-bold ${
                       durationMinutes === m
-                        ? 'bg-[#009179] text-white border-[#009179]'
+                        ? 'bg-[#006E5A] text-white border-[#006E5A]'
                         : 'bg-[#F6FAF9] text-[#163A3A] border-[#E2ECE9]'
                     }`}
                   >
@@ -467,7 +467,7 @@ export function ExamClient({ stations, quizPool }: ExamClientProps) {
                 dir="ltr"
                 className="inline-flex items-center gap-1.5 rounded-xl bg-[#E5F1EE] text-[#163A3A] px-3.5 py-2 font-mono text-sm font-bold tabular-nums"
               >
-                <Clock className="w-4 h-4 text-[#009179]" />
+                <Clock className="w-4 h-4 text-[#006E5A]" />
                 <span>{formatClock(secondsLeft)}</span>
               </span>
             )}
@@ -499,7 +499,7 @@ export function ExamClient({ stations, quizPool }: ExamClientProps) {
             return (
               <article key={item.id} className="orchid-card p-5 space-y-4">
                 <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
-                  <span className="font-bold text-[#009179]">
+                  <span className="font-bold text-[#006E5A]">
                     سؤال {idx + 1} من {examItems.length}
                   </span>
                   <span className="text-[#3B5A58] bg-[#F6FAF9] px-2.5 py-0.5 rounded-full border border-[#E2ECE9]">
@@ -531,13 +531,13 @@ export function ExamClient({ stations, quizPool }: ExamClientProps) {
                         onClick={() => handleToggleOption(item, opt.id)}
                         className={`w-full min-h-[48px] px-4 py-3 rounded-xl border text-right text-sm sm:text-base font-medium transition-colors flex items-center justify-between gap-3 ${
                           isSelected
-                            ? 'bg-[#E5F1EE] border-[#009179] text-[#163A3A] font-bold'
-                            : 'bg-[#F6FAF9] border-[#E2ECE9] text-[#3B5A58] hover:border-[#009179] hover:bg-white'
+                            ? 'bg-[#E5F1EE] border-[#006E5A] text-[#163A3A] font-bold'
+                            : 'bg-[#F6FAF9] border-[#E2ECE9] text-[#3B5A58] hover:border-[#006E5A] hover:bg-white'
                         }`}
                       >
                         <span>{opt.text}</span>
                         {isSelected && (
-                          <CheckCircle2 className="w-5 h-5 text-[#009179] shrink-0" />
+                          <CheckCircle2 className="w-5 h-5 text-[#006E5A] shrink-0" />
                         )}
                       </button>
                     );
@@ -569,14 +569,14 @@ export function ExamClient({ stations, quizPool }: ExamClientProps) {
         <section className="orchid-card p-5 sm:p-7 space-y-6 animate-card-enter">
           <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#E2ECE9] pb-4">
             <div className="space-y-1">
-              <span className="text-xs font-bold text-[#009179]">
+              <span className="text-xs font-bold text-[#006E5A]">
                 تقرير نتيجة الامتحان
               </span>
               <h1 className="text-2xl sm:text-3xl font-bold text-[#163A3A]">
                 درجتك: {report.score} من {report.total} ({report.percentage}٪)
               </h1>
             </div>
-            <div className="w-20 h-20 rounded-2xl bg-[#E5F1EE] text-[#009179] flex items-center justify-center text-2xl font-bold tabular-nums">
+            <div className="w-20 h-20 rounded-2xl bg-[#E5F1EE] text-[#006E5A] flex items-center justify-center text-2xl font-bold tabular-nums">
               {report.percentage}٪
             </div>
           </div>
@@ -584,8 +584,8 @@ export function ExamClient({ stations, quizPool }: ExamClientProps) {
           {/* Strongest & Weakest Stations */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {report.strongest && (
-              <div className="rounded-xl border border-[#009179]/30 bg-[#E5F1EE]/60 p-4 space-y-1">
-                <div className="flex items-center gap-2 text-xs font-bold text-[#009179]">
+              <div className="rounded-xl border border-[#006E5A]/30 bg-[#E5F1EE]/60 p-4 space-y-1">
+                <div className="flex items-center gap-2 text-xs font-bold text-[#006E5A]">
                   <TrendingUp className="w-4 h-4" />
                   <span>أقوى محطة</span>
                 </div>
@@ -629,13 +629,13 @@ export function ExamClient({ stations, quizPool }: ExamClientProps) {
                 >
                   <div className="flex items-center justify-between gap-2 text-sm font-bold text-[#163A3A]">
                     <span>{row.label}</span>
-                    <span className="tabular-nums text-[#009179]">
+                    <span className="tabular-nums text-[#006E5A]">
                       {row.correct}/{row.total} ({row.pct}٪)
                     </span>
                   </div>
                   <div className="w-full h-2 rounded-full bg-[#E2ECE9] overflow-hidden">
                     <div
-                      className="h-full bg-[#009179] rounded-full"
+                      className="h-full bg-[#006E5A] rounded-full"
                       style={{ width: `${row.pct}%` }}
                     />
                   </div>
@@ -650,7 +650,7 @@ export function ExamClient({ stations, quizPool }: ExamClientProps) {
               الدروس المقترح مراجعتها
             </h2>
             {report.wrongLessonIds.length === 0 ? (
-              <p className="text-sm text-[#009179] font-semibold bg-[#E5F1EE] rounded-xl p-4">
+              <p className="text-sm text-[#006E5A] font-semibold bg-[#E5F1EE] rounded-xl p-4">
                 أداء رائع! لا توجد دروس تحتاج للمراجعة من هذا الامتحان.
               </p>
             ) : (
@@ -661,7 +661,7 @@ export function ExamClient({ stations, quizPool }: ExamClientProps) {
                     className="rounded-xl border border-[#E2ECE9] bg-[#F6FAF9] p-3.5 flex flex-wrap items-center justify-between gap-3"
                   >
                     <div>
-                      <span className="text-xs font-bold text-[#009179]">
+                      <span className="text-xs font-bold text-[#006E5A]">
                         الدرس {lessonId}
                       </span>
                       <p className="text-sm font-bold text-[#163A3A]">
@@ -670,7 +670,7 @@ export function ExamClient({ stations, quizPool }: ExamClientProps) {
                     </div>
                     <Link
                       href={`/lesson/${lessonId}`}
-                      className="inline-flex items-center gap-1.5 min-h-[48px] px-4 rounded-lg bg-white border border-[#009179] text-sm font-bold text-[#009179] hover:bg-[#E5F1EE]"
+                      className="inline-flex items-center gap-1.5 min-h-[48px] px-4 rounded-lg bg-white border border-[#006E5A] text-sm font-bold text-[#006E5A] hover:bg-[#E5F1EE]"
                     >
                       <span>راجع الدرس</span>
                       <ArrowLeft className="w-4 h-4 shrink-0" />

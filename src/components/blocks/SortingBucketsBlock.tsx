@@ -97,7 +97,7 @@ export function SortingBucketsBlock({
       className={`rounded-xl border border-[#E2ECE9] bg-[#FFFFFF] p-5 sm:p-6 shadow-[0_4px_6px_-1px_rgb(0_0_0/0.08),0_2px_4px_-2px_rgb(0_0_0/0.08)] space-y-5 ${className}`}
     >
       <div className="space-y-1.5">
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E5F1EE] px-3 py-1 text-xs font-bold text-[#009179]">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E5F1EE] px-3 py-1 text-xs font-bold text-[#006E5A]">
           <FolderInput className="h-3.5 w-3.5" aria-hidden="true" />
           <span>نشاط تصنيف تفاعلي</span>
         </span>
@@ -112,12 +112,12 @@ export function SortingBucketsBlock({
       </div>
 
       {/* Unassigned items pool */}
-      <div className="rounded-xl border border-dashed border-[#009179]/40 bg-[#F6FAF9] p-3.5">
+      <div className="rounded-xl border border-dashed border-[#006E5A]/40 bg-[#F6FAF9] p-3.5">
         <p className="mb-2.5 text-xs font-bold text-[#3B5A58]">
           العناصر المتاحة ({unassignedItems.length}):
         </p>
         {unassignedItems.length === 0 ? (
-          <p className="py-2 text-center text-sm font-medium text-[#009179]">
+          <p className="py-2 text-center text-sm font-medium text-[#006E5A]">
             وزّعت كل العناصر! اضغط «تحقق من التصنيف» تحت.
           </p>
         ) : (
@@ -136,8 +136,8 @@ export function SortingBucketsBlock({
                   aria-pressed={isSelected}
                   className={`min-h-[48px] rounded-lg border-2 px-3.5 py-2 text-right text-[15px] sm:text-base font-medium transition-all ${
                     isSelected
-                      ? 'border-[#009179] bg-[#E5F1EE] text-[#163A3A] ring-2 ring-[#009179]/30'
-                      : 'border-[#E2ECE9] bg-white text-[#163A3A] hover:border-[#009179]'
+                      ? 'border-[#006E5A] bg-[#E5F1EE] text-[#163A3A] ring-2 ring-[#006E5A]/30'
+                      : 'border-[#E2ECE9] bg-white text-[#163A3A] hover:border-[#006E5A]'
                   }`}
                 >
                   <InlineFormatted text={item.text} />
@@ -170,7 +170,7 @@ export function SortingBucketsBlock({
               }}
               className={`flex flex-col rounded-xl border-2 p-4 transition-colors ${
                 canDrop
-                  ? 'border-[#009179] bg-[#E5F1EE]/40'
+                  ? 'border-[#006E5A] bg-[#E5F1EE]/40'
                   : 'border-[#E2ECE9] bg-[#F6FAF9]'
               }`}
             >
@@ -181,7 +181,7 @@ export function SortingBucketsBlock({
                     assignToBucket(selectedItemId, bucket.id);
                   }
                 }}
-                className="mb-3 flex min-h-[48px] w-full flex-col items-start justify-center rounded-lg bg-white px-3 py-2 text-right border border-[#E2ECE9] hover:border-[#009179]"
+                className="mb-3 flex min-h-[48px] w-full flex-col items-start justify-center rounded-lg bg-white px-3 py-2 text-right border border-[#E2ECE9] hover:border-[#006E5A]"
               >
                 <span className="text-base font-bold text-[#163A3A]">{bucket.label}</span>
                 {bucket.description && (
@@ -214,7 +214,7 @@ export function SortingBucketsBlock({
                         title="اضغط لإرجاع العنصر وتغيير فئته"
                         className={`flex min-h-[48px] w-full items-center justify-between gap-2 rounded-lg border px-3 py-2 text-right text-sm sm:text-[15px] font-medium transition-colors ${
                           isItemCorrect
-                            ? 'border-[#009179] bg-[#E5F1EE] text-[#163A3A]'
+                            ? 'border-[#006E5A] bg-[#E5F1EE] text-[#163A3A]'
                             : isItemWrong
                               ? 'border-[#E14B63] bg-[#FBEAEC] text-[#163A3A]'
                               : 'border-[#E2ECE9] bg-white text-[#163A3A] hover:border-[#E14B63]/60'
@@ -224,7 +224,7 @@ export function SortingBucketsBlock({
                           <InlineFormatted text={item.text} />
                         </span>
                         {isItemCorrect && (
-                          <CheckCircle2 className="h-4 w-4 shrink-0 text-[#009179]" aria-hidden="true" />
+                          <CheckCircle2 className="h-4 w-4 shrink-0 text-[#006E5A]" aria-hidden="true" />
                         )}
                         {isItemWrong && (
                           <XCircle className="h-4 w-4 shrink-0 text-[#E14B63]" aria-hidden="true" />
@@ -245,7 +245,7 @@ export function SortingBucketsBlock({
           type="button"
           disabled={!allPlaced}
           onClick={handleCheck}
-          className="min-h-[48px] flex-1 rounded-lg bg-[#009179] px-5 text-base font-bold text-white hover:bg-[#007a66] disabled:opacity-40"
+          className="min-h-[48px] flex-1 rounded-lg bg-[#006E5A] px-5 text-base font-bold text-white hover:bg-[#007a66] disabled:opacity-40"
         >
           تحقق من التصنيف
         </button>
@@ -267,13 +267,13 @@ export function SortingBucketsBlock({
           role="status"
           className={`rounded-xl border p-4 ${
             isAllCorrect
-              ? 'border-[#009179]/40 bg-[#E5F1EE]'
+              ? 'border-[#006E5A]/40 bg-[#E5F1EE]'
               : 'border-[#E14B63]/40 bg-[#FBEAEC]'
           }`}
         >
           <div className="flex items-start gap-2.5">
             {isAllCorrect ? (
-              <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#009179]" aria-hidden="true" />
+              <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#006E5A]" aria-hidden="true" />
             ) : (
               <XCircle className="mt-0.5 h-5 w-5 shrink-0 text-[#E14B63]" aria-hidden="true" />
             )}

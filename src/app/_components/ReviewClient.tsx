@@ -156,7 +156,7 @@ export function ReviewClient({ flashcards, stations }: ReviewClientProps) {
       <section className="orchid-card p-5 sm:p-6 space-y-4">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="space-y-1">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E5F1EE] px-3 py-1 text-xs font-bold text-[#009179]">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E5F1EE] px-3 py-1 text-xs font-bold text-[#006E5A]">
               <Layers className="w-3.5 h-3.5" />
               <span>بطاقات المراجعة الذكية</span>
             </span>
@@ -182,8 +182,8 @@ export function ReviewClient({ flashcards, stations }: ReviewClientProps) {
             onClick={() => handleStationSelect('all')}
             className={`min-h-[48px] shrink-0 px-4 rounded-xl border text-sm font-bold transition-colors ${
               selectedStation === 'all'
-                ? 'bg-[#009179] text-white border-[#009179]'
-                : 'bg-[#F6FAF9] text-[#163A3A] border-[#E2ECE9] hover:border-[#009179]'
+                ? 'bg-[#006E5A] text-white border-[#006E5A]'
+                : 'bg-[#F6FAF9] text-[#163A3A] border-[#E2ECE9] hover:border-[#006E5A]'
             }`}
           >
             كل المحطات ({flashcards.length})
@@ -199,8 +199,8 @@ export function ReviewClient({ flashcards, stations }: ReviewClientProps) {
                 onClick={() => handleStationSelect(st.id)}
                 className={`min-h-[48px] shrink-0 px-4 rounded-xl border text-sm font-bold transition-colors ${
                   selectedStation === st.id
-                    ? 'bg-[#009179] text-white border-[#009179]'
-                    : 'bg-[#F6FAF9] text-[#163A3A] border-[#E2ECE9] hover:border-[#009179]'
+                    ? 'bg-[#006E5A] text-white border-[#006E5A]'
+                    : 'bg-[#F6FAF9] text-[#163A3A] border-[#E2ECE9] hover:border-[#006E5A]'
                 }`}
               >
                 المحطة {st.number} ({count})
@@ -226,7 +226,7 @@ export function ReviewClient({ flashcards, stations }: ReviewClientProps) {
         </section>
       ) : isRoundComplete ? (
         <section className="orchid-card p-6 sm:p-8 text-center space-y-5 animate-card-enter">
-          <div className="w-14 h-14 mx-auto rounded-2xl bg-[#E5F1EE] text-[#009179] flex items-center justify-center">
+          <div className="w-14 h-14 mx-auto rounded-2xl bg-[#E5F1EE] text-[#006E5A] flex items-center justify-center">
             <Sparkles className="w-7 h-7" />
           </div>
 
@@ -240,7 +240,7 @@ export function ReviewClient({ flashcards, stations }: ReviewClientProps) {
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-3">
-            <span className="rounded-xl bg-[#E5F1EE] text-[#009179] px-4 py-2 text-sm font-bold">
+            <span className="rounded-xl bg-[#E5F1EE] text-[#006E5A] px-4 py-2 text-sm font-bold">
               عارفها: {knownInRound} ✓
             </span>
             <span className="rounded-xl bg-[#FBEAEC] text-[#E14B63] px-4 py-2 text-sm font-bold">
@@ -281,13 +281,13 @@ export function ReviewClient({ flashcards, stations }: ReviewClientProps) {
               type="button"
               onClick={() => setFlipped((f) => !f)}
               aria-label={`اقلب البطاقة: ${currentCard.termEn} — ${currentCard.termAr}`}
-              className="orchid-card w-full min-h-[260px] p-6 sm:p-8 flex flex-col items-center justify-center text-center gap-4 hover:border-[#009179] transition-colors cursor-pointer"
+              className="orchid-card w-full min-h-[260px] p-6 sm:p-8 flex flex-col items-center justify-center text-center gap-4 hover:border-[#006E5A] transition-colors cursor-pointer"
             >
               {!flipped ? (
                 <>
                   <span
                     dir="ltr"
-                    className="inline-block rounded-xl bg-[#E5F1EE] text-[#009179] px-4 py-1.5 font-mono text-base sm:text-lg font-bold"
+                    className="inline-block rounded-xl bg-[#E5F1EE] text-[#006E5A] px-4 py-1.5 font-mono text-base sm:text-lg font-bold"
                   >
                     {currentCard.termEn}
                   </span>
@@ -306,7 +306,7 @@ export function ReviewClient({ flashcards, stations }: ReviewClientProps) {
                     </span>
                     <span
                       dir="ltr"
-                      className="font-mono text-xs font-bold text-[#009179] bg-[#E5F1EE] px-2.5 py-0.5 rounded-md"
+                      className="font-mono text-xs font-bold text-[#006E5A] bg-[#E5F1EE] px-2.5 py-0.5 rounded-md"
                     >
                       {currentCard.termEn}
                     </span>
@@ -318,7 +318,7 @@ export function ReviewClient({ flashcards, stations }: ReviewClientProps) {
 
                   {currentCard.example && (
                     <p className="text-sm text-[#3B5A58] bg-[#F6FAF9] rounded-lg p-3 border border-[#E2ECE9]">
-                      <span className="font-bold text-[#009179]">مثال: </span>
+                      <span className="font-bold text-[#006E5A]">مثال: </span>
                       {currentCard.example}
                     </p>
                   )}
@@ -349,7 +349,7 @@ export function ReviewClient({ flashcards, stations }: ReviewClientProps) {
               <button
                 type="button"
                 onClick={() => handleReviewAction('known')}
-                className="min-h-[54px] rounded-xl border border-[#009179] bg-[#009179] text-white hover:bg-[#007A66] font-bold text-sm sm:text-base flex items-center justify-center gap-2 transition-colors"
+                className="min-h-[54px] rounded-xl border border-[#006E5A] bg-[#006E5A] text-white hover:bg-[#007A66] font-bold text-sm sm:text-base flex items-center justify-center gap-2 transition-colors"
               >
                 <Check className="w-5 h-5 shrink-0" />
                 <span>عارفها ✓</span>

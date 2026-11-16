@@ -41,7 +41,7 @@ function MindmapBranch({ node, depth = 0 }: { node: MindmapNode; depth?: number 
   const hasChildren = Boolean(node.children && node.children.length > 0);
 
   return (
-    <div className={depth > 0 ? 'border-s-2 border-[#009179]/30 ps-3.5 mt-2' : ''}>
+    <div className={depth > 0 ? 'border-s-2 border-[#006E5A]/30 ps-3.5 mt-2' : ''}>
       {hasChildren ? (
         <button
           type="button"
@@ -49,13 +49,13 @@ function MindmapBranch({ node, depth = 0 }: { node: MindmapNode; depth?: number 
           onClick={() => setExpanded((prev) => !prev)}
           className={`flex min-h-[48px] w-full items-center justify-between gap-2 rounded-lg border px-3.5 py-2 text-right transition-colors ${
             depth === 0
-              ? 'border-[#009179] bg-[#E5F1EE] font-bold text-[#163A3A]'
+              ? 'border-[#006E5A] bg-[#E5F1EE] font-bold text-[#163A3A]'
               : 'border-[#E2ECE9] bg-[#F6FAF9] font-semibold text-[#163A3A]'
           }`}
         >
           <span className="text-[15px] sm:text-base">{node.label}</span>
           <ChevronDown
-            className={`h-4 w-4 shrink-0 text-[#009179] transition-transform ${
+            className={`h-4 w-4 shrink-0 text-[#006E5A] transition-transform ${
               expanded ? 'rotate-180' : ''
             }`}
             aria-hidden="true"
@@ -108,7 +108,7 @@ function FaqSourcePanel({
             >
               <span className="text-[16px] leading-snug">{item.question}</span>
               <ChevronDown
-                className={`h-5 w-5 shrink-0 text-[#009179] transition-transform ${
+                className={`h-5 w-5 shrink-0 text-[#006E5A] transition-transform ${
                   isOpen ? 'rotate-180' : ''
                 }`}
                 aria-hidden="true"
@@ -189,7 +189,7 @@ export function AdditionalSourcesSheet({
         {/* Header */}
         <div className="flex items-center justify-between gap-3 border-b border-[#E2ECE9] bg-[#F6FAF9] px-5 py-4">
           <div className="space-y-0.5">
-            <span className="text-xs font-bold text-[#009179]">مصادر إضافية · NotebookLM</span>
+            <span className="text-xs font-bold text-[#006E5A]">مصادر إضافية · NotebookLM</span>
             <h2 className="text-lg font-bold text-[#163A3A]">
               {lessonTitle ? `إضافات: ${lessonTitle}` : 'مصادر مساعدة للفهم'}
             </h2>
@@ -199,7 +199,7 @@ export function AdditionalSourcesSheet({
             type="button"
             onClick={onClose}
             aria-label="إغلاق المصادر الإضافية"
-            className="flex min-h-[48px] min-w-[48px] items-center justify-center rounded-lg border border-[#E2ECE9] bg-white text-[#163A3A] hover:border-[#009179]"
+            className="flex min-h-[48px] min-w-[48px] items-center justify-center rounded-lg border border-[#E2ECE9] bg-white text-[#163A3A] hover:border-[#006E5A]"
           >
             <X className="h-5 w-5" aria-hidden="true" />
           </button>
@@ -218,8 +218,8 @@ export function AdditionalSourcesSheet({
                 onClick={() => handleSelectTab(src.id)}
                 className={`inline-flex min-h-[48px] shrink-0 items-center gap-2 rounded-lg border px-3.5 text-sm font-bold transition-colors ${
                   isActive
-                    ? 'border-[#009179] bg-[#009179] text-white'
-                    : 'border-[#E2ECE9] bg-[#F6FAF9] text-[#163A3A] hover:border-[#009179]'
+                    ? 'border-[#006E5A] bg-[#006E5A] text-white'
+                    : 'border-[#E2ECE9] bg-[#F6FAF9] text-[#163A3A] hover:border-[#006E5A]'
                 }`}
               >
                 <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
@@ -240,7 +240,7 @@ export function AdditionalSourcesSheet({
                     <li key={idx} className="flex items-start gap-2.5 text-[16px] text-[#163A3A]">
                       <span
                         aria-hidden="true"
-                        className="mt-2.5 h-2 w-2 shrink-0 rounded-full bg-[#009179]"
+                        className="mt-2.5 h-2 w-2 shrink-0 rounded-full bg-[#006E5A]"
                       />
                       <span className="leading-relaxed">{bullet}</span>
                     </li>
@@ -272,7 +272,7 @@ export function AdditionalSourcesSheet({
                     <h3 className="text-base font-bold text-[#163A3A]">{term.termAr}</h3>
                     <span
                       dir="ltr"
-                      className="rounded-md bg-[#E5F1EE] px-2.5 py-1 font-mono text-xs font-bold text-[#009179]"
+                      className="rounded-md bg-[#E5F1EE] px-2.5 py-1 font-mono text-xs font-bold text-[#006E5A]"
                     >
                       {term.termEn}
                     </span>
@@ -305,7 +305,7 @@ export function AdditionalSourcesSheet({
                       >
                         <span
                           aria-hidden="true"
-                          className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[#009179]"
+                          className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[#006E5A]"
                         />
                         <span>{note}</span>
                       </li>

@@ -186,7 +186,7 @@ export function ProgressClient({ stations }: ProgressClientProps) {
       {/* Summary Header */}
       <section className="orchid-card p-5 sm:p-6 space-y-4">
         <div className="space-y-1">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E5F1EE] px-3 py-1 text-xs font-bold text-[#009179]">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E5F1EE] px-3 py-1 text-xs font-bold text-[#006E5A]">
             <Trophy className="w-3.5 h-3.5" />
             <span>سجل إنجاز المتعلم</span>
           </span>
@@ -211,7 +211,7 @@ export function ProgressClient({ stations }: ProgressClientProps) {
 
           <div className="rounded-xl border border-[#E2ECE9] bg-[#F6FAF9] p-4 space-y-1">
             <span className="text-xs text-[#3B5A58]">إجمالي النقاط</span>
-            <p className="text-xl sm:text-2xl font-bold text-[#009179] tabular-nums">
+            <p className="text-xl sm:text-2xl font-bold text-[#006E5A] tabular-nums">
               {stats.xp} XP
             </p>
           </div>
@@ -239,14 +239,14 @@ export function ProgressClient({ stations }: ProgressClientProps) {
                 key={badge.id}
                 className={`rounded-xl border p-4 flex items-start gap-3 transition-colors ${
                   badge.unlocked
-                    ? 'border-[#009179]/40 bg-[#E5F1EE]/60'
+                    ? 'border-[#006E5A]/40 bg-[#E5F1EE]/60'
                     : 'border-[#E2ECE9] bg-[#F6FAF9] opacity-75'
                 }`}
               >
                 <span
                   className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${
                     badge.unlocked
-                      ? 'bg-[#009179] text-white'
+                      ? 'bg-[#006E5A] text-white'
                       : 'bg-white border border-[#E2ECE9] text-[#3B5A58]'
                   }`}
                 >
@@ -258,7 +258,7 @@ export function ProgressClient({ stations }: ProgressClientProps) {
                       {badge.title}
                     </h3>
                     {badge.unlocked && (
-                      <CheckCircle2 className="w-4 h-4 text-[#009179] shrink-0" />
+                      <CheckCircle2 className="w-4 h-4 text-[#006E5A] shrink-0" />
                     )}
                   </div>
                   <p className="text-xs text-[#3B5A58] leading-relaxed">
@@ -288,7 +288,7 @@ export function ProgressClient({ stations }: ProgressClientProps) {
               <Link
                 key={st.id}
                 href={`/station/${st.id}`}
-                className="block rounded-xl border border-[#E2ECE9] bg-[#F6FAF9] hover:border-[#009179] p-4 space-y-2 transition-colors"
+                className="block rounded-xl border border-[#E2ECE9] bg-[#F6FAF9] hover:border-[#006E5A] p-4 space-y-2 transition-colors"
               >
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <span className="text-sm sm:text-base font-bold text-[#163A3A]">
@@ -297,7 +297,7 @@ export function ProgressClient({ stations }: ProgressClientProps) {
                   <div className="flex items-center gap-3 text-xs font-bold tabular-nums">
                     {sum?.bestQuizScore !== null &&
                       sum?.bestQuizScore !== undefined && (
-                        <span className="text-[#009179]">
+                        <span className="text-[#006E5A]">
                           أعلى اختبار: {sum.bestQuizScore}٪
                         </span>
                       )}
@@ -308,7 +308,7 @@ export function ProgressClient({ stations }: ProgressClientProps) {
                 </div>
                 <div className="w-full h-2 rounded-full bg-[#E2ECE9] overflow-hidden">
                   <div
-                    className="h-full bg-[#009179] rounded-full transition-all duration-300"
+                    className="h-full bg-[#006E5A] rounded-full transition-all duration-300"
                     style={{ width: `${pct}%` }}
                   />
                 </div>
@@ -328,7 +328,7 @@ export function ProgressClient({ stations }: ProgressClientProps) {
         </div>
 
         {stats.weakSpots.length === 0 ? (
-          <p className="rounded-xl bg-[#E5F1EE]/60 border border-[#009179]/20 p-4 text-sm text-[#163A3A]">
+          <p className="rounded-xl bg-[#E5F1EE]/60 border border-[#006E5A]/20 p-4 text-sm text-[#163A3A]">
             ممتاز! لم تُسجَّل نقاط تعثر متكررة حتى الآن. استمر بنفس التركيز.
           </p>
         ) : (
@@ -351,7 +351,7 @@ export function ProgressClient({ stations }: ProgressClientProps) {
 
                 <Link
                   href={`/lesson/${spot.lessonId}`}
-                  className="inline-flex items-center gap-1.5 min-h-[48px] px-4 rounded-lg bg-white border border-[#009179] text-sm font-bold text-[#009179] hover:bg-[#E5F1EE]"
+                  className="inline-flex items-center gap-1.5 min-h-[48px] px-4 rounded-lg bg-white border border-[#006E5A] text-sm font-bold text-[#006E5A] hover:bg-[#E5F1EE]"
                 >
                   <span>راجع الدرس</span>
                   <ArrowLeft className="w-4 h-4 shrink-0" />
@@ -385,7 +385,7 @@ export function ProgressClient({ stations }: ProgressClientProps) {
           </button>
 
           {exportStatus && (
-            <p role="status" className="text-sm font-bold text-[#009179]">
+            <p role="status" className="text-sm font-bold text-[#006E5A]">
               {exportStatus}
             </p>
           )}
@@ -423,7 +423,7 @@ export function ProgressClient({ stations }: ProgressClientProps) {
             onClick={handleImportBackup}
             className="orchid-btn-secondary"
           >
-            <Upload className="w-4 h-4 text-[#009179] shrink-0" />
+            <Upload className="w-4 h-4 text-[#006E5A] shrink-0" />
             <span>استعادة التقدم</span>
           </button>
 
@@ -432,7 +432,7 @@ export function ProgressClient({ stations }: ProgressClientProps) {
               role="status"
               className={`text-sm font-bold ${
                 importStatus.kind === 'success'
-                  ? 'text-[#009179]'
+                  ? 'text-[#006E5A]'
                   : 'text-[#E14B63]'
               }`}
             >
@@ -446,14 +446,14 @@ export function ProgressClient({ stations }: ProgressClientProps) {
       <section className="orchid-card p-5 sm:p-6 space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">
-            <Smartphone className="w-5 h-5 text-[#009179]" />
+            <Smartphone className="w-5 h-5 text-[#006E5A]" />
             <h2 className="text-lg font-bold text-[#163A3A]">
               تثبيت التطبيق على الشاشة الرئيسية (بدون إنترنت)
             </h2>
           </div>
 
           {persisted !== null && (
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E5F1EE] px-3 py-1 text-xs font-bold text-[#009179]">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E5F1EE] px-3 py-1 text-xs font-bold text-[#006E5A]">
               <ShieldCheck className="w-3.5 h-3.5" />
               <span>
                 {persisted
@@ -478,7 +478,7 @@ export function ProgressClient({ stations }: ProgressClientProps) {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
           <div className="rounded-xl border border-[#E2ECE9] bg-[#F6FAF9] p-4 space-y-1.5">
             <h3 className="font-bold text-[#163A3A] flex items-center gap-2">
-              <Share2 className="w-4 h-4 text-[#009179]" />
+              <Share2 className="w-4 h-4 text-[#006E5A]" />
               <span>أجهزة iPhone / iPad (Safari)</span>
             </h3>
             <p className="text-xs sm:text-sm text-[#3B5A58]">
@@ -490,7 +490,7 @@ export function ProgressClient({ stations }: ProgressClientProps) {
 
           <div className="rounded-xl border border-[#E2ECE9] bg-[#F6FAF9] p-4 space-y-1.5">
             <h3 className="font-bold text-[#163A3A] flex items-center gap-2">
-              <Download className="w-4 h-4 text-[#009179]" />
+              <Download className="w-4 h-4 text-[#006E5A]" />
               <span>أجهزة Android (Chrome)</span>
             </h3>
             <p className="text-xs sm:text-sm text-[#3B5A58]">

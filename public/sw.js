@@ -5,9 +5,9 @@
 // 3. RFC 7233 HTTP Range Request (206 Partial Content) support from Cache Storage for Safari iOS & Chrome video/audio seeking,
 //    with graceful fallback to network streaming if range slicing fails.
 
-const SHELL_CACHE = 'ict-prep3-shell-v1';
-const PAGES_CACHE = 'ict-prep3-pages-v1';
-const MEDIA_CACHE = 'ict-prep3-media-v1';
+const SHELL_CACHE = 'ict-prep3-shell-v2';
+const PAGES_CACHE = 'ict-prep3-pages-v2';
+const MEDIA_CACHE = 'ict-prep3-media-v2';
 
 const PRECACHE_URLS = [
   '/',
@@ -134,13 +134,12 @@ async function createRangeResponse(cachedResponse, rangeHeader, pathname) {
 
     end = Math.min(end, totalLength - 1);
     const sliced = arrayBuffer.slice(start, end + 1);
-    const headers = new Headers(cachedResponse.headers);
-    headers.set('Content-Range', `bytes ${start}-${end}/${totalLength}`);
-    headers.set('Content-Length', String(sliced.byteLength));
-    headers.set('Accept-Ranges', 'bytes');
-    if (!headers.has('Content-Type')) {
-      headers.set('Content-Type', guessContentType(pathname));
-    }
+    const headers = new Headers({
+      'Content-Type': cachedResponse.headers.get('Content-Type') || guessContentType(pathname),
+      'Content-Range': `bytes ${start}-${end}/${totalLength}`,
+      'Content-Length': String(sliced.byteLength),
+      'Accept-Ranges': 'bytes',
+    });
 
     return new Response(sliced, {
       status: 206,
@@ -152,53 +151,67 @@ async function createRangeResponse(cachedResponse, rangeHeader, pathname) {
   }
 }
 
-async function handleMediaRequest(request, url, event) {
-  const mediaCache = await caches.open(MEDIA_CACHE);
-  const cached = await mediaCache.match(url.pathname);
-  const rangeHeader = request.headers.get('range');
+async function serveFromMediaCache(mediaCache, request, pathname) {
+  const cached = await mediaCache.match(pathname);
+  if (!cached) return null;
 
-  if (cached) {
-    if (rangeHeader) {
-      const ranged = await createRangeResponse(cached, rangeHeader, url.pathname);
-      if (ranged) return ranged;
-      // Graceful fallback to live streaming if cached range slicing fails (e.g. Safari iOS quirk)
-      try {
-        return await fetch(request);
-      } catch {
-        return cached;
-      }
-    }
+  const rangeHeader = request.headers.get('range');
+  if (rangeHeader) {
+    const ranged = await createRangeResponse(cached, rangeHeader, pathname);
+    if (ranged) return ranged;
     return cached;
   }
+  return cached;
+}
 
-  // Not cached yet -> Cache-on-demand when played
+async function handleMediaRequest(request, url, event) {
+  const mediaCache = await caches.open(MEDIA_CACHE);
+  const isOnline = !self.navigator || self.navigator.onLine !== false;
+
+  if (!isOnline) {
+    const cachedOffline = await serveFromMediaCache(mediaCache, request, url.pathname);
+    if (cachedOffline) return cachedOffline;
+    return new Response('Media unavailable offline', {
+      status: 503,
+      statusText: 'Service Unavailable',
+      headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+    });
+  }
+
+  // Online: stream from network first while warming MEDIA_CACHE cleanly in the background
   try {
     const networkResponse = await fetch(request);
 
-    if (networkResponse.ok && networkResponse.status === 200) {
-      const clone = networkResponse.clone();
-      event.waitUntil(mediaCache.put(url.pathname, clone));
-    } else if (networkResponse.status === 206 && !inFlightMediaCaches.has(url.pathname)) {
-      // Cache API does not allow storing 206 responses directly.
-      // Fetch full 200 resource cleanly in the background so future offline plays succeed.
-      inFlightMediaCaches.add(url.pathname);
-      event.waitUntil(
-        fetch(new Request(url.pathname))
-          .then((fullRes) => {
-            if (fullRes.ok && fullRes.status === 200) {
-              return mediaCache.put(url.pathname, fullRes);
-            }
-            return undefined;
-          })
-          .catch(() => undefined)
-          .finally(() => {
-            inFlightMediaCaches.delete(url.pathname);
-          })
-      );
+    if (networkResponse.ok) {
+      const existing = await mediaCache.match(url.pathname);
+      if (!existing) {
+        if (networkResponse.status === 200) {
+          event.waitUntil(mediaCache.put(url.pathname, networkResponse.clone()));
+        } else if (networkResponse.status === 206 && !inFlightMediaCaches.has(url.pathname)) {
+          // Cache API does not allow storing 206 responses directly.
+          // Fetch full 200 resource cleanly in the background so future offline plays succeed.
+          inFlightMediaCaches.add(url.pathname);
+          event.waitUntil(
+            fetch(new Request(url.pathname))
+              .then((fullRes) => {
+                if (fullRes.ok && fullRes.status === 200) {
+                  return mediaCache.put(url.pathname, fullRes);
+                }
+                return undefined;
+              })
+              .catch(() => undefined)
+              .finally(() => {
+                inFlightMediaCaches.delete(url.pathname);
+              })
+          );
+        }
+      }
     }
 
     return networkResponse;
   } catch {
+    const cachedFallback = await serveFromMediaCache(mediaCache, request, url.pathname);
+    if (cachedFallback) return cachedFallback;
     // Offline & not cached: return 503 so MediaPlayerBlock switches cleanly to Arabic transcript fallback
     return new Response('Media unavailable offline', {
       status: 503,

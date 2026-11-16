@@ -104,7 +104,7 @@ export function QuizQuestionBlock({
         <span
           className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold ${
             data.scored
-              ? 'bg-[#E5F1EE] text-[#009179]'
+              ? 'bg-[#E5F1EE] text-[#006E5A]'
               : 'bg-[#F6FAF9] border border-[#E2ECE9] text-[#3B5A58]'
           }`}
         >
@@ -139,14 +139,14 @@ export function QuizQuestionBlock({
         {options.map((option) => {
           const isSelected = selectedIds.includes(option.id);
           let containerClasses =
-            'border-[#E2ECE9] bg-[#F6FAF9] text-[#163A3A] hover:border-[#009179]/60';
+            'border-[#E2ECE9] bg-[#F6FAF9] text-[#163A3A] hover:border-[#006E5A]/60';
 
           if (submitted && isSelected) {
             containerClasses = option.isCorrect
-              ? 'border-[#009179] bg-[#E5F1EE] text-[#163A3A]'
+              ? 'border-[#006E5A] bg-[#E5F1EE] text-[#163A3A]'
               : 'border-[#E14B63] bg-[#FBEAEC] text-[#163A3A]';
           } else if (isSelected) {
-            containerClasses = 'border-[#009179] bg-[#E5F1EE]/70 text-[#163A3A]';
+            containerClasses = 'border-[#006E5A] bg-[#E5F1EE]/70 text-[#163A3A]';
           }
 
           return (
@@ -164,7 +164,7 @@ export function QuizQuestionBlock({
               {submitted && isSelected && (
                 <span className="shrink-0">
                   {option.isCorrect ? (
-                    <CheckCircle2 className="h-5 w-5 text-[#009179]" aria-hidden="true" />
+                    <CheckCircle2 className="h-5 w-5 text-[#006E5A]" aria-hidden="true" />
                   ) : (
                     <XCircle className="h-5 w-5 text-[#E14B63]" aria-hidden="true" />
                   )}
@@ -180,7 +180,7 @@ export function QuizQuestionBlock({
           type="button"
           disabled={selectedIds.length === 0}
           onClick={() => checkAnswer(selectedIds)}
-          className="min-h-[48px] w-full rounded-lg bg-[#009179] px-5 text-base font-bold text-white transition-colors hover:bg-[#007a66] disabled:opacity-40"
+          className="min-h-[48px] w-full rounded-lg bg-[#006E5A] px-5 text-base font-bold text-white transition-colors hover:bg-[#007a66] disabled:opacity-40"
         >
           تحقق من الإجابة
         </button>
@@ -191,14 +191,14 @@ export function QuizQuestionBlock({
           role="status"
           className={`rounded-xl border p-4 space-y-2 ${
             isAllCorrect
-              ? 'border-[#009179]/40 bg-[#E5F1EE]'
+              ? 'border-[#006E5A]/40 bg-[#E5F1EE]'
               : 'border-[#E14B63]/40 bg-[#FBEAEC]'
           }`}
         >
           <div className="flex items-center justify-between gap-2">
             <span
               className={`inline-flex items-center gap-1.5 text-sm font-bold ${
-                isAllCorrect ? 'text-[#009179]' : 'text-[#E14B63]'
+                isAllCorrect ? 'text-[#006E5A]' : 'text-[#E14B63]'
               }`}
             >
               {isAllCorrect ? (

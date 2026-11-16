@@ -58,7 +58,7 @@ export function SourcesDrawer({
       >
         <div className="flex items-center justify-between gap-3 border-b border-[#E2ECE9] bg-[#F6FAF9] px-5 py-4">
           <div>
-            <span className="text-xs font-bold text-[#009179]">مرجع للقراءة فقط</span>
+            <span className="text-xs font-bold text-[#006E5A]">مرجع للقراءة فقط</span>
             <h2 className="text-lg font-bold text-[#163A3A]">
               {lessonTitle ? `مصادر: ${lessonTitle}` : 'مصادر الدرس'}
             </h2>
@@ -68,7 +68,7 @@ export function SourcesDrawer({
             type="button"
             onClick={onClose}
             aria-label="إغلاق لوحة المصادر"
-            className="flex min-h-[48px] min-w-[48px] items-center justify-center rounded-lg border border-[#E2ECE9] bg-white text-[#163A3A] hover:border-[#009179]"
+            className="flex min-h-[48px] min-w-[48px] items-center justify-center rounded-lg border border-[#E2ECE9] bg-white text-[#163A3A] hover:border-[#006E5A]"
           >
             <X className="h-5 w-5" aria-hidden="true" />
           </button>
@@ -92,7 +92,7 @@ export function SourcesDrawer({
                       className="rounded-xl border border-[#E2ECE9] bg-[#F6FAF9] p-4 space-y-1.5"
                     >
                       <div className="flex flex-wrap items-center justify-between gap-2">
-                        <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E5F1EE] px-2.5 py-1 text-xs font-bold text-[#009179]">
+                        <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E5F1EE] px-2.5 py-1 text-xs font-bold text-[#006E5A]">
                           <Icon className="h-3.5 w-3.5" aria-hidden="true" />
                           <span>{meta.label}</span>
                         </span>
@@ -123,7 +123,7 @@ export function SourcesDrawer({
                     className="flex items-center justify-between rounded-lg border border-[#E2ECE9] bg-[#F6FAF9] px-3.5 py-2.5 text-sm text-[#163A3A]"
                   >
                     <span className="font-medium">{item.title}</span>
-                    <span className="rounded-full bg-white px-2.5 py-0.5 text-xs font-semibold text-[#009179] border border-[#E2ECE9]">
+                    <span className="rounded-full bg-white px-2.5 py-0.5 text-xs font-semibold text-[#006E5A] border border-[#E2ECE9]">
                       {item.type}
                     </span>
                   </li>

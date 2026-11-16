@@ -58,7 +58,7 @@ export function TableBlock({ data, className = '' }: TableBlockProps) {
                     key={colIdx}
                     scope="col"
                     className={`border-b border-[#1E4745] px-4 py-3 font-bold ${
-                      isHighlighted ? 'bg-[#009179] text-white' : ''
+                      isHighlighted ? 'bg-[#006E5A] text-white' : ''
                     }`}
                   >
                     {renderCellContent(header)}

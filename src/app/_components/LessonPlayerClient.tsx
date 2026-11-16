@@ -232,7 +232,7 @@ export function LessonPlayerClient({
           <div className="flex items-center justify-between gap-2">
             <Link
               href={`/station/${lesson.stationId}`}
-              className="inline-flex items-center gap-1.5 min-h-[48px] px-2 -mr-2 text-sm font-bold text-[#009179] hover:text-[#163A3A]"
+              className="inline-flex items-center gap-1.5 min-h-[48px] px-2 -mr-2 text-sm font-bold text-[#006E5A] hover:text-[#163A3A]"
             >
               <ArrowRight className="w-4 h-4 shrink-0" />
               <span className="hidden sm:inline">{stationTitle}</span>
@@ -240,7 +240,7 @@ export function LessonPlayerClient({
             </Link>
 
             <div className="text-center min-w-0">
-              <div className="text-xs font-bold text-[#009179] tabular-nums">
+              <div className="text-xs font-bold text-[#006E5A] tabular-nums">
                 البطاقة {currentIndex + 1} من {totalCards}
               </div>
               <div className="text-sm font-bold text-[#163A3A] truncate max-w-[180px] sm:max-w-xs">
@@ -251,9 +251,9 @@ export function LessonPlayerClient({
             <button
               type="button"
               onClick={() => setSourcesOpen(true)}
-              className="inline-flex items-center gap-1.5 min-h-[48px] px-3 rounded-lg border border-[#E2ECE9] bg-[#F6FAF9] text-sm font-bold text-[#163A3A] hover:border-[#009179]"
+              className="inline-flex items-center gap-1.5 min-h-[48px] px-3 rounded-lg border border-[#E2ECE9] bg-[#F6FAF9] text-sm font-bold text-[#163A3A] hover:border-[#006E5A]"
             >
-              <BookOpen className="w-4 h-4 text-[#009179] shrink-0" />
+              <BookOpen className="w-4 h-4 text-[#006E5A] shrink-0" />
               <span>المصادر</span>
             </button>
           </div>
@@ -268,7 +268,7 @@ export function LessonPlayerClient({
             className="w-full h-2 rounded-full bg-[#E5F1EE] overflow-hidden"
           >
             <div
-              className="h-full bg-[#009179] rounded-full transition-all duration-300"
+              className="h-full bg-[#006E5A] rounded-full transition-all duration-300"
               style={{ width: `${completed ? 100 : progressPct}%` }}
             />
           </div>
@@ -279,12 +279,12 @@ export function LessonPlayerClient({
       <main className="flex-1 w-full max-w-3xl mx-auto px-4 pt-5 pb-32">
         {completed ? (
           <section className="orchid-card p-6 sm:p-8 text-center space-y-6 animate-card-enter">
-            <div className="w-16 h-16 mx-auto rounded-2xl bg-[#E5F1EE] text-[#009179] flex items-center justify-center">
+            <div className="w-16 h-16 mx-auto rounded-2xl bg-[#E5F1EE] text-[#006E5A] flex items-center justify-center">
               <CheckCircle2 className="w-9 h-9" />
             </div>
 
             <div className="space-y-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E5F1EE] px-4 py-1.5 text-sm font-bold text-[#009179]">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E5F1EE] px-4 py-1.5 text-sm font-bold text-[#006E5A]">
                 <Sparkles className="w-4 h-4" />
                 <span>+50 XP</span>
               </span>
@@ -305,7 +305,7 @@ export function LessonPlayerClient({
                   </span>
                 </div>
                 <div className="rounded-xl border border-[#E2ECE9] bg-[#F6FAF9] px-4 py-2.5 flex items-center gap-2">
-                  <Trophy className="w-5 h-5 text-[#009179]" />
+                  <Trophy className="w-5 h-5 text-[#006E5A]" />
                   <span className="text-sm font-bold text-[#163A3A] tabular-nums">
                     الإجمالي: {stats.xp} XP
                   </span>
@@ -327,9 +327,9 @@ export function LessonPlayerClient({
                         key={src.id}
                         type="button"
                         onClick={() => setActiveExtraId(src.id)}
-                        className="inline-flex items-center gap-2 min-h-[48px] px-3.5 py-2 rounded-lg border border-[#E2ECE9] bg-white text-sm font-bold text-[#163A3A] hover:border-[#009179]"
+                        className="inline-flex items-center gap-2 min-h-[48px] px-3.5 py-2 rounded-lg border border-[#E2ECE9] bg-white text-sm font-bold text-[#163A3A] hover:border-[#006E5A]"
                       >
-                        <Icon className="w-4 h-4 text-[#009179]" />
+                        <Icon className="w-4 h-4 text-[#006E5A]" />
                         <span>{src.title}</span>
                       </button>
                     );
@@ -367,7 +367,7 @@ export function LessonPlayerClient({
                   <span
                     className={`text-xs font-bold px-3 py-1 rounded-full ${
                       isCardUnlocked
-                        ? 'bg-[#E5F1EE] text-[#009179]'
+                        ? 'bg-[#E5F1EE] text-[#006E5A]'
                         : 'bg-[#FBEAEC] text-[#E14B63]'
                     }`}
                   >
@@ -391,9 +391,9 @@ export function LessonPlayerClient({
 
               {/* NotebookLM Additional Sources on Last Card */}
               {isLastCard && lesson.additionalSources.length > 0 && (
-                <section className="orchid-card p-5 space-y-3 border-[#009179]/30">
+                <section className="orchid-card p-5 space-y-3 border-[#006E5A]/30">
                   <div className="space-y-1">
-                    <span className="text-xs font-bold text-[#009179]">
+                    <span className="text-xs font-bold text-[#006E5A]">
                       إضافات NotebookLM · بدون مغادرة الدرس
                     </span>
                     <h2 className="text-base sm:text-lg font-bold text-[#163A3A]">
@@ -409,13 +409,13 @@ export function LessonPlayerClient({
                           key={src.id}
                           type="button"
                           onClick={() => setActiveExtraId(src.id)}
-                          className="flex items-center justify-between gap-2 min-h-[48px] px-4 py-2.5 rounded-xl border border-[#E2ECE9] bg-[#F6FAF9] hover:border-[#009179] hover:bg-white text-right font-bold text-sm text-[#163A3A] transition-colors"
+                          className="flex items-center justify-between gap-2 min-h-[48px] px-4 py-2.5 rounded-xl border border-[#E2ECE9] bg-[#F6FAF9] hover:border-[#006E5A] hover:bg-white text-right font-bold text-sm text-[#163A3A] transition-colors"
                         >
                           <span className="flex items-center gap-2.5">
-                            <Icon className="w-4 h-4 text-[#009179] shrink-0" />
+                            <Icon className="w-4 h-4 text-[#006E5A] shrink-0" />
                             <span>{src.title}</span>
                           </span>
-                          <ArrowLeft className="w-4 h-4 text-[#009179] shrink-0" />
+                          <ArrowLeft className="w-4 h-4 text-[#006E5A] shrink-0" />
                         </button>
                       );
                     })}

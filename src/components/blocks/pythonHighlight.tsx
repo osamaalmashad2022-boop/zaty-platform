@@ -208,7 +208,7 @@ export function PythonCodeLines({
               key={lineNumber}
               className={`flex items-start px-4 transition-colors ${
                 isHighlighted
-                  ? 'bg-[#009179]/25 border-l-2 border-[#2EC4B6]'
+                  ? 'bg-[#006E5A]/25 border-l-2 border-[#2EC4B6]'
                   : 'hover:bg-white/5'
               }`}
             >

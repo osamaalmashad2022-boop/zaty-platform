@@ -118,7 +118,7 @@ export function FormattedText({ text, className = '' }: FormattedTextProps) {
                   <li key={liIdx} className="flex items-start gap-2.5">
                     <span
                       aria-hidden="true"
-                      className="mt-3 h-2 w-2 shrink-0 rounded-full bg-[#009179]"
+                      className="mt-3 h-2 w-2 shrink-0 rounded-full bg-[#006E5A]"
                     />
                     <span className="flex-1">
                       <InlineFormatted text={line.trim().replace(/^[-•*]\s+/, '')} />
