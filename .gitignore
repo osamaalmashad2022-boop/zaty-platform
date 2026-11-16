@@ -1,6 +1,10 @@
-# Dependencies & Next.js build outputs
+# Dependencies & Next.js / Cloudflare build outputs
 node_modules/
 .next/
+.cloudflare/
+.vinext/
+.wrangler/
+.open-next/
 out/
 dist/
 coverage/
