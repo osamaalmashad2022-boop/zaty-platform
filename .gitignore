@@ -1,0 +1,22 @@
+# Dependencies & Next.js build outputs
+node_modules/
+.next/
+out/
+dist/
+coverage/
+*.tsbuildinfo
+next-env.d.ts
+
+# Environment & local databases
+.env*
+*.db
+*.sqlite*
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Raw Mindsmith visual reference exports (kept locally only)
+_______________/
+_____________________________/
+_____________________________________________________________________/

@@ -1,0 +1,55 @@
+import type { FlashcardItem } from '@/types/curriculum';
+
+export const STATION_3_FLASHCARDS: FlashcardItem[] = [
+  {
+    id: 'fc-3-1',
+    stationId: 'station-3',
+    microLessonId: '3.1',
+    termAr: 'السلسلة النصية',
+    termEn: 'String',
+    definition: 'مجموعة من الحروف والأرقام والرموز محاطة بـ " " أو \' \'، غير قابلة للتعديل (Immutable).',
+    code: 'text = "hello"\nprint(len(text), text[0], text[-1])',
+  },
+  {
+    id: 'fc-3-2',
+    stationId: 'station-3',
+    microLessonId: '3.1',
+    termAr: 'دوال النصوص الأساسية',
+    termEn: 'len / upper / in',
+    definition: 'len() تحسب الطول، upper() تكبّر الحروف، وin تتحقق من وجود حرف داخل النص.',
+  },
+  {
+    id: 'fc-3-3',
+    stationId: 'station-3',
+    microLessonId: '3.2',
+    termAr: 'القائمة',
+    termEn: 'List [ ]',
+    definition: 'مجموعة مرتبة وقابلة للتعديل (Mutable) داخل أقواس مربعة [ ] وتقبل أنواع بيانات متنوعة.',
+    code: 'names = ["Ahmed", "Ali"]\nnames.append("Sara")',
+  },
+  {
+    id: 'fc-3-4',
+    stationId: 'station-3',
+    microLessonId: '3.2',
+    termAr: 'الإضافة والحذف في القوائم',
+    termEn: 'append() & remove()',
+    definition: 'append() تضيف عنصرًا إلى نهاية القائمة، وremove() تحذف عنصرًا محددًا.',
+  },
+  {
+    id: 'fc-3-5',
+    stationId: 'station-3',
+    microLessonId: '3.3',
+    termAr: 'تحويل النص إلى قائمة',
+    termEn: 'list(text)',
+    definition: 'دالة تفكك السلسلة النصية إلى قائمة من حروفها لتسهيل الفحص والتعديل.',
+    code: 'chars = list("hello")',
+  },
+  {
+    id: 'fc-3-6',
+    stationId: 'station-3',
+    microLessonId: '3.4',
+    termAr: 'إيقاف الحلقة',
+    termEn: 'break',
+    definition: 'كلمة مفتاحية توقف الحلقة التكرارية فور تحقق الشرط المطلوب لمنع الفحص الزائد.',
+  },
+];
