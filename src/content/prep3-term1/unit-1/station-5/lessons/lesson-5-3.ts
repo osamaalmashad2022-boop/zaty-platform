@@ -8,9 +8,9 @@ export const LESSON_5_3: LessonPack = {
   title: 'نمط التحقق وإعادة الإدخال اللانهائي (while True + break)',
   subtitle: 'اسمح للمستخدم يعيد المحاولة لحد ما يكتب قيمة سليمة، واحمِ الدوال بـ try/except',
   durationMin: 9,
-  contentVersion: 1,
+  contentVersion: 2,
   access: 'free',
-  status: 'draft',
+  status: 'ready',
   objectives: [
     'تبني حلقة التحقق وإعادة المحاولة باستخدام while True مع try / except و break.',
     'تدمج معالجة الأخطاء داخل الدوال لجعل البرامج احترافية ومقاومة للانهيار.',
@@ -46,7 +46,7 @@ export const LESSON_5_3: LessonPack = {
           data: {
             title: 'نمط إعادة المحاولة من الكتاب (ص ٥٦–٥٧)',
             code: 'while True:\n    try:\n        num = int(input("Enter a number: "))\n        print("You entered:", num)\n        break\n    except:\n        print("Invalid input! Try again.")',
-            caption: 'الحلقة تستمر في طلب الإدخال ولا تتوقف إلا عند نجاح التحويل ووصول التنفيذ إلى break.',
+            caption: 'الحلقة بتفضل تطلب الإدخال ومش بتقف إلا لما التحويل ينجح ونوصل لأمر break.',
             runnable: true,
           },
         },
@@ -94,7 +94,7 @@ export const LESSON_5_3: LessonPack = {
           data: {
             variant: 'warning',
             title: 'لا تنسَ break جوه try!',
-            body: 'لو كتبت `while True:` ونسيت `break` بعد نجاح الإدخال، الحلقة هتفضل تلف للأبد! وكمان تقدر تحط `try / except` جوه الدوال (`Functions`) لتصبح أكثر احترافية.',
+            body: 'لو كتبت `while True:` ونسيت `break` بعد نجاح الإدخال، الحلقة هتفضل تلف للأبد! وكمان تقدر تحط `try / except` جوه الدوال (`Functions`) لتصبح برامجك احترافية لا تنهار.',
           },
         },
         {
@@ -136,11 +136,28 @@ export const LESSON_5_3: LessonPack = {
             explanation: 'تتكرر الحلقة بعد الخطأ الأول، وعند إدخال 5 الصحيح ينجح try وتخرج break من الحلقة.',
           },
         },
+        {
+          id: '5.3-q2',
+          type: 'quizQuestion',
+          data: {
+            question: 'ماذا يحدث إذا نسينا كتابة أمر `break` في نهاية كتلة `try:` داخل حلقة `while True:`؟',
+            multiple: false,
+            scored: false,
+            sourceTag: 'كتاب الوزارة ص ٥٦–٥٧',
+            options: [
+              { id: 'a', text: 'يتوقف البرنامج بعد أول إدخال صحيح تلقائيًا', isCorrect: false, feedback: 'while True شرطها صحيح دائمًا ولا تتوقف بدون break.' },
+              { id: 'b', text: 'تستمر الحلقة في طلب الإدخال إلى ما لا نهاية حتى مع الإدخال الصحيح', isCorrect: true, feedback: 'صح! break هي اللي بتنهي حلقة while True بعد ما الإدخال ينجح.' },
+              { id: 'c', text: 'يظهر خطأ ZeroDivisionError', isCorrect: false, feedback: 'لا علاقة له بالقسمة على صفر.' },
+              { id: 'd', text: 'لا تُنفّذ كتلة except أبدًا', isCorrect: false, feedback: 'except تعمل عادي عند الخطأ، لكن المشكلة إن الحلقة لن تخرج عند النجاح.' },
+            ],
+            explanation: 'الأمر break ضروري للخروج من حلقة while True اللانهائية بمجرد استلام قيمة صحيحة.',
+          },
+        },
       ],
     },
     {
       id: '5.3-c6',
-      title: 'ختام الوحدة الأولى!',
+      title: 'ختام الوحدة الأولى والمصادر الإضافية',
       role: 'summary',
       blocks: [
         {
@@ -160,8 +177,44 @@ export const LESSON_5_3: LessonPack = {
     {
       id: 'nb-5-3-summary',
       type: 'summary',
-      title: 'ملخص سريع',
-      content: 'دمج while True مع try/except و break لضمان إدخال سليم، وإمكانية وضعها داخل الدوال.',
+      title: 'ملخص سريع (NotebookLM)',
+      content: 'الجمع بين الحلقة اللانهائية while True ومعالجة الاستثناءات try/except ينشئ برامج قوية تتحمل أخطاء المستخدمين.',
+      bullets: [
+        'while True: تكرر الطلب تلقائيًا عند حدوث خطأ.',
+        'break توضع في نهاية try للخروج فور إدخال قيمة سليمة.',
+        'وضع try/except داخل الدوال يجعل الكود أكثر احترافية.',
+      ],
+    },
+    {
+      id: 'nb-5-3-faq',
+      type: 'faq',
+      title: 'أسئلة شائعة',
+      items: [
+        {
+          id: 'faq-5-3-1',
+          question: 'ليه حطينا break جوه try مش جوه except؟',
+          answer: 'لأننا عايزين نخرج من الحلقة بس لما المستخدم يكتب قيمة صح في try؛ أما لو غلط ونطّ لـ except فالمفروض الحلقة تلف تاني وتديله فرصة جديدة!',
+        },
+        {
+          id: 'faq-5-3-2',
+          question: 'إزاي أدمج try / except مع الدوال من المحطة الرابعة؟',
+          answer: 'بتحط كتلة try / except جوه تعريف الدالة def عشان الدالة نفسها تحمي العملية الحسابية وترجع نتيجة أو رسالة واضحة.',
+        },
+      ],
+    },
+    {
+      id: 'nb-5-3-mindmap',
+      type: 'mindmap',
+      title: 'خريطة ذهنية',
+      root: {
+        id: 'mm-5-3',
+        label: 'حلقة إعادة المحاولة',
+        children: [
+          { id: 'mm-5-3-w', label: 'while True: استمرار الطلب' },
+          { id: 'mm-5-3-t', label: 'try: محاولة التحويل + break عند النجاح' },
+          { id: 'mm-5-3-e', label: 'except: رسالة خطأ وإعادة المحاولة' },
+        ],
+      },
     },
     {
       id: 'nb-5-3-glossary',
@@ -169,11 +222,13 @@ export const LESSON_5_3: LessonPack = {
       title: 'أهم المصطلحات',
       terms: [
         { id: 'g53-1', termAr: 'حلقة التحقق وإعادة المحاولة', termEn: 'Validation Retry Loop', definition: 'استخدام while True مع try/except و break لإعادة طلب الإدخال حتى يصبح صحيحًا.' },
+        { id: 'g53-2', termAr: 'الحلقة اللانهائية المحكومة', termEn: 'while True + break', definition: 'حلقة تستمر في العمل حتى يتحقق شرط نجاح ينفذ break للخروج.' },
       ],
     },
   ],
   sources: [
     { id: 's53-tb', kind: 'textbook', label: 'كتاب الوزارة — ICT الصف الثالث الإعدادي', detail: 'حلقة while True ومعالجة الأخطاء داخل الدوال', pages: 'ص 56–57' },
+    { id: 's53-nb', kind: 'notebooklm', label: 'مصادر NotebookLM للدرس ٥.٣', detail: 'نمط التحقق اللانهائي وقائمة مراجعة الوحدة الأولى' },
   ],
   nextStep: {
     kind: 'stationQuiz',

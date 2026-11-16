@@ -6,6 +6,9 @@ import {
   ArrowLeft,
   CheckCircle2,
   ClipboardCheck,
+  Cloud,
+  CloudOff,
+  Crown,
   Flame,
   Layers,
   Play,
@@ -15,6 +18,11 @@ import {
   Trophy,
 } from 'lucide-react';
 import { deriveLearnerStats, getLearnerStats } from '@/lib/storage/progress';
+import {
+  fetchCurrentUser,
+  type CloudUser,
+  type UserTier,
+} from '@/lib/sync/cloudSync';
 import type { LearnerStats, LessonPack, StationPack, UnitPack } from '@/types/curriculum';
 
 export interface HomeClientProps {
@@ -64,6 +72,7 @@ function getStationStatusMeta(
   station: StationPack,
   completedCount: number,
   totalCount: number,
+  userTier?: UserTier,
 ) {
   if (totalCount > 0 && completedCount >= totalCount) {
     return {
@@ -77,10 +86,10 @@ function getStationStatusMeta(
       badgeClass: 'bg-[#006E5A] text-white border-[#006E5A]',
     };
   }
-  if (station.access === 'premium') {
+  if (station.access === 'premium' && userTier !== 'premium') {
     return {
-      label: 'متاح بالنسخة الكاملة لاحقًا',
-      badgeClass: 'bg-[#FBEAEC] text-[#E14B63] border-[#E14B63]/30',
+      label: 'متاح بالنسخة الكاملة',
+      badgeClass: 'bg-[#FBEAEC] text-[#B91C3C] border-[#E14B63]/30',
     };
   }
   return {
@@ -92,7 +101,7 @@ function getStationStatusMeta(
 function getContentStageLabel(status: StationPack['status']): string | null {
   if (status === 'ready') return null;
   if (status === 'draft') return 'محتوى مبدئي';
-  return 'مسودة هيكلية';
+  return 'بانتظار الحزمة';
 }
 
 export function HomeClient({ units }: HomeClientProps) {
@@ -100,6 +109,8 @@ export function HomeClient({ units }: HomeClientProps) {
     deriveLearnerStats([], []),
   );
   const [loaded, setLoaded] = useState(false);
+  const [cloudUser, setCloudUser] = useState<CloudUser | null>(null);
+  const [authLoaded, setAuthLoaded] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -113,8 +124,25 @@ export function HomeClient({ units }: HomeClientProps) {
       .catch(() => {
         if (!cancelled) setLoaded(true);
       });
+
+    const refreshAuth = () => {
+      fetchCurrentUser()
+        .then((user) => {
+          if (!cancelled) {
+            setCloudUser(user);
+            setAuthLoaded(true);
+          }
+        })
+        .catch(() => {
+          if (!cancelled) setAuthLoaded(true);
+        });
+    };
+    refreshAuth();
+    window.addEventListener('sl-auth-changed', refreshAuth);
+
     return () => {
       cancelled = true;
+      window.removeEventListener('sl-auth-changed', refreshAuth);
     };
   }, []);
 
@@ -156,10 +184,41 @@ export function HomeClient({ units }: HomeClientProps) {
       <section className="orchid-card p-5 sm:p-7 space-y-5">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="space-y-1.5">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E5F1EE] px-3 py-1 text-xs font-bold text-[#006E5A]">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>مسار المبرمج الصغير · تالتة إعدادي</span>
-            </span>
+            <div className="flex flex-col items-start sm:flex-row sm:items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E5F1EE] px-3 py-1 text-xs font-bold text-[#006E5A] h-[26px] whitespace-nowrap">
+                <Sparkles className="w-3.5 h-3.5 shrink-0" />
+                <span>مسار المبرمج الصغير · تالتة إعدادي</span>
+              </span>
+              <Link
+                href="/progress"
+                data-testid="home-account-slot"
+                className="inline-flex items-center justify-center gap-1.5 rounded-full border border-[#E2ECE9] bg-[#F6FAF9] px-3 py-1 text-xs font-bold text-[#163A3A] hover:border-[#006E5A] h-[26px] min-w-[148px] whitespace-nowrap"
+              >
+                {!authLoaded ? (
+                  <span
+                    aria-hidden="true"
+                    className="inline-block h-2.5 w-24 rounded bg-[#E2ECE9] animate-pulse"
+                  />
+                ) : cloudUser ? (
+                  cloudUser.tier === 'premium' ? (
+                    <>
+                      <Crown className="w-3.5 h-3.5 text-[#006E5A] shrink-0" />
+                      <span className="text-[#006E5A]">النسخة الكاملة ★</span>
+                    </>
+                  ) : (
+                    <>
+                      <Cloud className="w-3.5 h-3.5 text-[#006E5A] shrink-0" />
+                      <span>مزامنة سحابية · مجاني</span>
+                    </>
+                  )
+                ) : (
+                  <>
+                    <CloudOff className="w-3.5 h-3.5 text-[#3B5A58] shrink-0" />
+                    <span>حفظ محلي · اربط حسابك</span>
+                  </>
+                )}
+              </Link>
+            </div>
             <h1 className="text-2xl sm:text-3xl font-bold text-[#163A3A]">
               أهلًا يا مبرمج! جاهز لخطوة جديدة؟
             </h1>
@@ -169,99 +228,171 @@ export function HomeClient({ units }: HomeClientProps) {
             </p>
           </div>
 
-          {/* Streak & XP compact pills */}
-          <div className="flex items-center gap-2.5 flex-wrap">
-            <div className="flex items-center gap-2 rounded-xl border border-[#E2ECE9] bg-[#F6FAF9] px-3.5 py-2">
-              <Flame className="w-5 h-5 text-[#E14B63]" />
+          {/* Streak & XP compact pills (fixed-height slots prevent hydration CLS) */}
+          <div
+            data-testid="home-stats-slot"
+            aria-busy={!loaded}
+            className="flex items-center gap-2.5 flex-wrap"
+          >
+            <div className="flex items-center gap-2 rounded-xl border border-[#E2ECE9] bg-[#F6FAF9] px-3.5 py-2 min-w-[122px] min-h-[60px]">
+              <Flame className="w-5 h-5 text-[#E14B63] shrink-0" />
               <div className="leading-tight">
                 <div className="text-xs text-[#3B5A58]">سلسلة الأيام</div>
-                <div className="text-base font-bold text-[#163A3A] tabular-nums">
-                  {stats.streakDays} يوم
+                <div className="h-6 flex items-center text-base font-bold text-[#163A3A] tabular-nums">
+                  {loaded ? (
+                    <span>{stats.streakDays} يوم</span>
+                  ) : (
+                    <>
+                      <span
+                        aria-hidden="true"
+                        className="inline-block h-4 w-12 rounded bg-[#E2ECE9] animate-pulse"
+                      />
+                      <span className="sr-only">جاري تحميل سلسلة الأيام</span>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center gap-2 rounded-xl border border-[#E2ECE9] bg-[#F6FAF9] px-3.5 py-2">
-              <Trophy className="w-5 h-5 text-[#006E5A]" />
+            <div className="flex items-center gap-2 rounded-xl border border-[#E2ECE9] bg-[#F6FAF9] px-3.5 py-2 min-w-[122px] min-h-[60px]">
+              <Trophy className="w-5 h-5 text-[#006E5A] shrink-0" />
               <div className="leading-tight">
                 <div className="text-xs text-[#3B5A58]">نقاط الخبرة</div>
-                <div className="text-base font-bold text-[#163A3A] tabular-nums">
-                  {stats.xp} XP
+                <div className="h-6 flex items-center text-base font-bold text-[#163A3A] tabular-nums">
+                  {loaded ? (
+                    <span>{stats.xp} XP</span>
+                  ) : (
+                    <>
+                      <span
+                        aria-hidden="true"
+                        className="inline-block h-4 w-14 rounded bg-[#E2ECE9] animate-pulse"
+                      />
+                      <span className="sr-only">جاري تحميل نقاط الخبرة</span>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Daily Goal Bar */}
-        <div className="rounded-xl border border-[#E2ECE9] bg-[#F6FAF9] p-3.5 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2.5">
+        {/* Daily Goal Bar (reserved height prevents hydration CLS) */}
+        <div
+          data-testid="home-goal-slot"
+          className="rounded-xl border border-[#E2ECE9] bg-[#F6FAF9] p-3.5 min-h-[82px] sm:min-h-[72px] flex flex-wrap items-center justify-between gap-3"
+        >
+          <div className="flex items-center gap-2.5 min-w-0">
             {dailyGoalMet ? (
               <CheckCircle2 className="w-5 h-5 text-[#006E5A] shrink-0" />
             ) : (
               <Target className="w-5 h-5 text-[#006E5A] shrink-0" />
             )}
-            <div>
+            <div className="min-w-0">
               <p className="text-sm font-bold text-[#163A3A]">
                 هدف اليوم: أنجز درسًا واحدًا اليوم
               </p>
-              <p className="text-xs text-[#3B5A58]">
-                {dailyGoalMet
-                  ? `عاش! أنجزت ${stats.todayLessonsCount} درس اليوم واستمريت في تقدمك.`
-                  : 'درس واحد قصير يكفي لتحافظ على سلسلتك اليومية.'}
-              </p>
+              <div className="min-h-[20px] flex items-center">
+                {loaded ? (
+                  <p className="text-xs text-[#3B5A58] line-clamp-1">
+                    {dailyGoalMet
+                      ? `عاش! أنجزت ${stats.todayLessonsCount} درس اليوم واستمريت في تقدمك.`
+                      : 'درس واحد قصير يكفي لتحافظ على سلسلتك اليومية.'}
+                  </p>
+                ) : (
+                  <span
+                    aria-hidden="true"
+                    className="inline-block h-3.5 w-52 max-w-full rounded bg-[#E2ECE9] animate-pulse"
+                  />
+                )}
+              </div>
             </div>
           </div>
-          <span className="text-xs font-bold px-3 py-1 rounded-full bg-white border border-[#E2ECE9] text-[#163A3A] tabular-nums">
-            {stats.totalCompletedLessons} / {totalTermLessons} درس مكتمل
+          <span className="min-w-[128px] h-[28px] inline-flex items-center justify-center text-xs font-bold px-3 rounded-full bg-white border border-[#E2ECE9] text-[#163A3A] tabular-nums whitespace-nowrap shrink-0">
+            {loaded ? (
+              <span>
+                {stats.totalCompletedLessons} / {totalTermLessons} درس مكتمل
+              </span>
+            ) : (
+              <span
+                aria-hidden="true"
+                className="inline-block h-3 w-16 rounded bg-[#E2ECE9] animate-pulse"
+              />
+            )}
           </span>
         </div>
 
-        {/* Giant Primary CTA */}
-        {resume && (
-          <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-            <Link
-              href={`/lesson/${resume.lesson.id}`}
-              className="orchid-btn-primary w-full sm:w-auto sm:min-w-[280px] min-h-[56px] text-base sm:text-lg px-6 shadow-sm"
-            >
-              <Play className="w-5 h-5 fill-current shrink-0" />
-              <span>
-                {resume.isNewLearner
-                  ? 'ابدأ الدرس الأول'
-                  : 'كمّل من مكان ما وقفت'}
-              </span>
-              <ArrowLeft className="w-5 h-5 shrink-0" />
-            </Link>
+        {/* Giant Primary CTA (fixed-height reserved slot eliminates above-fold CLS) */}
+        <div
+          data-testid="home-cta-slot"
+          className="min-h-[92px] sm:min-h-[56px] flex flex-col sm:flex-row sm:items-center gap-3"
+        >
+          {!loaded ? (
+            <>
+              <div
+                aria-hidden="true"
+                className="w-full sm:w-[280px] h-[56px] rounded-lg bg-[#E5F1EE] animate-pulse shrink-0"
+              />
+              <div
+                aria-hidden="true"
+                className="h-6 w-56 max-w-full rounded bg-[#E5F1EE]/80 animate-pulse"
+              />
+            </>
+          ) : (
+            resume && (
+              <>
+                <Link
+                  href={`/lesson/${resume.lesson.id}`}
+                  className="orchid-btn-primary w-full sm:w-[280px] h-[56px] text-base sm:text-lg px-6 shadow-sm shrink-0"
+                >
+                  <Play className="w-5 h-5 fill-current shrink-0" />
+                  <span>
+                    {resume.isNewLearner
+                      ? 'ابدأ الدرس الأول'
+                      : 'كمّل من مكان ما وقفت'}
+                  </span>
+                  <ArrowLeft className="w-5 h-5 shrink-0" />
+                </Link>
 
-            <div className="text-sm text-[#3B5A58] px-1">
-              <span className="font-semibold text-[#163A3A]">
-                الدرس {resume.lesson.id}:
-              </span>{' '}
-              {resume.lesson.title} ({resume.lesson.durationMin} د)
-            </div>
-          </div>
-        )}
+                <div className="text-sm text-[#3B5A58] px-1 leading-6 min-h-[24px] line-clamp-1">
+                  <span className="font-semibold text-[#163A3A]">
+                    الدرس {resume.lesson.id}:
+                  </span>{' '}
+                  {resume.lesson.title} ({resume.lesson.durationMin} د)
+                </div>
+              </>
+            )
+          )}
+        </div>
       </section>
 
       {/* Quick Study Modes */}
       <section className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Link
           href="/review"
-          className="orchid-card p-4 sm:p-5 flex items-center justify-between gap-4 hover:border-[#006E5A] transition-colors min-h-[84px]"
+          className="orchid-card p-4 sm:p-5 flex items-center justify-between gap-4 hover:border-[#006E5A] transition-colors min-h-[88px]"
         >
-          <div className="flex items-center gap-3.5">
+          <div className="flex items-center gap-3.5 min-w-0">
             <span className="w-12 h-12 rounded-xl bg-[#E5F1EE] text-[#006E5A] flex items-center justify-center shrink-0">
               <Layers className="w-6 h-6" />
             </span>
-            <div>
+            <div className="min-w-0">
               <h2 className="text-base font-bold text-[#163A3A]">
                 البطاقات للمراجعة
               </h2>
-              <p className="text-xs sm:text-sm text-[#3B5A58]">
-                {reviewAgainCount > 0
-                  ? `${reviewAgainCount} بطاقة بانتظار المراجعة أولًا`
-                  : `${totalFlashcardsCount} بطاقة مصطلحات وتعريفات سريعة`}
-              </p>
+              <div className="min-h-[20px] flex items-center">
+                {loaded ? (
+                  <p className="text-xs sm:text-sm text-[#3B5A58] line-clamp-1">
+                    {reviewAgainCount > 0
+                      ? `${reviewAgainCount} بطاقة بانتظار المراجعة أولًا`
+                      : `${totalFlashcardsCount} بطاقة مصطلحات وتعريفات سريعة`}
+                  </p>
+                ) : (
+                  <span
+                    aria-hidden="true"
+                    className="inline-block h-3.5 w-44 max-w-full rounded bg-[#E2ECE9] animate-pulse"
+                  />
+                )}
+              </div>
             </div>
           </div>
           <ArrowLeft className="w-5 h-5 text-[#006E5A] shrink-0" />
@@ -269,7 +400,7 @@ export function HomeClient({ units }: HomeClientProps) {
 
         <Link
           href="/exam"
-          className="orchid-card p-4 sm:p-5 flex items-center justify-between gap-4 hover:border-[#006E5A] transition-colors min-h-[84px]"
+          className="orchid-card p-4 sm:p-5 flex items-center justify-between gap-4 hover:border-[#006E5A] transition-colors min-h-[88px]"
         >
           <div className="flex items-center gap-3.5">
             <span className="w-12 h-12 rounded-xl bg-[#E5F1EE] text-[#006E5A] flex items-center justify-center shrink-0">
@@ -290,13 +421,13 @@ export function HomeClient({ units }: HomeClientProps) {
 
       {/* Visual Learning Path: 2 Units / 9 Stations */}
       <section aria-label="خريطة المسار التعليمي" className="space-y-6">
-        <div className="flex items-center justify-between gap-2">
+        <div
+          data-testid="home-path-header"
+          className="flex items-center justify-between gap-2 min-h-[32px]"
+        >
           <h2 className="text-xl font-bold text-[#163A3A]">
             المسار المرئي للترم الأول (وحدتان · ٩ محطات)
           </h2>
-          {!loaded && (
-            <span className="text-xs text-[#3B5A58]">جاري تحميل التقدم...</span>
-          )}
         </div>
 
         <div className="space-y-6">
@@ -355,6 +486,7 @@ export function HomeClient({ units }: HomeClientProps) {
                       station,
                       completedCount,
                       totalCount,
+                      cloudUser?.tier,
                     );
                     const stageLabel = getContentStageLabel(station.status);
                     const isDone =
@@ -411,16 +543,6 @@ export function HomeClient({ units }: HomeClientProps) {
                                   <span>
                                     {station.quizBank.length} سؤال في البنك
                                   </span>
-                                  {summary?.bestQuizScore !== null &&
-                                    summary?.bestQuizScore !== undefined && (
-                                      <>
-                                        <span>·</span>
-                                        <span className="font-bold text-[#006E5A]">
-                                          أعلى درجة اختبار:{' '}
-                                          {summary.bestQuizScore}٪
-                                        </span>
-                                      </>
-                                    )}
                                 </div>
                               </div>
                             </div>
@@ -429,13 +551,19 @@ export function HomeClient({ units }: HomeClientProps) {
                           </div>
 
                           {/* Station progress bar */}
-                          <div className="mt-3 flex items-center gap-3">
+                          <div className="mt-3 flex items-center gap-3 min-h-[20px]">
                             <div className="flex-1 h-2 rounded-full bg-[#E2ECE9] overflow-hidden">
                               <div
                                 className="h-full bg-[#006E5A] rounded-full transition-all duration-300"
                                 style={{ width: `${pct}%` }}
                               />
                             </div>
+                            {summary?.bestQuizScore !== null &&
+                              summary?.bestQuizScore !== undefined && (
+                                <span className="text-xs font-bold text-[#006E5A] tabular-nums shrink-0">
+                                  أعلى درجة: {summary.bestQuizScore}٪
+                                </span>
+                              )}
                             <span className="text-xs font-bold text-[#163A3A] tabular-nums shrink-0">
                               {completedCount}/{totalCount}
                             </span>
@@ -451,19 +579,35 @@ export function HomeClient({ units }: HomeClientProps) {
         </div>
       </section>
 
-      {/* Gentle Safari iOS / Offline Backup Banner */}
-      <section className="rounded-xl border border-[#E2ECE9] bg-white p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* Gentle Safari iOS / Offline Backup & Cloud Sync Banner */}
+      <section
+        data-testid="home-backup-banner"
+        className="rounded-xl border border-[#E2ECE9] bg-white p-4 sm:p-5 min-h-[104px] flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+      >
         <div className="flex items-start gap-3">
-          <span className="w-10 h-10 rounded-xl bg-[#FBEAEC] text-[#E14B63] flex items-center justify-center shrink-0">
-            <ShieldAlert className="w-5 h-5" />
+          <span
+            className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
+              cloudUser
+                ? 'bg-[#E5F1EE] text-[#006E5A]'
+                : 'bg-[#FBEAEC] text-[#B91C3C]'
+            }`}
+          >
+            {cloudUser ? (
+              <Cloud className="w-5 h-5" />
+            ) : (
+              <ShieldAlert className="w-5 h-5" />
+            )}
           </span>
           <div className="space-y-0.5">
             <h3 className="text-sm sm:text-base font-bold text-[#163A3A]">
-              احفظ تقدمك لو بتذاكر من الموبايل أو Safari iOS
+              {cloudUser
+                ? 'حسابك مرتبط بالمزامنة السحابية'
+                : 'احفظ تقدمك لو بتذاكر من الموبايل أو Safari iOS'}
             </h3>
             <p className="text-xs sm:text-sm text-[#3B5A58]">
-              تقدمك محفوظ تلقائيًا على جهازك بدون حساب. ثبّت المنصة على الشاشة
-              الرئيسية أو انسخ «كود التقدم الاحتياطي» عشان يفضل معاك دايمًا.
+              {cloudUser
+                ? `تقدمك محفوظ سحابيًا (${cloudUser.tier === 'premium' ? 'النسخة الكاملة ★' : 'الباقة المجانية'}) ومزامن على جهازك للعمل بدون نت.`
+                : 'تقدمك محفوظ تلقائيًا على جهازك بدون حساب. اربط حسابك للمزامنة السحابية أو انسخ كود التقدم الاحتياطي.'}
             </p>
           </div>
         </div>
@@ -472,7 +616,9 @@ export function HomeClient({ units }: HomeClientProps) {
           href="/progress"
           className="orchid-btn-secondary shrink-0 text-sm whitespace-nowrap"
         >
-          حفظ نسخة التقدم / التثبيت
+          {cloudUser
+            ? 'إدارة الحساب والمزامنة'
+            : 'ربط الحساب / نسخة التقدم'}
         </Link>
       </section>
     </div>

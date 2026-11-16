@@ -13,7 +13,7 @@ export const STATION_8_PACK: StationPack = {
     'اعرف فوائد الألعاب الهادفة ومخاطر الحيل النفسية (Dark Patterns و Loot Boxes و FOMO)، وتعلّم ضوابط التوازن الرقمي.',
   textbookPages: '81–86',
   access: 'free',
-  status: 'awaiting_pack',
+  status: 'ready',
   objectives: [
     'يميز بين أنواع الألعاب الإلكترونية وفوائدها ومخاطرها.',
     'يشرح إجراءات الحد من التأثير السلبي للألعاب عالميًا.',

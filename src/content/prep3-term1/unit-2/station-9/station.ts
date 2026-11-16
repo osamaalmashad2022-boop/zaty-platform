@@ -14,7 +14,7 @@ export const STATION_9_PACK: StationPack = {
     'افهم تقنية GANs وصراع المولد والمميز، واكتشف علامات التزييف العميق بالعين وأدوات الكشف، وتحمّل مسؤولية المواطن الرقمي الواعي.',
   textbookPages: '87–95',
   access: 'free',
-  status: 'awaiting_pack',
+  status: 'ready',
   objectives: [
     'يشرح مفهوم التزييف العميق Deepfake وتقنية GANs.',
     'يحدد العلامات البصرية وأدوات الكشف الآلي للمحتوى المزيف.',

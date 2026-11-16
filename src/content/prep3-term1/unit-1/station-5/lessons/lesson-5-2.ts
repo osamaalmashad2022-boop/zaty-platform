@@ -8,9 +8,9 @@ export const LESSON_5_2: LessonPack = {
   title: 'التمييز بين الأخطاء (ValueError مقابل ZeroDivisionError)',
   subtitle: 'اعرض رسالة مخصصة لنوع الخطأ بالظبط باستخدام أكثر من except',
   durationMin: 8,
-  contentVersion: 1,
+  contentVersion: 2,
   access: 'free',
-  status: 'draft',
+  status: 'ready',
   objectives: [
     'تميّز بين سبب حدوث ValueError وسبب حدوث ZeroDivisionError.',
     'تستخدم أكثر من كتلة except داخل نفس كتلة try للتعامل الدقيق مع الأخطاء.',
@@ -30,7 +30,7 @@ export const LESSON_5_2: LessonPack = {
             durationMin: 8,
             stationLabel: 'المحطة ٥ · الدرس ٢ من ٣',
             goal: 'تفرّق بين ValueError و ZeroDivisionError وتعالج كل خطأ برسالة واضحة ومخصصة.',
-            hook: 'تخيل عندك برنامج بيقسم `10 / num`. المستخدم ممكن يغلط بطريقتين: إما يكتب كلمة `"abc"`، أو يكتب `0`! رسالة «غلط وخلاص» محيّرة، لكن الأفضل تقول له بالظبط غلط في إيه!',
+            hook: 'تخيل عندك برنامج بيقسم `10 / num`. المستخدم ممكن يغلط بطريقتين: إما يكتب كلمة `"abc"`، أو يكتب `0`! رسالة «غلط وخلاص» محيّرة، لكن الأحسن تقول له بالظبط غلط في إيه!',
           },
         },
       ],
@@ -44,7 +44,7 @@ export const LESSON_5_2: LessonPack = {
           id: '5.2-table',
           type: 'tableBlock',
           data: {
-            heading: 'الفرق بين أهم استثناءين في المنهج',
+            heading: 'الفرق بين أهم استثناءين في المنهج (ص ٥٥–٥٦)',
             headers: ['نوع الاستثناء', 'متى يحدث؟', 'مثال سبب الخطأ'],
             rows: [
               ['ValueError', 'عند فشل تحويل نص غير رقمي إلى عدد', 'int("abc") أو int("خمسة")'],
@@ -58,7 +58,7 @@ export const LESSON_5_2: LessonPack = {
           data: {
             title: 'مثال ٣ من الكتاب (ص ٥٦)',
             code: 'try:\n    num = int(input("Enter a number: "))\n    result = 10 / num\n    print(result)\nexcept ValueError:\n    print("Please enter numbers only!")\nexcept ZeroDivisionError:\n    print("You cannot divide by zero!")',
-            caption: 'كتلة try واحدة، ومعاها أكثر من except مخصصة لكل خطأ.',
+            caption: 'كتلة try واحدة، ومعاها أكثر من except مخصصة لكل نوع خطأ.',
             runnable: true,
           },
         },
@@ -103,7 +103,7 @@ export const LESSON_5_2: LessonPack = {
           data: {
             variant: 'warning',
             title: 'تنبّه لترتيب except وللقيمة "123"',
-            body: '• `int("123")` **لا يُنتج** `ValueError` لأنه نص رقمي سليم!\n• ودايمًا `except ValueError:` (المخصصة) لازم تيجي **قبل** `except:` العامة.',
+            body: '• `int("123")` **مش بتعمل** `ValueError` لأن `"123"` نص رقمي سليم يتحول إلى `123`!\n• ودايمًا `except ValueError:` (المخصصة) لازم تيجي **قبل** `except:` العامة.',
           },
         },
       ],
@@ -131,6 +131,23 @@ export const LESSON_5_2: LessonPack = {
             explanation: 'القسمة على صفر في Python ترفع استثناء ZeroDivisionError.',
           },
         },
+        {
+          id: '5.2-q2',
+          type: 'quizQuestion',
+          data: {
+            question: 'متى يحدث خطأ `ValueError` في برنامج يقرأ مدخلات المستخدم؟',
+            multiple: false,
+            scored: false,
+            sourceTag: 'كتاب الوزارة ص ٥٩',
+            options: [
+              { id: 'a', text: 'عند إدخال الرقم 0 في عملية قسمة', isCorrect: false, feedback: 'ده بيسبب ZeroDivisionError.' },
+              { id: 'b', text: 'عند محاولة تحويل نص غير رقمي مثل "hello" باستخدام int()', isCorrect: true, feedback: 'صح! int() لا تقبل الحروف غير الرقمية وترفع ValueError.' },
+              { id: 'c', text: 'عند استخدام دالة print() للطباعة', isCorrect: false, feedback: 'print() لا ترفع ValueError.' },
+              { id: 'd', text: 'عند تحويل "123" إلى int("123")', isCorrect: false, feedback: '"123" نص رقمي سليم ويتحول بنجاح.' },
+            ],
+            explanation: 'ValueError يحدث عندما يكون نوع البيانات نصًا لكنه لا يمثل رقمًا صالحًا للتحويل.',
+          },
+        },
       ],
     },
     {
@@ -155,20 +172,58 @@ export const LESSON_5_2: LessonPack = {
     {
       id: 'nb-5-2-summary',
       type: 'summary',
-      title: 'ملخص سريع',
-      content: 'استخدام except ValueError و except ZeroDivisionError معًا لتخصيص رسائل الخطأ.',
+      title: 'ملخص سريع (NotebookLM)',
+      content: 'ممكن نكتب أكثر من except تحت نفس try عشان نتعامل مع كل نوع خطأ بطريقة مخصصة.',
+      bullets: [
+        'except ValueError: تعالج إدخال نص بدل رقم.',
+        'except ZeroDivisionError: تعالج القسمة على صفر.',
+        'تكتب الكتل المخصصة أولًا قبل except العامة.',
+      ],
+    },
+    {
+      id: 'nb-5-2-faq',
+      type: 'faq',
+      title: 'أسئلة شائعة',
+      items: [
+        {
+          id: 'faq-5-2-1',
+          question: 'ينفع أحط أكثر من except لنفس جملة try؟',
+          answer: 'أيوه، وPython بيشوف نوع الخطأ اللي حصل ويشغّل كتلة except المطابقة ليه بالظبط.',
+        },
+        {
+          id: 'faq-5-2-2',
+          question: 'لو المستخدم كتب "0" في int(input())، أنهي except هيشتغل في 10 / num؟',
+          answer: 'int("0") هتنجح وتطلع 0 من غير ValueError، وبعدها في 10 / 0 هيشتغل except ZeroDivisionError!',
+        },
+      ],
+    },
+    {
+      id: 'nb-5-2-mindmap',
+      type: 'mindmap',
+      title: 'خريطة ذهنية',
+      root: {
+        id: 'mm-5-2',
+        label: 'تخصيص الاستثناءات',
+        children: [
+          { id: 'mm-5-2-val', label: 'ValueError ← int("abc")' },
+          { id: 'mm-5-2-zero', label: 'ZeroDivisionError ← 10 / 0' },
+          { id: 'mm-5-2-ord', label: 'الترتيب: المخصصة قبل العامة' },
+        ],
+      },
     },
     {
       id: 'nb-5-2-glossary',
       type: 'glossary',
       title: 'أهم المصطلحات',
       terms: [
-        { id: 'g52-1', termAr: 'خطأ القسمة على صفر', termEn: 'ZeroDivisionError', definition: 'استثناء يقع عند محاولة قسمة أي رقم على 0.' },
+        { id: 'g52-1', termAr: 'خطأ القيمة', termEn: 'ValueError', definition: 'استثناء يقع عند تمرير قيمة غير صالحة لدالة تحويل مثل int("abc").' },
+        { id: 'g52-2', termAr: 'خطأ القسمة على صفر', termEn: 'ZeroDivisionError', definition: 'استثناء يقع عند محاولة قسمة أي رقم على 0.' },
       ],
     },
   ],
   sources: [
     { id: 's52-tb', kind: 'textbook', label: 'كتاب الوزارة — ICT الصف الثالث الإعدادي', detail: 'تخصيص رسائل ValueError و ZeroDivisionError', pages: 'ص 55–56' },
+    { id: 's52-nb', kind: 'notebooklm', label: 'مصادر NotebookLM للدرس ٥.٢', detail: 'جدول الاستثناءات المتعددة وترتيب except' },
   ],
   nextStep: {
     kind: 'lesson',

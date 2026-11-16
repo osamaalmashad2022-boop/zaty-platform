@@ -8,9 +8,9 @@ export const LESSON_3_2: LessonPack = {
   title: 'القوائم Lists: الإنشاء والإضافة والحذف والتكرار',
   subtitle: 'احفظ قائمة أسماء أو درجات في متغير واحد وعدّلها بسهولة',
   durationMin: 8,
-  contentVersion: 1,
+  contentVersion: 2,
   access: 'free',
-  status: 'draft',
+  status: 'ready',
   objectives: [
     'تعرّف القائمة (List) داخل أقواس مربعة [ ] مع إمكانية تنوّع أنواع بياناتها.',
     'تصل لعناصر القائمة بالفهرس وتضيف عناصر بـ append() وتحذف بـ remove().',
@@ -44,8 +44,8 @@ export const LESSON_3_2: LessonPack = {
           id: '3.2-desc',
           type: 'richText',
           data: {
-            heading: 'كيف تعمل القوائم؟',
-            body: '**القائمة (List)** هي مجموعة مرتبة من القيم داخل قوسين مربعين `[ ]` وقابلة للتعديل، وممكن تجمع أرقام ونصوص وقيم منطقية معًا مثل `[1, "two", 3.0, True]`.\n• `append()` تضيف عنصرًا لنهاية القائمة.\n• `remove()` تحذف العنصر المحدد.',
+            heading: 'إزاي بنشتغل على القوائم (Lists)؟',
+            body: '**القائمة (List)** هي مجموعة مرتبة من القيم جوه قوسين مربعين `[ ]` وقابلة للتعديل، وممكن تجمع أرقام ونصوص وقيم منطقية مع بعض زي `[1, "two", 3.0, True]`.\n• `append()` بتضيف عنصر لنهاية القائمة.\n• `remove()` بتحذف العنصر اللي بتحدده باسمه أو قيمته.\n• وكمان نقدر نلف على عناصرها بحلقة `for item in list:`.',
           },
         },
         {
@@ -72,7 +72,7 @@ export const LESSON_3_2: LessonPack = {
           data: {
             mode: 'fillLine',
             title: 'أضف الاسم "Sara" لنهاية القائمة',
-            prompt: 'أكمل السطر الناقص لإضافة `"Sara"` إلى نهاية قائمة `names` ثم اطبعها.',
+            prompt: 'أكمل السطر الناقص لإضافة `"Sara"` لنهاية قائمة `names` وبعدين اطبعها.',
             starterCode: 'names = ["Ahmed", "Ali"]\n# أضف "Sara" باستخدام append هنا\nprint(names)',
             solutionCode: 'names = ["Ahmed", "Ali"]\nnames.append("Sara")\nprint(names)',
             checks: [
@@ -178,8 +178,46 @@ export const LESSON_3_2: LessonPack = {
     {
       id: 'nb-3-2-summary',
       type: 'summary',
-      title: 'ملخص سريع',
-      content: 'القائمة [ ] بنية بيانات قابلة للتعديل وتبدأ فهرستها من 0، وتقبل الإضافة والحذف والتكرار بـ for.',
+      title: 'ملخص سريع (NotebookLM)',
+      content: 'القائمة [ ] بنية بيانات مرنة تجمع عناصر متعددة وتبدأ فهرستها من 0 وتقبل الإضافة والحذف.',
+      bullets: [
+        'تنشأ بأقواس مربعة مثل nums = [10, 20, 30].',
+        'append(x) تضيف عنصرًا في نهاية القائمة.',
+        'remove(x) تحذف أول ظهور للعنصر x من القائمة.',
+        'يمكن أن تضم أرقامًا ونصوصًا وقيمًا منطقية في نفس القائمة.',
+      ],
+    },
+    {
+      id: 'nb-3-2-faq',
+      type: 'faq',
+      title: 'أسئلة شائعة',
+      items: [
+        {
+          id: 'faq-3-2-1',
+          question: 'إيه الفرق بين append() و remove()؟',
+          answer: 'append() بتزود عنصر جديد في آخر القائمة، بينما remove() بتدور على قيمة محددة وتمسحها من القائمة.',
+        },
+        {
+          id: 'faq-3-2-2',
+          question: 'هل القائمة لازم تكون كلها أرقام أو كلها نصوص؟',
+          answer: 'لا! في Python القائمة مرنة وتقدر تحط جواها أرقام صحيحة وعشرية ونصوص وقيم True/False مع بعض.',
+        },
+      ],
+    },
+    {
+      id: 'nb-3-2-mindmap',
+      type: 'mindmap',
+      title: 'خريطة ذهنية',
+      root: {
+        id: 'mm-3-2',
+        label: 'القوائم (Lists [ ])',
+        children: [
+          { id: 'mm-3-2-1', label: 'الإنشاء: داخل [ ] وبأنواع متنوعة' },
+          { id: 'mm-3-2-2', label: 'الوصول: بالفهرس [0] و [-1]' },
+          { id: 'mm-3-2-3', label: 'التعديل: append() للإضافة و remove() للحذف' },
+          { id: 'mm-3-2-4', label: 'التكرار: for item in list:' },
+        ],
+      },
     },
     {
       id: 'nb-3-2-glossary',
@@ -188,11 +226,13 @@ export const LESSON_3_2: LessonPack = {
       terms: [
         { id: 'g32-1', termAr: 'القائمة', termEn: 'List [ ]', definition: 'مجموعة مرتبة وقابلة للتعديل من القيم داخل أقواس مربعة.' },
         { id: 'g32-2', termAr: 'دالة الإضافة', termEn: 'append()', definition: 'دالة تضيف عنصرًا جديدًا في نهاية القائمة.' },
+        { id: 'g32-3', termAr: 'دالة الحذف', termEn: 'remove()', definition: 'دالة تحذف عنصرًا محددًا بقيمته من القائمة.' },
       ],
     },
   ],
   sources: [
     { id: 's32-tb', kind: 'textbook', label: 'كتاب الوزارة — ICT الصف الثالث الإعدادي', detail: 'القوائم Lists وعملياتها', pages: 'ص 34' },
+    { id: 's32-nb', kind: 'notebooklm', label: 'مصادر NotebookLM للدرس ٣.٢', detail: 'عمليات القوائم والوصول والتكرار' },
   ],
   nextStep: {
     kind: 'lesson',

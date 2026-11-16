@@ -56,7 +56,14 @@ function collectStationMediaUrls(station: StationPack): string[] {
   return Array.from(urls).filter(Boolean);
 }
 
+function getContentStageLabel(status: StationPack['status']): string | null {
+  if (status === 'ready') return null;
+  if (status === 'draft') return 'محتوى مبدئي';
+  return 'بانتظار الحزمة';
+}
+
 export function StationClient({ station, unitTitle }: StationClientProps) {
+  const stationStageLabel = getContentStageLabel(station.status);
   const [stats, setStats] = useState<LearnerStats>(() =>
     deriveLearnerStats([], []),
   );
@@ -201,6 +208,11 @@ export function StationClient({ station, unitTitle }: StationClientProps) {
               <span className="rounded-md bg-[#006E5A] text-white px-2.5 py-0.5 text-xs font-bold">
                 المحطة {station.number}
               </span>
+              {stationStageLabel && (
+                <span className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-[#F6FAF9] border border-[#E2ECE9] text-[#3B5A58]">
+                  {stationStageLabel}
+                </span>
+              )}
               {unitTitle && (
                 <span className="text-xs font-medium text-[#3B5A58]">
                   {unitTitle}
@@ -282,7 +294,7 @@ export function StationClient({ station, unitTitle }: StationClientProps) {
               role="status"
               className={`text-xs sm:text-sm font-medium ${
                 downloadState === 'error'
-                  ? 'text-[#E14B63]'
+                  ? 'text-[#B91C3C]'
                   : 'text-[#006E5A]'
               }`}
             >
@@ -307,6 +319,7 @@ export function StationClient({ station, unitTitle }: StationClientProps) {
           {station.lessons.map((lesson, idx) => {
             const isCompleted = completedIds.has(lesson.id);
             const unlocked = isLessonUnlocked(lesson, idx);
+            const lessonStageLabel = getContentStageLabel(lesson.status);
 
             return (
               <li key={lesson.id}>
@@ -350,6 +363,11 @@ export function StationClient({ station, unitTitle }: StationClientProps) {
                           >
                             {isCompleted ? 'مكتمل ✓' : 'متاح'}
                           </span>
+                          {lessonStageLabel && (
+                            <span className="text-xs px-2 py-0.5 rounded-full bg-white border border-[#E2ECE9] text-[#3B5A58]">
+                              {lessonStageLabel}
+                            </span>
+                          )}
                         </div>
 
                         <h3 className="text-base sm:text-lg font-bold text-[#163A3A]">
@@ -387,6 +405,11 @@ export function StationClient({ station, unitTitle }: StationClientProps) {
                           <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-white border border-[#E2ECE9] text-[#3B5A58]">
                             يُفتح بعد الدرس السابق
                           </span>
+                          {lessonStageLabel && (
+                            <span className="text-xs px-2 py-0.5 rounded-full bg-white border border-[#E2ECE9] text-[#3B5A58]">
+                              {lessonStageLabel}
+                            </span>
+                          )}
                         </div>
 
                         <h3 className="text-base sm:text-lg font-bold text-[#163A3A]/80">

@@ -15,7 +15,7 @@ export const STATION_3_PACK: StationPack = {
     'اتعامل مع النصوص والفهرسة الموجبة والسالبة والقوائم القابلة للتعديل، وابنِ أداة فحص قوة كلمة المرور.',
   textbookPages: '31–42',
   access: 'free',
-  status: 'draft',
+  status: 'ready',
   objectives: [
     'يفهم معنى السلاسل النصية والقوائم والفرق بين Mutable و Immutable.',
     'يستخدم الفهرسة والدوال len / upper / in و append / remove.',

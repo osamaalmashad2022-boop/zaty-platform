@@ -8,9 +8,9 @@ export const LESSON_4_3: LessonPack = {
   title: 'تطبيق هندسي عملي: دالة حساب مساحة الدائرة',
   subtitle: 'حوّل القانون الرياضي لدالة ذكية ترجّع المساحة لأي نصف قطر',
   durationMin: 8,
-  contentVersion: 1,
+  contentVersion: 2,
   access: 'free',
-  status: 'draft',
+  status: 'ready',
   objectives: [
     'تكتب دالة circle_area(radius) باستخدام قيمة π = 3.14.',
     'تطوّر الدالة لتستخدم return area بدل print() وتخزن الناتج في متغير خارجي.',
@@ -135,11 +135,28 @@ export const LESSON_4_3: LessonPack = {
             explanation: 'تمرير radius كمعامل يجعل الدالة مرنة وتعمل مع أي قيمة لنصف القطر.',
           },
         },
+        {
+          id: '4.3-q2',
+          type: 'quizQuestion',
+          data: {
+            question: 'بعد تعديل `circle_area(radius)` لتستخدم `return area`، ما قيمة `result` عند تنفيذ `result = circle_area(10)`؟',
+            multiple: false,
+            scored: false,
+            sourceTag: 'كتاب الوزارة ص ٤٦–٤٧',
+            options: [
+              { id: 'a', text: '31.4', isCorrect: false, feedback: 'دي 3.14 * 10 (من غير التربيع).' },
+              { id: 'b', text: '62.8', isCorrect: false, feedback: 'ده محيط الدائرة 2 * pi * r.' },
+              { id: 'c', text: '314.0', isCorrect: true, feedback: 'صح! 3.14 × 10 × 10 = 314.0.' },
+              { id: 'd', text: 'None', isCorrect: false, feedback: 'ترجع 314.0 لأنها بتستخدم return area.' },
+            ],
+            explanation: 'area = 3.14 * 10 * 10 = 314.0 وترجعها الدالة عبر return.',
+          },
+        },
       ],
     },
     {
       id: '4.3-c6',
-      title: 'ختام المحطة الرابعة',
+      title: 'ختام المحطة الرابعة والمصادر الإضافية',
       role: 'summary',
       blocks: [
         {
@@ -148,7 +165,7 @@ export const LESSON_4_3: LessonPack = {
           data: {
             heading: 'الخلاصة في فقرة',
             calloutStyle: 'summary',
-            body: 'بنِينا دالة `circle_area(radius)` وطوّرناها بـ `return` علشان ترجّع القيمة ونستخدمها بأي نصف قطر. دلوقتي تقدر تختبر نفسك في ٤٠ سؤالًا رسميًا للمحطة الرابعة!',
+            body: 'بنِينا دالة `circle_area(radius)` وطوّرناها بـ `return` علشان ترجّع القيمة ونستخدمها بأي نصف قطر في حسابات تانية. دلوقتي تقدر تختبر نفسك في ٤٠ سؤالًا رسميًا للمحطة الرابعة!',
           },
         },
       ],
@@ -159,20 +176,59 @@ export const LESSON_4_3: LessonPack = {
     {
       id: 'nb-4-3-summary',
       type: 'summary',
-      title: 'ملخص سريع',
-      content: 'دالة circle_area(radius) تجمع بين المعاملات والقانون الرياضي وكلمة return.',
+      title: 'ملخص سريع (NotebookLM)',
+      content: 'دالة circle_area(radius) تجمع بين المعاملات والقانون الرياضي وكلمة return في تطبيق هندسي عملي.',
+      bullets: [
+        'pi = 3.14 و area = pi * radius * radius.',
+        'تطوير الدالة بـ return area يتيح حفظ الناتج في متغير خارجي.',
+        'نفس الدالة تشتغل على radius = 5 أو radius = 10 أو أي قيمة.',
+      ],
+    },
+    {
+      id: 'nb-4-3-faq',
+      type: 'faq',
+      title: 'أسئلة شائعة',
+      items: [
+        {
+          id: 'faq-4-3-1',
+          question: 'هل ممكن أكتب radius ** 2 بدل radius * radius؟',
+          answer: 'أيوه طبعًا! في Python علامة ** معناها الأس، فـ radius ** 2 بتدي نفس نتيجة radius * radius.',
+        },
+        {
+          id: 'faq-4-3-2',
+          question: 'ليه عدّلنا الدالة من print() إلى return area في تدريب الكتاب؟',
+          answer: 'عشان تبقى دالة احترافية نقدر نخزن نتيجتها في متغير result أو نجمع مساحتين مع بعض.',
+        },
+      ],
+    },
+    {
+      id: 'nb-4-3-mindmap',
+      type: 'mindmap',
+      title: 'خريطة ذهنية',
+      root: {
+        id: 'mm-4-3',
+        label: 'دالة مساحة الدائرة',
+        children: [
+          { id: 'mm-4-3-in', label: 'المدخل (Parameter): radius' },
+          { id: 'mm-4-3-calc', label: 'الحساب: pi * radius * radius' },
+          { id: 'mm-4-3-out', label: 'الإرجاع: return area' },
+          { id: 'mm-4-3-test', label: 'الاختبار: r=5 (78.5) و r=10 (314.0)' },
+        ],
+      },
     },
     {
       id: 'nb-4-3-glossary',
       type: 'glossary',
       title: 'أهم المصطلحات',
       terms: [
-        { id: 'g43-1', termAr: 'معامل الدالة المرن', termEn: 'radius Parameter', definition: 'مدخل يمكّن نفس الدالة من حساب المساحة لأي دائرة بأي نصف قطر.' },
+        { id: 'g43-1', termAr: 'معامل نصف القطر', termEn: 'radius Parameter', definition: 'مدخل يمكّن نفس الدالة من حساب المساحة لأي دائرة بأي نصف قطر.' },
+        { id: 'g43-2', termAr: 'قانون مساحة الدائرة', termEn: 'pi * r * r', definition: 'الصيغة الرياضية لحساب مساحة الدائرة حيث pi ≈ 3.14.' },
       ],
     },
   ],
   sources: [
     { id: 's43-tb', kind: 'textbook', label: 'كتاب الوزارة — ICT الصف الثالث الإعدادي', detail: 'تطبيق دالة مساحة الدائرة وتعديل return', pages: 'ص 45–47' },
+    { id: 's43-nb', kind: 'notebooklm', label: 'مصادر NotebookLM للدرس ٤.٣', detail: 'تتبع تنفيذ circle_area قبل وبعد return' },
   ],
   nextStep: {
     kind: 'stationQuiz',

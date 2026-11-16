@@ -8,9 +8,9 @@ export const LESSON_5_1: LessonPack = {
   title: 'لماذا تنهار البرامج؟ مقدمة صيد الأخطاء (try / except)',
   subtitle: 'احمِ برنامجك من التوقف المفاجئ لما المستخدم يكتب بيانات غلط',
   durationMin: 8,
-  contentVersion: 1,
+  contentVersion: 2,
   access: 'free',
-  status: 'draft',
+  status: 'ready',
   objectives: [
     'تشرح سبب توقف البرامج عند إدخال نصوص بدل الأرقام في int(input()).',
     'تستخدم كتلتي try و except العامة لمنع انهيار البرنامج.',
@@ -30,7 +30,7 @@ export const LESSON_5_1: LessonPack = {
             durationMin: 8,
             stationLabel: 'المحطة ٥ · الدرس ١ من ٣',
             goal: 'تحمي برنامجك من الانهيار المفاجئ عند إدخال بيانات خاطئة باستخدام try و except.',
-            hook: 'سألت المستخدم: «أدخل عمرك»، فكتبلك `"ahmed"` بدل `15`! من غير حماية البرنامج هيقفل فجأة في وشه — لكن بـ `try / except` تقدر تمسك الخطأ وتطلعله رسالة لطيفة.',
+            hook: 'سألت المستخدم: «أدخل عمرك»، فكتبلك `"ahmed"` بدل `15`! من غير حماية البرنامج هيقفل فجأة في وشه — لكن بـ `try / except` تقدر تمسك الخطأ وتطلعله رسالة لطيفة وتكمّل شغلك.',
             image: '/media/robot-shield.png',
           },
         },
@@ -46,7 +46,7 @@ export const LESSON_5_1: LessonPack = {
           type: 'richText',
           data: {
             heading: 'كيف تعمل try و except؟',
-            body: '• **`try:`** جرّب تنفيذ الكود اللي جواها (واللي ممكن يحصل فيه خطأ).\n• **`except:`** لو حصل خطأ جوه `try`، البرنامج مش هيقف! هينط مباشرة لـ `except` وينفذ الرسالة أو الحل البديل.\n• أما لو ما حصلش خطأ في `try`، بايثون هيتجاهل `except` تمامًا.',
+            body: '• **`try:`** جرّب تنفيذ الكود اللي جواها (واللي ممكن يحصل فيه خطأ وقت التشغيل).\n• **`except:`** لو حصل خطأ جوه `try`، البرنامج مش هيقف! هينط مباشرة لـ `except` وينفذ الرسالة أو الحل البديل.\n• أما لو ما حصلش خطأ في `try`، بايثون هيتجاهل `except` تمامًا ويكمّل طبيعي.',
           },
         },
         {
@@ -55,7 +55,7 @@ export const LESSON_5_1: LessonPack = {
           data: {
             title: 'مثال ١ من الكتاب (ص ٥٥)',
             code: 'try:\n    age = int(input("Enter your age: "))\n    print("Next year you will be:", age + 1)\nexcept:\n    print("Please enter a valid number!")',
-            caption: 'الرسالة جوه except بتظهر للمستخدم بدل رسالة الخطأ الافتراضية.',
+            caption: 'الرسالة جوه except بتظهر للمستخدم بدل رسالة الخطأ الحمراء المفاجئة.',
             runnable: true,
           },
         },
@@ -126,6 +126,23 @@ export const LESSON_5_1: LessonPack = {
             explanation: 'try و except تمنعان توقف البرنامج عند الخطأ وتعرضان رسالة واضحة.',
           },
         },
+        {
+          id: '5.1-q2',
+          type: 'quizQuestion',
+          data: {
+            question: 'ماذا يحدث لكتلة `except:` عندما يعمل الكود داخل `try:` بنجاح بدون أي خطأ؟',
+            multiple: false,
+            scored: false,
+            sourceTag: 'كتاب الوزارة ص ٥٥',
+            options: [
+              { id: 'a', text: 'تُنفّذ بعد انتهاء try دائمًا', isCorrect: false, feedback: 'except بتشتغل بس لو حصل خطأ.' },
+              { id: 'b', text: 'يتم تجاهلها ولا تُنفّذ', isCorrect: true, feedback: 'صح! except بتشتغل بس وقت حدوث خطأ جوه try.' },
+              { id: 'c', text: 'تعيد تشغيل try مرة ثانية', isCorrect: false, feedback: 'الإعادة بتحتاج حلقة while.' },
+              { id: 'd', text: 'تُظهر رسالة خطأ فارغة', isCorrect: false, feedback: 'لا تُظهر شيئًا عند النجاح.' },
+            ],
+            explanation: 'عند سلامة التنفيذ داخل try، يتخطى Python كتلة except تمامًا.',
+          },
+        },
       ],
     },
     {
@@ -150,20 +167,64 @@ export const LESSON_5_1: LessonPack = {
     {
       id: 'nb-5-1-summary',
       type: 'summary',
-      title: 'ملخص سريع',
-      content: 'try تضع فيها الكود المعرض للخطأ، وexcept تنفذ فقط إذا وقع خطأ داخل try.',
+      title: 'ملخص سريع (NotebookLM)',
+      content: 'أخطاء مدخلات المستخدم شائعة، وبنية try / except تحمي البرنامج من التوقف المفاجئ.',
+      bullets: [
+        'try تحتوي على الأوامر المعرضة لحدوث خطأ وقت التشغيل.',
+        'except تُنفّذ فقط إذا وقع خطأ داخل try.',
+        'تحسّن تجربة المستخدم بعرض رسالة مفهومة بدل الانهيار.',
+      ],
+    },
+    {
+      id: 'nb-5-1-faq',
+      type: 'faq',
+      title: 'أسئلة شائعة',
+      items: [
+        {
+          id: 'faq-5-1-1',
+          question: 'ليه البرامج بتنهار عند إدخال نص داخل int(input())؟',
+          answer: 'لأن Python بيحاول يحول الحروف لرقم صحيح فيفشل ويرفع خطأ وقت التشغيل (Runtime Error)، ولو ما عالجناهوش بيوقف البرنامج فورًا.',
+        },
+        {
+          id: 'faq-5-1-2',
+          question: 'هل ممكن أكتب كود عادي جوه try من غير مشكلة؟',
+          answer: 'أيوه، بس الأفضل تحط جوه try الأسطر اللي فعلاً ممكن يحصل فيها خطأ (زي تحويل المدخلات أو القسمة).',
+        },
+      ],
+    },
+    {
+      id: 'nb-5-1-mindmap',
+      type: 'mindmap',
+      title: 'خريطة ذهنية',
+      root: {
+        id: 'mm-5-1',
+        label: 'صيد الأخطاء (try / except)',
+        children: [
+          { id: 'mm-5-1-try', label: 'try: جرّب الكود الحساس' },
+          {
+            id: 'mm-5-1-res',
+            label: 'النتيجة',
+            children: [
+              { id: 'mm-5-1-ok', label: 'لا يوجد خطأ ← تجاهل except' },
+              { id: 'mm-5-1-err', label: 'وقع خطأ ← نفّذ except بدون توقف' },
+            ],
+          },
+        ],
+      },
     },
     {
       id: 'nb-5-1-glossary',
       type: 'glossary',
       title: 'أهم المصطلحات',
       terms: [
-        { id: 'g51-1', termAr: 'معالجة الاستثناءات', termEn: 'try / except', definition: 'بنية برمجية لالتقاط الأخطاء وقت التشغيل ومعالجتها بدون توقف البرنامج.' },
+        { id: 'g51-1', termAr: 'معالجة الاستثناءات', termEn: 'Exception Handling (try / except)', definition: 'بنية برمجية لالتقاط الأخطاء وقت التشغيل ومعالجتها بدون توقف البرنامج.' },
+        { id: 'g51-2', termAr: 'خطأ وقت التشغيل', termEn: 'Runtime Error', definition: 'خطأ يحدث أثناء تنفيذ البرنامج مثل إدخال بيانات من نوع غير متوقع.' },
       ],
     },
   ],
   sources: [
     { id: 's51-tb', kind: 'textbook', label: 'كتاب الوزارة — ICT الصف الثالث الإعدادي', detail: 'مقدمة try و except', pages: 'ص 53–55' },
+    { id: 's51-nb', kind: 'notebooklm', label: 'مصادر NotebookLM للدرس ٥.١', detail: 'شرح سبب توقف البرامج وحمايتها بـ try / except' },
   ],
   nextStep: {
     kind: 'lesson',

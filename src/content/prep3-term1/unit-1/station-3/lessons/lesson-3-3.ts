@@ -8,9 +8,9 @@ export const LESSON_3_3: LessonPack = {
   title: 'الفروق الجوهرية والتحويل (Mutable vs Immutable)',
   subtitle: 'ليه القائمة بتتعدل والنص لأ؟ وإزاي نحول النص لقائمة حروف بـ list()',
   durationMin: 8,
-  contentVersion: 1,
+  contentVersion: 2,
   access: 'free',
-  status: 'draft',
+  status: 'ready',
   objectives: [
     'تقارن بين السلسلة النصية والقائمة من حيث القابلية للتعديل (Immutable vs Mutable) والأقواس.',
     'تحوّل السلسلة النصية إلى قائمة حروف باستخدام الدالة list(text).',
@@ -30,21 +30,21 @@ export const LESSON_3_3: LessonPack = {
             durationMin: 8,
             stationLabel: 'المحطة ٣ · الدرس ٣ من ٤',
             goal: 'تفرّق بين القابل للتعديل (Mutable) وغير القابل للتعديل (Immutable) وتحوّل النص لقائمة.',
-            hook: 'لو جربت تغير أول حرف في كلمة `"hello"` بأمر `text[0] = "H"`، بايثون هيرفض! لكن في القائمة `letters[0] = "H"` بينفذ فورًا. تعال نعرف ليه!',
+            hook: 'لو جربت تغيّر أول حرف في كلمة `"hello"` بأمر `text[0] = "H"`، بايثون هيرفض ويطلع خطأ! لكن في القائمة `letters[0] = "H"` بينفذ فورًا. تعال نعرف ليه!',
           },
         },
       ],
     },
     {
       id: '3.3-c2',
-      title: 'جدول المقارنة الرسمي (من Export C وكتاب الوزارة)',
+      title: 'جدول المقارنة الرسمي + التحويل بـ list()',
       role: 'concept',
       blocks: [
         {
           id: '3.3-table',
           type: 'tableBlock',
           data: {
-            heading: 'الفرق بين السلسلة النصية (String) والقائمة (List)',
+            heading: 'الفرق بين السلسلة النصية (String) والقائمة (List) — ص ٣٥',
             headers: ['الخاصية', 'السلسلة النصية (String)', 'القائمة (List)'],
             rows: [
               ['نوع البيانات', 'حروف ونصوص داخل تنصيص', 'أي نوع (أرقام، نصوص، منطقية...)'],
@@ -60,7 +60,7 @@ export const LESSON_3_3: LessonPack = {
           data: {
             title: 'التحويل بين النص والقائمة (ص ٣٥)',
             code: 'text = "hello"\nletters = list(text)\nprint(letters)  # [\'h\', \'e\', \'l\', \'l\', \'o\']\nletters[0] = "H"\nprint(letters)',
-            caption: 'تحويل النص إلى قائمة حروف بـ list() يسمح لنا بتعديل أي حرف بسهولة.',
+            caption: 'تحويل النص لقائمة حروف بـ list() بيخلينا نقدر نعدّل أي حرف بالفهرس بسهولة.',
             runnable: true,
           },
         },
@@ -99,7 +99,7 @@ export const LESSON_3_3: LessonPack = {
           data: {
             mode: 'fillLine',
             title: 'حوّل كلمة "code" لقائمة حروف',
-            prompt: 'أكمل السطر الناقص باستخدام دالة `list()` لتحويل `word` إلى قائمة ثم طباعتها.',
+            prompt: 'أكمل السطر الناقص باستخدام دالة `list()` لتحويل `word` لقائمة ثم طباعتها.',
             starterCode: 'word = "code"\n# حوّل word إلى قائمة باسم chars هنا\nprint(chars)',
             solutionCode: 'word = "code"\nchars = list(word)\nprint(chars)',
             checks: [
@@ -121,7 +121,7 @@ export const LESSON_3_3: LessonPack = {
           data: {
             variant: 'warning',
             title: 'مصطلح مهم جدًا: Immutable vs Mutable',
-            body: '• **Immutable (غير قابل للتعديل):** السلسلة النصية String.\n• **Mutable (قابل للتعديل):** القائمة List — نقدر نضيف بـ `append()` ونحذف بـ `remove()` ونغيّر قيمة عنصر بفهرسه.',
+            body: '• **Immutable (غير قابل للتعديل):** السلسلة النصية String — ما تقدرش تغير حرفًا فيها مباشرة بـ `text[0] = "H"`.\n• **Mutable (قابل للتعديل):** القائمة List — نقدر نضيف بـ `append()` ونحذف بـ `remove()` ونغيّر قيمة عنصر بفهرسه.',
           },
         },
       ],
@@ -149,6 +149,23 @@ export const LESSON_3_3: LessonPack = {
             explanation: 'القائمة Mutable تقبل التعديل، بينما السلسلة النصية Immutable.',
           },
         },
+        {
+          id: '3.3-q2',
+          type: 'quizQuestion',
+          data: {
+            question: 'ماذا يرجع تنفيذ `list("ICT")` في Python؟',
+            multiple: false,
+            scored: false,
+            sourceTag: 'كتاب الوزارة ص ٣٥',
+            options: [
+              { id: 'a', text: '["ICT"]', isCorrect: false, feedback: 'list() تفكّك النص إلى حروف مفردة.' },
+              { id: 'b', text: "['I', 'C', 'T']", isCorrect: true, feedback: 'صح! الدالة list() تقسّم النص لقائمة حروف يمكن تعديلها.' },
+              { id: 'c', text: '"I C T"', isCorrect: false, feedback: 'الناتج قائمة [ ] مش نص.' },
+              { id: 'd', text: 'خطأ TypeError', isCorrect: false, feedback: 'تحويل النص لقائمة عملية صحيحة تمامًا.' },
+            ],
+            explanation: 'دالة list(text) تحوّل السلسلة النصية إلى قائمة من حروفها المفردة.',
+          },
+        },
       ],
     },
     {
@@ -162,7 +179,7 @@ export const LESSON_3_3: LessonPack = {
           data: {
             heading: 'الخلاصة في فقرة',
             calloutStyle: 'summary',
-            body: 'السلسلة النصية **Immutable** (ثابتة بعد الإنشاء) وتُكتب بـ `" "`، بينما القائمة **Mutable** (تتعدل بحرية) وتُكتب بـ `[ ]`، ونقدر نحول النص لقائمة بـ `list(text)`. في الدرس الأخير من المحطة هنبني مشروع الكتاب العملي: فحص قوة كلمة المرور!',
+            body: 'السلسلة النصية **Immutable** (ثابتة بعد الإنشاء) وتُكتب بـ `" "`، بينما القائمة **Mutable** (تتعدل بحرية) وتُكتب بـ `[ ]`، ونقدر نحول النص لقائمة حروف بـ `list(text)`. في الدرس الأخير من المحطة هنبني مشروع الكتاب العملي: فحص قوة كلمة المرور!',
           },
         },
       ],
@@ -173,8 +190,52 @@ export const LESSON_3_3: LessonPack = {
     {
       id: 'nb-3-3-summary',
       type: 'summary',
-      title: 'ملخص سريع',
-      content: 'String ثابتة (Immutable) و List قابلة للتعديل (Mutable)، ويمكن التحويل عبر list(text).',
+      title: 'ملخص سريع (NotebookLM)',
+      content: 'الفرق الأساسي بين String و List هو القابلية للتعديل ونوع الأقواس المستخدمة.',
+      bullets: [
+        'String: غير قابلة للتعديل (Immutable) وتُحاط بـ " " أو \' \'.',
+        'List: قابلة للتعديل (Mutable) وتُحاط بـ [ ].',
+        'list(text) تحوّل أي نص لقائمة حروف تقدر تعدّل فيها بالفهرس.',
+      ],
+    },
+    {
+      id: 'nb-3-3-faq',
+      type: 'faq',
+      title: 'أسئلة شائعة',
+      items: [
+        {
+          id: 'faq-3-3-1',
+          question: 'ليه text[0] = "A" بيطلع خطأ في String؟',
+          answer: 'لأن السلاسل النصية في Python غير قابلة للتعديل (Immutable) بعد إنشائها؛ لازم تحولها لقائمة بـ list() الأول لو عايز تعدل حروفها.',
+        },
+        {
+          id: 'faq-3-3-2',
+          question: 'لو حوّلت النص بـ list("hi") الناتج إيه؟',
+          answer: 'الناتج قائمة فيها حرفين: [\'h\', \'i\']، وتقدر ساعتها تعدل أي عنصر فيها.',
+        },
+      ],
+    },
+    {
+      id: 'nb-3-3-mindmap',
+      type: 'mindmap',
+      title: 'خريطة ذهنية',
+      root: {
+        id: 'mm-3-3',
+        label: 'String مقابل List',
+        children: [
+          {
+            id: 'mm-3-3-str',
+            label: 'String (" ")',
+            children: [{ id: 'mm-3-3-s1', label: 'Immutable (غير قابل للتعديل)' }],
+          },
+          {
+            id: 'mm-3-3-lst',
+            label: 'List ([ ])',
+            children: [{ id: 'mm-3-3-l1', label: 'Mutable (قابل للتعديل)' }],
+          },
+          { id: 'mm-3-3-conv', label: 'التحويل: list(text)' },
+        ],
+      },
     },
     {
       id: 'nb-3-3-glossary',
@@ -183,11 +244,13 @@ export const LESSON_3_3: LessonPack = {
       terms: [
         { id: 'g33-1', termAr: 'قابل للتعديل', termEn: 'Mutable', definition: 'خاصية تعني إمكانية تعديل العناصر بعد الإنشاء مثل القوائم Lists.' },
         { id: 'g33-2', termAr: 'غير قابل للتعديل', termEn: 'Immutable', definition: 'خاصية تعني عدم إمكانية تغيير الحروف مباشرة بعد الإنشاء مثل Strings.' },
+        { id: 'g33-3', termAr: 'دالة التحويل لقائمة', termEn: 'list()', definition: 'دالة تحوّل السلسلة النصية إلى قائمة من الحروف.' },
       ],
     },
   ],
   sources: [
     { id: 's33-tb', kind: 'textbook', label: 'كتاب الوزارة — ICT الصف الثالث الإعدادي', detail: 'جدول مقارنة String و List والتحويل بـ list()', pages: 'ص 35' },
+    { id: 's33-nb', kind: 'notebooklm', label: 'مصادر NotebookLM للدرس ٣.٣', detail: 'شرح Mutable مقابل Immutable والتحويل' },
   ],
   nextStep: {
     kind: 'lesson',

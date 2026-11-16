@@ -14,7 +14,7 @@ export const STATION_5_PACK: StationPack = {
     'احمِ برامجك من التوقف المفاجئ باستخدام try و except، وميّز بين ValueError و ZeroDivisionError، وابنِ حلقات إعادة المحاولة.',
   textbookPages: '53–63',
   access: 'free',
-  status: 'draft',
+  status: 'ready',
   objectives: [
     'يشرح سبب حدوث الأخطاء عند إدخال البيانات.',
     'يستخدم try و except لمعالجة ValueError و ZeroDivisionError.',

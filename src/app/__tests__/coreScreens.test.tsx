@@ -186,4 +186,86 @@ describe('Core learner journey screens', () => {
       screen.getByRole('link', { name: /الدرس الجاي/ }),
     ).toHaveAttribute('href', '/lesson/1.2');
   });
+
+  it('reserves fixed layout slots before Dexie/auth hydration (CLS-safe) and displays subtle cloud tier status', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          ok: true,
+          authenticated: true,
+          user: {
+            id: 'u-1',
+            email: 'salma@example.com',
+            name: 'سلمى',
+            tier: 'premium',
+            guardianConsentAt: 1700000000000,
+            createdAt: 1700000000000,
+          },
+        }),
+        { status: 200, headers: { 'Content-Type': 'application/json' } },
+      ),
+    );
+
+    const { container } = render(<HomeClient units={SAMPLE_UNITS} />);
+
+    // Before Dexie resolves, reserved fixed-height slots are already mounted
+    expect(screen.getByTestId('home-stats-slot')).toBeInTheDocument();
+    expect(screen.getByTestId('home-goal-slot')).toHaveClass('min-h-[82px]');
+    expect(screen.getByTestId('home-cta-slot')).toHaveClass(
+      'min-h-[92px]',
+      'sm:min-h-[56px]',
+    );
+    expect(screen.getByTestId('home-account-slot')).toBeInTheDocument();
+    expect(screen.getByTestId('home-backup-banner')).toHaveClass('min-h-[104px]');
+    expect(screen.queryByText(/جاري تحميل التقدم/)).not.toBeInTheDocument();
+
+    // After hydration resolves, same slots remain mounted with resolved CTA & premium status
+    await waitFor(() =>
+      expect(screen.getByRole('link', { name: /ابدأ الدرس الأول/ })).toBeInTheDocument(),
+    );
+    await waitFor(() =>
+      expect(screen.getByTestId('home-account-slot')).toHaveTextContent(
+        'النسخة الكاملة ★',
+      ),
+    );
+    expect(screen.getByTestId('home-backup-banner')).toHaveTextContent(
+      'حسابك مرتبط بالمزامنة السحابية',
+    );
+    expect(container.textContent).not.toMatch(/(?:ال)?طالب/);
+  });
+
+  it('omits stale awaiting-pack badges for ready stations while gracefully rendering non-ready stages', async () => {
+    const { unmount } = render(<HomeClient units={SAMPLE_UNITS} />);
+    await waitFor(() =>
+      expect(screen.getByRole('link', { name: /ابدأ الدرس الأول/ })).toBeInTheDocument(),
+    );
+    expect(
+      screen.queryByText(/بانتظار الحزمة|مسودة هيكلية|محتوى مبدئي/),
+    ).not.toBeInTheDocument();
+    unmount();
+
+    const { unmount: unmountStation } = render(
+      <StationClient station={SAMPLE_STATION} unitTitle="الوحدة 1" />,
+    );
+    await waitFor(() =>
+      expect(screen.getByText(/الدروس المصغّرة/)).toBeInTheDocument(),
+    );
+    expect(
+      screen.queryByText(/بانتظار الحزمة|مسودة هيكلية|محتوى مبدئي/),
+    ).not.toBeInTheDocument();
+    unmountStation();
+
+    const awaitingStation: StationPack = {
+      ...SAMPLE_STATION,
+      id: 'station-6',
+      number: 6,
+      status: 'awaiting_pack',
+      lessons: [{ ...SAMPLE_LESSON, id: '6.1', status: 'draft' }],
+    };
+    render(<StationClient station={awaitingStation} unitTitle="الوحدة 2" />);
+    await waitFor(() =>
+      expect(screen.getByText('بانتظار الحزمة')).toBeInTheDocument(),
+    );
+    expect(screen.getByText('محتوى مبدئي')).toBeInTheDocument();
+  });
 });

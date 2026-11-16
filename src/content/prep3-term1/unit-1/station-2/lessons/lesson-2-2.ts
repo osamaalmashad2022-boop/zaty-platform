@@ -8,9 +8,9 @@ export const LESSON_2_2: LessonPack = {
   title: 'خوارزميات التكرار والبحث والترتيب',
   subtitle: 'افتح الأنواع الخمسة كلها في بطاقات منظمة وطابق كل خوارزمية بمثالها',
   durationMin: 8,
-  contentVersion: 1,
+  contentVersion: 2,
   access: 'free',
-  status: 'draft',
+  status: 'ready',
   objectives: [
     'تستعرض أنواع الخوارزميات التقليدية الخمسة وتفهم دور كل نوع.',
     'تقرأ وتكتب خوارزميات التكرار والبحث عن عنصر في قائمة بلغة Python.',
@@ -30,7 +30,7 @@ export const LESSON_2_2: LessonPack = {
             durationMin: 8,
             stationLabel: 'المحطة ٢ · الدرس ٢ من ٤',
             goal: 'تميّز بين الأنواع الخمسة للخوارزميات التقليدية وتكتب كود تكرار وبحث في Python.',
-            hook: 'لما بتدور على اسمك في كشف درجات المدرسة (دي خوارزمية بحث)، ولما بترتّب الكشف حسب الدرجات من الصغير للكبير (دي خوارزمية ترتيب)!',
+            hook: 'لما بتدوّر على اسمك في كشف درجات المدرسة (دي خوارزمية بحث Search)، ولما بترتّب الكشف حسب الدرجات من الصغير للكبير (دي خوارزمية ترتيب Sorting)!',
           },
         },
       ],
@@ -50,31 +50,31 @@ export const LESSON_2_2: LessonPack = {
               {
                 id: 'alg-1',
                 title: '١. الخوارزميات التسلسلية (Sequential)',
-                body: 'تُنفّذ خطوة بعد خطوة بترتيب ثابت من أعلى لأسفل، وكل خطوة تعتمد على التي قبلها (مثل قراءة كتاب من الصفحة الأولى للأخيرة).',
+                body: 'بتتنفذ خطوة بعد خطوة بترتيب ثابت من فوق لتحت، وكل خطوة معتمدة على اللي قبلها (زي قراءة كتاب من الصفحة الأولى للأخيرة).',
                 code: 'name = input("Enter your name: ")\nprint("Hello", name)',
               },
               {
                 id: 'alg-2',
                 title: '٢. الخوارزميات الشرطية (Conditional)',
-                body: 'تعتمد على جملة الشرط `if / else` لتحديد المسار بناءً على الشرط (مثل فحص هل الرقم موجب أم سالب).',
+                body: 'بتعتمد على جملة الشرط `if / else` لتحديد المسار حسب الشرط (زي فحص هل الرقم موجب أم سالب).',
                 code: 'num = int(input("Enter a number: "))\nif num > 0:\n    print("Positive number")\nelse:\n    print("Negative number")',
               },
               {
                 id: 'alg-3',
                 title: '٣. الخوارزميات التكرارية (Loop)',
-                body: 'تكرر نفس العملية عددًا محددًا من المرات لتوفير الوقت والجهد بدل تكرار السطور (مثل طباعة Hello خمس مرات).',
+                body: 'بتكرر نفس العملية عدد محدد من المرات عشان توفر الوقت والمجهود بدل تكرار السطور (زي طباعة Hello خمس مرات).',
                 code: 'for i in range(5):\n    print("Hello")',
               },
               {
                 id: 'alg-4',
                 title: '٤. خوارزميات البحث (Search)',
-                body: 'تُستخدم للعثور على عنصر معين داخل قائمة بيانات (مثل البحث عن الرقم 10 وطباعة Found عند وجوده).',
+                body: 'بتُستخدم عشان نلاقي عنصر معين جوه قائمة بيانات (زي البحث عن الرقم 10 وطباعة Found لو لقيناه).',
                 code: 'numbers = [3, 7, 10, 5]\ntarget = 10\nfor num in numbers:\n    if num == target:\n        print("Found")',
               },
               {
                 id: 'alg-5',
                 title: '٥. خوارزميات الترتيب (Sorting)',
-                body: 'ترتّب البيانات تصاعديًا من الأصغر للأكبر (أو أبجديًا) بمقارنة العناصر وتبديلها، وفي Python تساعدنا دالة `sort()`.',
+                body: 'بترتّب البيانات تصاعديًا من الأصغر للأكبر (أو أبجديًا) بمقارنة العناصر وتبديلها، وفي Python بتساعدنا دالة `sort()`.',
                 code: 'nums = [8, 3, 10, 1]\nnums.sort()\nprint(nums)  # [1, 3, 8, 10]',
               },
             ],
@@ -92,7 +92,7 @@ export const LESSON_2_2: LessonPack = {
           id: '2.2-match',
           type: 'matchingPairs',
           data: {
-            prompt: 'طابق كل مثال من أمثلة الكتاب بنوع الخوارزمية الذي يمثله:',
+            prompt: 'طابق كل مثال من أمثلة الكتاب بنوع الخوارزمية اللي بيمثله:',
             pairs: [
               { id: 'm1', left: 'إدخال الاسم ثم طباعته مسبوقًا بكلمة Hello', right: 'الخوارزمية التسلسلية' },
               { id: 'm2', left: 'إدخال رقم وتحديد هل هو موجب أم سالب', right: 'الخوارزمية الشرطية' },
@@ -102,7 +102,7 @@ export const LESSON_2_2: LessonPack = {
             ],
             feedback: {
               correct: 'عاش! ربطت الأنواع الخمسة بأمثلتها الرسمية كلها صح.',
-              incorrect: 'راجع التمييز بين التكرار (طباعة مرات متتالية) والبحث (إيجاد 10) والترتيب (أصغر لأكبر).',
+              incorrect: 'راجع الفرق بين التكرار (طباعة مرات متتالية) والبحث (إيجاد 10) والترتيب (أصغر لأكبر).',
             },
           },
         },
@@ -110,7 +110,7 @@ export const LESSON_2_2: LessonPack = {
     },
     {
       id: '2.2-c4',
-      title: 'تطبيق Python: البحث داخل قائمة',
+      title: 'تطبيق Python: البحث داخل قائمة وترتيبها',
       role: 'tryIt',
       requireInteraction: true,
       blocks: [
@@ -126,7 +126,7 @@ export const LESSON_2_2: LessonPack = {
             solutionCode:
               'numbers = [3, 7, 10, 5]\nfor num in numbers:\n    if num == 10:\n        print("Found")\n\nnumbers.sort()\nprint(numbers)',
             checks: [
-              { id: 'found', label: 'طباعة Found عند وجود 10', stdin: [], contains: ['Found', '[3, 5, 7, 10]'] },
+              { id: 'found', label: 'طباعة Found عند وجود 10 ثم القائمة مرتبة', stdin: [], contains: ['Found', '[3, 5, 7, 10]'] },
             ],
             hint: 'جوه الحلقة اكتب if num == 10: وتحتها بمسافة بادئة print("Found").',
           },
@@ -144,7 +144,7 @@ export const LESSON_2_2: LessonPack = {
           data: {
             variant: 'warning',
             title: 'خطأ شائع: وظيفة sort() في Python',
-            body: 'الدالة `sort()` في Python تُستخدم لترتيب القائمة (تصاعديًا من الأصغر للأكبر افتراضيًا)، مش لعكس القائمة بدون ترتيب — اللي بيعكس الترتيب هو `reverse()`.',
+            body: 'الدالة `sort()` في Python بتستخدم لترتيب القائمة (تصاعديًا من الأصغر للأكبر افتراضيًا)، مش لعكس القائمة بدون ترتيب — اللي بيعكس الترتيب هو `reverse()`.',
           },
         },
       ],
@@ -164,10 +164,10 @@ export const LESSON_2_2: LessonPack = {
             scored: false,
             sourceTag: 'كتاب الوزارة ص ٢٩',
             options: [
-              { id: 'a', text: 'reverse()', isCorrect: false, feedback: 'reverse() تعكس الترتيب الحالي فقط.' },
-              { id: 'b', text: 'find()', isCorrect: false, feedback: 'ليست دالة ترتيب قائمة.' },
-              { id: 'c', text: 'sort()', isCorrect: true, feedback: 'صح! sort() ترتب عناصر القائمة.' },
-              { id: 'd', text: 'search()', isCorrect: false, feedback: 'لا توجد دالة بهذا الاسم لترتيب القائمة.' },
+              { id: 'a', text: 'reverse()', isCorrect: false, feedback: 'reverse() بتعكس الترتيب الحالي بس.' },
+              { id: 'b', text: 'find()', isCorrect: false, feedback: 'مش دالة ترتيب قائمة.' },
+              { id: 'c', text: 'sort()', isCorrect: true, feedback: 'صح! sort() بترتب عناصر القائمة.' },
+              { id: 'd', text: 'search()', isCorrect: false, feedback: 'ما فيش دالة بالاسم ده لترتيب القائمة.' },
             ],
             explanation: 'دالة sort() ترتب عناصر القائمة تصاعديًا من الأصغر للأكبر.',
           },
@@ -181,10 +181,10 @@ export const LESSON_2_2: LessonPack = {
             scored: false,
             sourceTag: 'كتاب الوزارة ص ٢٨',
             options: [
-              { id: 'a', text: 'طباعة Hello مرة واحدة', isCorrect: false, feedback: 'range(3) تدور 3 مرات.' },
+              { id: 'a', text: 'طباعة Hello مرة واحدة', isCorrect: false, feedback: 'range(3) بتلف 3 مرات.' },
               { id: 'b', text: 'طباعة Hello ثلاث مرات', isCorrect: true, feedback: 'ممتاز! 0، 1، 2 يعني 3 دورات.' },
-              { id: 'c', text: 'طباعة Hello خمس مرات', isCorrect: false, feedback: 'دي لـ range(5).' },
-              { id: 'd', text: 'حدوث خطأ في البرنامج', isCorrect: false, feedback: 'الكود صحيح نحويًا.' },
+              { id: 'c', text: 'طباعة Hello خمس مرات', isCorrect: false, feedback: 'دي لو range(5).' },
+              { id: 'd', text: 'حدوث خطأ في البرنامج', isCorrect: false, feedback: 'الكود سليم نحويًا.' },
             ],
             explanation: 'range(3) تولد 0 و1 و2، فتُطبع Hello ثلاث مرات.',
           },
@@ -214,8 +214,47 @@ export const LESSON_2_2: LessonPack = {
     {
       id: 'nb-2-2-summary',
       type: 'summary',
-      title: 'ملخص سريع',
-      content: 'الخوارزميات التقليدية تنقسم إلى ٥ أنواع أساسية تغطي التنفيذ المتتابع، القرار، التكرار، البحث، والترتيب.',
+      title: 'ملخص سريع (NotebookLM)',
+      content: 'كل خوارزميات البرمجة الكلاسيكية بترجع لواحد من ٥ أنواع أساسية بتحل بيهم معظم المسائل.',
+      bullets: [
+        'التسلسلية: خطوة ورا خطوة بالترتيب.',
+        'الشرطية: اختيار مسار بـ if / else.',
+        'التكرارية: إعادة الأوامر بـ for / while.',
+        'البحث: إيجاد عنصر محدد في قائمة؛ والترتيب: تنظيمها بـ sort().',
+      ],
+    },
+    {
+      id: 'nb-2-2-faq',
+      type: 'faq',
+      title: 'أسئلة شائعة',
+      items: [
+        {
+          id: 'faq-2-2-1',
+          question: 'ليه الترتيب (Sorting) مهم قبل البحث أحيانًا؟',
+          answer: 'لأن البيانات المرتبة (تصاعديًا أو أبجديًا) بتخلي الوصول لأي معلومة أسرع وأسهل بكثير زي دليل التليفون.',
+        },
+        {
+          id: 'faq-2-2-2',
+          question: 'إيه الفرق بين sort() و reverse() في Python؟',
+          answer: 'sort() بترتب الأرقام من الصغير للكبير (أو الحروف أبجديًا)، أما reverse() فبتعكس الترتيب الحالي بس من غير مقارنة قيم.',
+        },
+      ],
+    },
+    {
+      id: 'nb-2-2-mindmap',
+      type: 'mindmap',
+      title: 'خريطة ذهنية',
+      root: {
+        id: 'mm-2-2',
+        label: 'الخوارزميات التقليدية الخمسة',
+        children: [
+          { id: 'mm-2-2-1', label: '١. التسلسلية (Sequential)' },
+          { id: 'mm-2-2-2', label: '٢. الشرطية (if / else)' },
+          { id: 'mm-2-2-3', label: '٣. التكرارية (for / range)' },
+          { id: 'mm-2-2-4', label: '٤. البحث (Search)' },
+          { id: 'mm-2-2-5', label: '٥. الترتيب (Sorting / sort())' },
+        ],
+      },
     },
     {
       id: 'nb-2-2-glossary',
@@ -224,11 +263,13 @@ export const LESSON_2_2: LessonPack = {
       terms: [
         { id: 'g22-1', termAr: 'خوارزمية البحث', termEn: 'Search Algorithm', definition: 'خطوات للعثور على عنصر محدد داخل مجموعة بيانات.' },
         { id: 'g22-2', termAr: 'خوارزمية الترتيب', termEn: 'Sorting Algorithm', definition: 'خطوات لتنظيم البيانات تصاعديًا أو تنازليًا.' },
+        { id: 'g22-3', termAr: 'الخوارزمية التكرارية', termEn: 'Loop Algorithm', definition: 'خوارزمية تعيد تنفيذ مجموعة أوامر لعدد محدد من المرات أو حتى تحقق شرط.' },
       ],
     },
   ],
   sources: [
     { id: 's22-tb', kind: 'textbook', label: 'كتاب الوزارة — ICT الصف الثالث الإعدادي', detail: 'أنواع الخوارزميات التقليدية الخمسة', pages: 'ص 20–24' },
+    { id: 's22-nb', kind: 'notebooklm', label: 'مصادر NotebookLM للدرس ٢.٢', detail: 'ملخص الأنواع الخمسة وأكواد البحث والترتيب' },
   ],
   nextStep: {
     kind: 'lesson',

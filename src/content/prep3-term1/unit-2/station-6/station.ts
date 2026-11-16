@@ -14,7 +14,7 @@ export const STATION_6_PACK: StationPack = {
     'ميّز بين البرمجة التقليدية والتعلم الآلي، وافهم معادلة النموذج الخطي y = wx + b، وطبّق دالة predict_grade(x) بلغة Python.',
   textbookPages: '65–75',
   access: 'free',
-  status: 'awaiting_pack',
+  status: 'ready',
   objectives: [
     'يميز بين البرمجة التقليدية والتعلم الآلي.',
     'يناقش مفهوم التنبؤ باستخدام البيانات والنمط (Pattern).',

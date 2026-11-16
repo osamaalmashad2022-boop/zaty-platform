@@ -8,9 +8,9 @@ export const LESSON_4_2: LessonPack = {
   title: 'القيمة المعادة ونطاق المتغيرات (return vs print & Scope)',
   subtitle: 'إمتى تطبع بس وإمتى ترجّع قيمة تحفظها وتبني عليها عمليات تانية؟',
   durationMin: 8,
-  contentVersion: 1,
+  contentVersion: 2,
   access: 'free',
-  status: 'draft',
+  status: 'ready',
   objectives: [
     'تفرّق بين الطباعة داخل الدالة بـ print() وإرجاع القيمة بـ return.',
     'تستقبل ناتج الدالة في متغير خارجي وتستخدمه في حسابات جديدة.',
@@ -56,9 +56,9 @@ export const LESSON_4_2: LessonPack = {
           id: '4.2-scope-code',
           type: 'codeView',
           data: {
-            title: 'نطاق المتغيرات المحلي (Local Scope)',
+            title: 'إعادة القيم ونطاق المتغيرات المحلي (Local Scope)',
             code: 'def multiply(a, b):\n    return a * b\n\nx = multiply(4, 5)   # 20\ny = multiply(2, 3)   # 6\nprint(x + y)         # 26',
-            caption: 'بفضل return قدرنا نجمع x + y؛ أما المتغير المعرّف جوه الدالة فقط فلا يراه الكود بالخارج.',
+            caption: 'بفضل return قدرنا نحفظ النواتج في x و y ونجمعهم؛ أما المتغير المعرّف جوه الدالة فقط فلا يراه الكود بالخارج.',
             runnable: true,
           },
         },
@@ -129,6 +129,23 @@ export const LESSON_4_2: LessonPack = {
             explanation: 'المتغير x محلي داخل الدالة test()، ولا يمكن الوصول إليه مباشرة من خارجها.',
           },
         },
+        {
+          id: '4.2-q2',
+          type: 'quizQuestion',
+          data: {
+            question: 'ماذا يحدث إذا استخدمنا `print(result)` داخل الدالة بدلًا من `return result` وحاولنا حفظ ناتج استدعائها في متغير؟',
+            multiple: false,
+            scored: false,
+            sourceTag: 'كتاب الوزارة ص ٤٦–٤٧',
+            options: [
+              { id: 'a', text: 'تُحفظ القيمة تلقائيًا في المتغير', isCorrect: false, feedback: 'print() لا تُرجع قيمة للمتغير.' },
+              { id: 'b', text: 'يستقبل المتغير القيمة الفارغة None ولا يمكن استخدامه في حسابات أخرى', isCorrect: true, feedback: 'صح! لازم return عشان المتغير ياخد القيمة المعادة.' },
+              { id: 'c', text: 'يتوقف Python فورًا عند print', isCorrect: false, feedback: 'لا يتوقف عند الطباعة، لكنه يرجع None.' },
+              { id: 'd', text: 'تضاعف القيمة تلقائيًا', isCorrect: false, feedback: 'غير صحيح.' },
+            ],
+            explanation: 'print() تعرض على الشاشة فقط وترجع None، أما return فتعيد القيمة لتُخزّن وتُستخدم.',
+          },
+        },
       ],
     },
     {
@@ -142,7 +159,7 @@ export const LESSON_4_2: LessonPack = {
           data: {
             heading: 'الخلاصة في فقرة',
             calloutStyle: 'summary',
-            body: '`return` بترجع النتيجة من الدالة علشان نخزنها في متغير ونكمّل شغل عليها (عكس `print()` اللي بتعرض على الشاشة وبس). وكمان المتغيرات المعرّفة جوه الدالة لها نطاق محلي ما بيتشافش برّاها. في الدرس التالت هنطبّق ده على دالة مساحة الدائرة!',
+            body: '`return` بترجع النتيجة من الدالة علشان نخزنها في متغير ونكمّل شغل عليها (عكس `print()` اللي بتعرض على الشاشة وبس). وكمان المتغيرات المعرّفة جوه الدالة ليها نطاق محلي ما بيتشافش برّاها. في الدرس التالت هنطبّق ده على دالة مساحة الدائرة!',
           },
         },
       ],
@@ -153,8 +170,54 @@ export const LESSON_4_2: LessonPack = {
     {
       id: 'nb-4-2-summary',
       type: 'summary',
-      title: 'ملخص سريع',
-      content: 'return ترجع القيمة للمتغير المستدعي، والمتغيرات المحلية داخل الدالة لا تُرى من خارجها.',
+      title: 'ملخص سريع (NotebookLM)',
+      content: 'فهم return والنطاق المحلي يخليك تبني دوال مترابطة تتبادل النتائج بوضوح.',
+      bullets: [
+        'return تنهي الدالة وترجع النتيجة لمكان الاستدعاء.',
+        'print() تعرض النص على الشاشة فقط وترجع None.',
+        'أي متغير يُنشأ داخل الدالة محلي (Local) ولا يُرى خارجها.',
+      ],
+    },
+    {
+      id: 'nb-4-2-faq',
+      type: 'faq',
+      title: 'أسئلة شائعة',
+      items: [
+        {
+          id: 'faq-4-2-1',
+          question: 'إزاي آخد قيمة متغير من جوه الدالة وأستخدمه برّاها؟',
+          answer: 'لازم الدالة ترجّعه بـ return، وإنت بره الدالة تحفظه في متغير زي val = my_func().',
+        },
+        {
+          id: 'faq-4-2-2',
+          question: 'إيه اللي بيحصل لأي سطر مكتوب بعد return جوه الدالة؟',
+          answer: 'الدالة بتقف وتخرج فورًا عند return، فأي سطر بعده في نفس المسار مش بيتنفذ!',
+        },
+      ],
+    },
+    {
+      id: 'nb-4-2-mindmap',
+      type: 'mindmap',
+      title: 'خريطة ذهنية',
+      root: {
+        id: 'mm-4-2',
+        label: 'مخرجات الدالة ونطاقها',
+        children: [
+          {
+            id: 'mm-4-2-ret',
+            label: 'return مقابل print()',
+            children: [
+              { id: 'mm-4-2-r1', label: 'return: ترجع قيمة للحفظ والاستخدام' },
+              { id: 'mm-4-2-r2', label: 'print(): عرض على الشاشة فقط' },
+            ],
+          },
+          {
+            id: 'mm-4-2-scp',
+            label: 'Local Scope',
+            children: [{ id: 'mm-4-2-s1', label: 'المتغير الداخلي غير مرئي بالخارج (NameError)' }],
+          },
+        ],
+      },
     },
     {
       id: 'nb-4-2-glossary',
@@ -163,11 +226,13 @@ export const LESSON_4_2: LessonPack = {
       terms: [
         { id: 'g42-1', termAr: 'القيمة المعادة', termEn: 'return', definition: 'كلمة مفتاحية تُعيد ناتج الدالة إلى موضع استدعائها لاستخدامه لاحقًا.' },
         { id: 'g42-2', termAr: 'النطاق المحلي', termEn: 'Local Scope', definition: 'حيز الدالة الذي تنتمي إليه المتغيرات المعرفة داخلها فقط.' },
+        { id: 'g42-3', termAr: 'خطأ اسم غير معرف', termEn: 'NameError', definition: 'خطأ يظهر عند محاولة استخدام متغير غير معرف في النطاق الحالي.' },
       ],
     },
   ],
   sources: [
     { id: 's42-tb', kind: 'textbook', label: 'كتاب الوزارة — ICT الصف الثالث الإعدادي', detail: 'return مقابل print ونطاق المتغيرات', pages: 'ص 46–47' },
+    { id: 's42-nb', kind: 'notebooklm', label: 'مصادر NotebookLM للدرس ٤.٢', detail: 'تتبع return والنطاق المحلي Local Scope' },
   ],
   nextStep: {
     kind: 'lesson',

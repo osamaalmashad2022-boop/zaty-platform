@@ -14,7 +14,7 @@ export const STATION_4_PACK: StationPack = {
     'نظّم كودك في دوال قابلة لإعادة الاستخدام، وفرّق بين Parameters و Arguments و return و print والنطاق المحلي.',
   textbookPages: '43–52',
   access: 'free',
-  status: 'draft',
+  status: 'ready',
   objectives: [
     'يشرح معنى الدالة (Function) ويعرّفها بكلمة def.',
     'يميز بين Parameters و Arguments، وبين print() و return، والنطاق المحلي.',

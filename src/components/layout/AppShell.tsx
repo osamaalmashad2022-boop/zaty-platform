@@ -3,7 +3,18 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Layers, ClipboardCheck, Trophy, WifiOff, Code2, ArrowRight } from 'lucide-react';
+import {
+  Home,
+  Layers,
+  ClipboardCheck,
+  Trophy,
+  WifiOff,
+  Code2,
+  ArrowRight,
+  Cloud,
+  Crown,
+} from 'lucide-react';
+import { fetchCurrentUser, type CloudUser } from '@/lib/sync/cloudSync';
 
 interface NavItem {
   href: string;
@@ -49,6 +60,7 @@ export interface AppShellProps {
 export function AppShell({ children, title, backHref, backLabel }: AppShellProps) {
   const pathname = usePathname() || '/';
   const [isOffline, setIsOffline] = useState(false);
+  const [cloudUser, setCloudUser] = useState<CloudUser | null>(null);
 
   // Focused full-screen mode inside the lesson player hides the bottom nav and global header
   // so the learner gets clean RTL card navigation and thumb-friendly Prev/Next controls.
@@ -56,12 +68,27 @@ export function AppShell({ children, title, backHref, backLabel }: AppShellProps
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
+    let cancelled = false;
 
     const updateStatus = () => setIsOffline(!window.navigator.onLine);
     updateStatus();
 
+    const refreshUser = () => {
+      fetchCurrentUser()
+        .then((user) => {
+          if (!cancelled) {
+            setCloudUser((prev) =>
+              prev?.id === user?.id && prev?.tier === user?.tier ? prev : user,
+            );
+          }
+        })
+        .catch(() => undefined);
+    };
+    refreshUser();
+
     window.addEventListener('online', updateStatus);
     window.addEventListener('offline', updateStatus);
+    window.addEventListener('sl-auth-changed', refreshUser);
 
     if ('serviceWorker' in window.navigator) {
       window.navigator.serviceWorker
@@ -76,8 +103,10 @@ export function AppShell({ children, title, backHref, backLabel }: AppShellProps
     }
 
     return () => {
+      cancelled = true;
       window.removeEventListener('online', updateStatus);
       window.removeEventListener('offline', updateStatus);
+      window.removeEventListener('sl-auth-changed', refreshUser);
     };
   }, []);
 
@@ -124,7 +153,7 @@ export function AppShell({ children, title, backHref, backLabel }: AppShellProps
                   <span className="text-base sm:text-lg font-bold text-[#163A3A]">
                     {title ?? 'تعلّم ICT'}
                   </span>
-                  <span className="text-xs text-[#3B5A58]/80">
+                  <span className="text-xs text-[#3B5A58]">
                     ٣ إعدادي · الترم الأول
                   </span>
                 </span>
@@ -154,8 +183,27 @@ export function AppShell({ children, title, backHref, backLabel }: AppShellProps
             })}
           </nav>
 
-          {/* Offline status pill */}
-          <div className="flex items-center gap-2">
+          {/* Cloud / Tier & Offline status pills */}
+          <div className="flex items-center gap-2 shrink-0">
+            {cloudUser && (
+              <Link
+                href="/progress"
+                data-testid="shell-tier-pill"
+                className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-[#006E5A]/30 bg-[#E5F1EE] text-[#006E5A] px-3 py-1 text-xs font-bold hover:border-[#006E5A] whitespace-nowrap"
+              >
+                {cloudUser.tier === 'premium' ? (
+                  <>
+                    <Crown className="w-3.5 h-3.5 shrink-0" />
+                    <span>النسخة الكاملة ★</span>
+                  </>
+                ) : (
+                  <>
+                    <Cloud className="w-3.5 h-3.5 shrink-0" />
+                    <span>مزامنة سحابية</span>
+                  </>
+                )}
+              </Link>
+            )}
             {isOffline ? (
               <span
                 role="status"

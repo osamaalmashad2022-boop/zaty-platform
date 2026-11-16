@@ -135,17 +135,60 @@ describe('ICT Prep 3 Term 1 curriculum integrity & importer', () => {
     }
   });
 
-  it('marks Unit 2 Stations 6-9 as awaiting_pack with structured lessons, flashcards, and quizzes', () => {
-    for (const stationId of ['station-6', 'station-7', 'station-8', 'station-9']) {
-      const station = getStationById(stationId)!;
-      expect(station.status).toBe('awaiting_pack');
+  it('marks all 9 stations and all 29 micro-lessons (1.1..9.3) as ready with 4 rich NotebookLM additionalSources and 10-part template cards', () => {
+    const stations = getAllStations();
+    const lessons = getAllLessons();
+    expect(stations).toHaveLength(9);
+    expect(lessons).toHaveLength(29);
+
+    for (const station of stations) {
+      expect(station.status, `Station ${station.id} must be ready`).toBe('ready');
       expect(station.lessons.length).toBeGreaterThanOrEqual(2);
       expect(station.flashcards.length).toBeGreaterThanOrEqual(3);
-      for (const lesson of station.lessons) {
-        expect(lesson.status).toBe('awaiting_pack');
-        expect(lesson.cards[0]?.blocks[0]?.type).toBe('heroHook');
-      }
     }
+
+    for (const lesson of lessons) {
+      expect(lesson.status, `Lesson ${lesson.id} must be ready`).toBe('ready');
+      expect(lesson.cards[0]?.blocks[0]?.type, `Lesson ${lesson.id} must start with heroHook`).toBe('heroHook');
+      expect(lesson.cards.some((c) => c.role === 'summary')).toBe(true);
+      expect(lesson.cards.some((c) => c.role === 'warning')).toBe(true);
+      expect(lesson.cards.some((c) => c.role === 'quickCheck')).toBe(true);
+      expect(lesson.objectives.length).toBeGreaterThanOrEqual(2);
+      expect(lesson.sources.length).toBeGreaterThanOrEqual(2);
+      expect(lesson.summary.trim().length).toBeGreaterThan(10);
+
+      expect(
+        lesson.additionalSources.length,
+        `Lesson ${lesson.id} must have at least 4 additionalSources`,
+      ).toBeGreaterThanOrEqual(4);
+      const sourceTypes = new Set(lesson.additionalSources.map((s) => s.type));
+      for (const expectedType of ['summary', 'faq', 'mindmap', 'glossary'] as const) {
+        expect(sourceTypes.has(expectedType), `Lesson ${lesson.id} missing additionalSource type ${expectedType}`).toBe(true);
+      }
+
+      const serialized = JSON.stringify(lesson);
+      expect(serialized, `Placeholder text in lesson ${lesson.id}`).not.toMatch(/مسودة هيكلية|Awaiting Pack/);
+    }
+
+    // Verify Unit 2 Stations 6-9 include rich interactive blocks and Station 6 includes predict_grade codeLabs
+    for (const stationId of ['station-6', 'station-7', 'station-8', 'station-9']) {
+      const station = getStationById(stationId)!;
+      const blockTypes = new Set(
+        station.lessons.flatMap((l) => l.cards.flatMap((c) => c.blocks.map((b) => b.type))),
+      );
+      const hasInteractive =
+        blockTypes.has('sortingBuckets') ||
+        blockTypes.has('matchingPairs') ||
+        blockTypes.has('orderFlowBuilder') ||
+        blockTypes.has('codeLab');
+      expect(hasInteractive, `${stationId} must contain interactive blocks`).toBe(true);
+    }
+
+    const s6CodeLabs = getStationById('station-6')!
+      .lessons.flatMap((l) => l.cards.flatMap((c) => c.blocks))
+      .filter((b) => b.type === 'codeLab');
+    expect(s6CodeLabs.length).toBeGreaterThanOrEqual(2);
+    expect(s6CodeLabs.some((b) => b.type === 'codeLab' && b.data.solutionCode.includes('predict_grade'))).toBe(true);
   });
 
   it('maps every QuizItem and FlashcardItem microLessonId and lookup helper accurately', () => {

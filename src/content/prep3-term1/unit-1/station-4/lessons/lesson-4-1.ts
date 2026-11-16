@@ -8,9 +8,9 @@ export const LESSON_4_1: LessonPack = {
   title: 'تعريف الدالة واستدعاؤها بالمعاملات (def & Parameters)',
   subtitle: 'اكتب الكود مرة واحدة وناديه في أي وقت بقيم مختلفة',
   durationMin: 8,
-  contentVersion: 1,
+  contentVersion: 2,
   access: 'free',
-  status: 'draft',
+  status: 'ready',
   objectives: [
     'تشرح معنى الدالة (Function) وفائدتها في تنظيم الكود ومنع التكرار.',
     'تعرّف دالة جديدة باستخدام الكلمة المفتاحية def وتمرّر لها معاملات (Parameters).',
@@ -30,7 +30,7 @@ export const LESSON_4_1: LessonPack = {
             durationMin: 8,
             stationLabel: 'المحطة ٤ · الدرس ١ من ٣',
             goal: 'تعرّف دالة بـ def وتمرر لها قيم عند استدعائها بدون تكرار الكود.',
-            hook: 'زي زرار في الآلة الحاسبة: بتدوس عليه فيقوم بمهمة جاهزة ويرجعلك النتيجة! في البرمجة اسمها الدالة (Function) — بتكتبها مرة وتناديها مية مرة.',
+            hook: 'زي زرار في الآلة الحاسبة: بتدوس عليه فيقوم بمهمة جاهزة ويرجعلك النتيجة! في البرمجة اسمها الدالة (`Function`) — بتكتبها مرة واحدة وتناديها مية مرة بأرقام مختلفة.',
           },
         },
       ],
@@ -45,7 +45,7 @@ export const LESSON_4_1: LessonPack = {
           type: 'richText',
           data: {
             heading: 'الدالة (Function) والفرق بين Parameters و Arguments',
-            body: '• **الدالة (Function):** مجموعة تعليمات برمجية تُكتب مرة واحدة باستخدام `def` وتُستدعى عدة مرات لتنظيم البرنامج ومنع التكرار.\n• **المعاملات (Parameters):** أسماء المتغيرات داخل الأقواس عند تعريف الدالة (مثل `a, b`).\n• **الوسائط (Arguments):** القيم الفعلية التي نمررها للدالة عند استدعائها (مثل `3, 5`).',
+            body: '• **الدالة (Function):** مجموعة تعليمات برمجية بتتكتب مرة واحدة باستخدام `def` ونستدعيها وقت ما نحتاج لتنظيم البرنامج ومنع التكرار وتسهيل الصيانة.\n• **المعاملات (Parameters):** أسماء المتغيرات جوه الأقواس عند تعريف الدالة (مثل `a, b`).\n• **الوسائط / المعطيات (Arguments):** القيم الفعلية اللي بنبعتها للدالة وقت استدعائها (مثل `3, 5`).',
           },
         },
         {
@@ -54,7 +54,7 @@ export const LESSON_4_1: LessonPack = {
           data: {
             title: 'مثال الكتاب: دالة جمع رقمين (ص ٤٥)',
             code: 'def add_numbers(a, b):\n    result = a + b\n    print(result)\n\nadd_numbers(3, 5)\nadd_numbers(10, 20)',
-            caption: 'a و b هما Parameters، بينما 3 و 5 هما Arguments.',
+            caption: 'a و b هما Parameters في التعريف، بينما 3 و 5 هما Arguments عند الاستدعاء.',
             runnable: true,
           },
         },
@@ -81,6 +81,21 @@ export const LESSON_4_1: LessonPack = {
             hint: 'اكتب greet("Ahmed") من غير مسافة بادئة في بداية السطر.',
           },
         },
+        {
+          id: '4.1-mul-lab',
+          type: 'codeLab',
+          data: {
+            mode: 'freeRun',
+            title: 'تحدي مستقل: دالة ضرب رقمين',
+            prompt: 'اكتب دالة اسمها `multiply(a, b)` تطبع حاصل ضرب `a * b`، ثم استدعِها بالقيم `4, 6` لتطبع `24`.',
+            starterCode: '# عرّف الدالة multiply(a, b) ثم استدعِها بـ 4 و 6\n',
+            solutionCode: 'def multiply(a, b):\n    print(a * b)\n\nmultiply(4, 6)',
+            checks: [
+              { id: 'mul-24', label: 'multiply(4, 6) تطبع 24', stdin: [], expectedOutputRegex: '(^|\\D)24(\\D|$)' },
+            ],
+            hint: 'اكتب def multiply(a, b): وتحتها بمسافة بادئة print(a * b) وبعدين بره الدالة multiply(4, 6).',
+          },
+        },
       ],
     },
     {
@@ -94,7 +109,7 @@ export const LESSON_4_1: LessonPack = {
           data: {
             variant: 'warning',
             title: 'عدد القيم عند الاستدعاء لازم يساوي عدد المعاملات!',
-            body: 'لو عرّفت الدالة بمعاملين `def add(a, b):` ثم استدعيتها بقيمة واحدة `add(5)`، بايثون هيطلع خطأ `TypeError` بسبب نقص قيمة للمعامل الثاني!',
+            body: 'لو عرّفت الدالة بمعاملين `def add(a, b):` وبعدين استدعيتها بقيمة واحدة `add(5)`، بايثون هيطلع خطأ `TypeError` عشان ناقص قيمة للمعامل التاني! وكمان ما تنساش تستدعي الدالة، لأن تعريف الدالة لوحده مش بيشغلها.',
           },
         },
       ],
@@ -122,6 +137,23 @@ export const LESSON_4_1: LessonPack = {
             explanation: 'المعاملات Parameters في التعريف، والوسائط Arguments عند الاستدعاء.',
           },
         },
+        {
+          id: '4.1-q2',
+          type: 'quizQuestion',
+          data: {
+            question: 'أي كلمة مفتاحية نستخدمها في Python لتعريف دالة جديدة؟',
+            multiple: false,
+            scored: false,
+            sourceTag: 'كتاب الوزارة ص ٤٨',
+            options: [
+              { id: 'a', text: 'function', isCorrect: false, feedback: 'دي مش الكلمة المستخدمة في Python.' },
+              { id: 'b', text: 'def', isCorrect: true, feedback: 'صح! def هي اختصار define وتُستخدم لتعريف أي دالة في Python.' },
+              { id: 'c', text: 'func', isCorrect: false, feedback: 'غير صحيح في Python.' },
+              { id: 'd', text: 'call', isCorrect: false, feedback: 'غير صحيح.' },
+            ],
+            explanation: 'تُعرَّف الدالة في Python باستخدام الكلمة المفتاحية def متبوعة باسم الدالة والأقواس والنقطتين.',
+          },
+        },
       ],
     },
     {
@@ -135,7 +167,7 @@ export const LESSON_4_1: LessonPack = {
           data: {
             heading: 'الخلاصة في فقرة',
             calloutStyle: 'summary',
-            body: 'الدالة تُعرّف بـ `def` وتقبل معاملات `Parameters` في التعريف وتستلم قيمًا `Arguments` عند الاستدعاء، وده بيخلي الكود منظم وقابل لإعادة الاستخدام. في الدرس الجاي هنعرف الفرق الحاسم بين `print` و `return` ونطاق المتغير المحلي!',
+            body: 'الدالة بتتعرّف بـ `def` وبتقبل معاملات `Parameters` في التعريف وبتستلم قيمًا `Arguments` عند الاستدعاء، وده بيخلي الكود منظم وقابل لإعادة الاستخدام من غير تكرار. في الدرس الجاي هنعرف الفرق الحاسم بين `print` و `return` ونطاق المتغير المحلي!',
           },
         },
       ],
@@ -146,8 +178,45 @@ export const LESSON_4_1: LessonPack = {
     {
       id: 'nb-4-1-summary',
       type: 'summary',
-      title: 'ملخص سريع',
-      content: 'def لتعريف الدالة، والـ Parameters هي المدخلات الرمزية في التعريف، والـ Arguments هي القيم الفعلية عند الاستدعاء.',
+      title: 'ملخص سريع (NotebookLM)',
+      content: 'الدوال هي أساس كتابة كود نظيف وقابل لإعادة الاستخدام بدون نسخ نفس السطور.',
+      bullets: [
+        'def function_name(parameters): لتعريف الدالة.',
+        'Parameters هي المتغيرات الرمزية جوه تعريف الدالة.',
+        'Arguments هي القيم الفعلية اللي بنمررها وقت الاستدعاء.',
+        'الدالة ما بتتنفذش إلا لما نستدعيها باسمها وأقواسها.',
+      ],
+    },
+    {
+      id: 'nb-4-1-faq',
+      type: 'faq',
+      title: 'أسئلة شائعة',
+      items: [
+        {
+          id: 'faq-4-1-1',
+          question: 'إيه الفرق بين Parameters و Arguments؟',
+          answer: 'Parameters هي الأسماء المكتوبة جنب def (زي a و b)، أما Arguments فهي الأرقام أو النصوص الفعلية اللي بتبعتها وقت النداء زي add_numbers(3, 5).',
+        },
+        {
+          id: 'faq-4-1-2',
+          question: 'ينفع أعرف دالة من غير استدعاء وأتوقعها تطبع لوحدها؟',
+          answer: 'لا! def بتجهز الدالة بس في الذاكرة، ولازم تستدعيها باسمها عشان تشتغل.',
+        },
+      ],
+    },
+    {
+      id: 'nb-4-1-mindmap',
+      type: 'mindmap',
+      title: 'خريطة ذهنية',
+      root: {
+        id: 'mm-4-1',
+        label: 'الدوال (Functions)',
+        children: [
+          { id: 'mm-4-1-def', label: 'التعريف: def name(params):' },
+          { id: 'mm-4-1-call', label: 'الاستدعاء: name(args)' },
+          { id: 'mm-4-1-why', label: 'الفائدة: منع التكرار وسهولة الصيانة' },
+        ],
+      },
     },
     {
       id: 'nb-4-1-glossary',
@@ -155,12 +224,14 @@ export const LESSON_4_1: LessonPack = {
       title: 'أهم المصطلحات',
       terms: [
         { id: 'g41-1', termAr: 'الدالة', termEn: 'Function (def)', definition: 'كتلة تعليمات برمجية تُكتب مرة واحدة وتُستدعى عند الحاجة.' },
-        { id: 'g41-2', termAr: 'المعاملات والوسائط', termEn: 'Parameters vs Arguments', definition: 'Parameters في تعريف الدالة، و Arguments هي القيم الممررة عند استدعائها.' },
+        { id: 'g41-2', termAr: 'المعاملات', termEn: 'Parameters', definition: 'المتغيرات المحددة داخل قوسي الدالة عند تعريفها لتمثيل المدخلات.' },
+        { id: 'g41-3', termAr: 'الوسائط / المعطيات', termEn: 'Arguments', definition: 'القيم الفعلية الممررة للدالة عند استدعائها.' },
       ],
     },
   ],
   sources: [
     { id: 's41-tb', kind: 'textbook', label: 'كتاب الوزارة — ICT الصف الثالث الإعدادي', detail: 'تعريف الدوال والمعاملات', pages: 'ص 43–45' },
+    { id: 's41-nb', kind: 'notebooklm', label: 'مصادر NotebookLM للدرس ٤.١', detail: 'الفرق بين Parameters و Arguments وبناء الدوال' },
   ],
   nextStep: {
     kind: 'lesson',
