@@ -189,7 +189,7 @@ export function AppShell({ children, title, backHref, backLabel }: AppShellProps
               <Link
                 href="/progress"
                 data-testid="shell-tier-pill"
-                className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-[#006E5A]/30 bg-[#E5F1EE] text-[#006E5A] px-3 py-1 text-xs font-bold hover:border-[#006E5A] whitespace-nowrap"
+                className="inline-flex items-center gap-1.5 rounded-full border border-[#006E5A]/30 bg-[#E5F1EE] text-[#006E5A] px-2.5 sm:px-3 py-1 text-xs font-bold hover:border-[#006E5A] whitespace-nowrap"
               >
                 {cloudUser.tier === 'premium' ? (
                   <>

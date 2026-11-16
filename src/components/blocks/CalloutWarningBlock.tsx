@@ -1,7 +1,7 @@
 import React from 'react';
 import { AlertTriangle, Lightbulb, Sparkles } from 'lucide-react';
 import type { CalloutWarningData } from '@/types/curriculum';
-import { FormattedText } from './FormattedText';
+import { FormattedText, InlineFormatted } from './FormattedText';
 
 export interface CalloutWarningBlockProps {
   data: CalloutWarningData;
@@ -20,7 +20,9 @@ export function CalloutWarningBlock({ data, className = '' }: CalloutWarningBloc
           <span>{data.title}</span>
         </div>
         {data.body && (
-          <p className="mt-2.5 text-[16px] leading-relaxed text-[#163A3A]">{data.body}</p>
+          <p className="mt-2.5 text-[16px] leading-relaxed text-[#163A3A]">
+            <InlineFormatted text={data.body} />
+          </p>
         )}
       </section>
     );

@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import type { AccordionBlockData } from '@/types/curriculum';
-import { FormattedText } from './FormattedText';
+import { FormattedText, InlineFormatted } from './FormattedText';
 import { PythonCodeLines } from './pythonHighlight';
 
 export interface AccordionBlockProps {
@@ -53,7 +53,9 @@ export function AccordionBlock({ data, onInteract, className = '' }: AccordionBl
                 onClick={() => toggleItem(item.id)}
                 className="flex min-h-[48px] w-full items-center justify-between gap-3 px-4 py-3.5 text-right font-bold text-[#163A3A] hover:bg-[#E5F1EE]/40"
               >
-                <span className="text-[16px] sm:text-[17px] leading-snug">{item.title}</span>
+                <span className="text-[16px] sm:text-[17px] leading-snug">
+                  <InlineFormatted text={item.title} />
+                </span>
                 <ChevronDown
                   className={`h-5 w-5 shrink-0 text-[#006E5A] transition-transform duration-200 ${
                     isOpen ? 'rotate-180' : ''

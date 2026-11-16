@@ -34,14 +34,14 @@ export function InlineFormatted({ text }: { text: string }) {
         if (part.startsWith('**') && part.endsWith('**') && part.length >= 4) {
           return (
             <strong key={idx} className="font-bold text-[#163A3A]">
-              {part.slice(2, -2)}
+              <InlineFormatted text={part.slice(2, -2)} />
             </strong>
           );
         }
         if (part.startsWith('*') && part.endsWith('*') && part.length >= 2) {
           return (
             <em key={idx} className="italic">
-              {part.slice(1, -1)}
+              <InlineFormatted text={part.slice(1, -1)} />
             </em>
           );
         }
