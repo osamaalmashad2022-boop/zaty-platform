@@ -26,6 +26,15 @@ export class IctDatabase extends Dexie {
       cachedLessons: '&lessonId, contentVersion, cachedAt',
       preferences: '&key, updatedAt',
     });
+
+    this.version(2).stores({
+      learningEvents:
+        '++id, &eventId, courseId, type, lessonId, stationId, cairoDate, createdAt',
+      frictionEvents:
+        '++id, &eventId, courseId, lessonId, stationId, blockId, blockType, createdAt',
+      cachedLessons: '&lessonId, courseId, contentVersion, cachedAt',
+      preferences: '&key, updatedAt',
+    });
   }
 }
 

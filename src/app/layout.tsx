@@ -18,16 +18,16 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'تعلّم ICT | الثالث الإعدادي — الترم الأول',
+  title: 'ذاتي (Zaty) | منصتك للتعلّم الذاتي التفاعلي',
   description:
-    'منصة تعلّم ذاتي عربية للموبايل لمادة الكمبيوتر وتكنولوجيا المعلومات (3 إعدادي — الترم الأول): Python والذكاء الاصطناعي والأمن السيبراني بدون إنترنت.',
+    'منصة ذاتي للتعلّم الذاتي التفاعلي لمختلف الصفوف والمواد — تبدأ بمقرر الكمبيوتر وتكنولوجيا المعلومات (الصف الثالث الإعدادي · الترم الأول) بتدريبات Python والذكاء الاصطناعي والأمن السيبراني بدون إنترنت.',
   manifest: '/manifest.webmanifest',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'تعلّم ICT',
+    title: 'ذاتي',
   },
-  applicationName: 'تعلّم ICT',
+  applicationName: 'ذاتي',
 };
 
 export const viewport: Viewport = {

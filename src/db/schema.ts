@@ -33,6 +33,7 @@ const SCHEMA_STATEMENTS: InStatement[] = [
   `CREATE TABLE IF NOT EXISTS learning_events (
     event_id TEXT PRIMARY KEY,
     user_id TEXT NOT NULL,
+    course_id TEXT NOT NULL DEFAULT 'prep3-term1',
     type TEXT NOT NULL,
     lesson_id TEXT NOT NULL,
     station_id TEXT,
@@ -44,6 +45,7 @@ const SCHEMA_STATEMENTS: InStatement[] = [
   `CREATE TABLE IF NOT EXISTS friction_events (
     id TEXT PRIMARY KEY,
     user_id TEXT NOT NULL,
+    course_id TEXT NOT NULL DEFAULT 'prep3-term1',
     lesson_id TEXT NOT NULL,
     station_id TEXT,
     block_id TEXT NOT NULL,
@@ -59,6 +61,7 @@ const SCHEMA_STATEMENTS: InStatement[] = [
   `CREATE TABLE IF NOT EXISTS flashcard_state (
     user_id TEXT NOT NULL,
     card_id TEXT NOT NULL,
+    course_id TEXT NOT NULL DEFAULT 'prep3-term1',
     box INTEGER NOT NULL DEFAULT 1,
     status TEXT NOT NULL DEFAULT 'review_again',
     review_count INTEGER NOT NULL DEFAULT 0,
@@ -75,6 +78,7 @@ const SCHEMA_STATEMENTS: InStatement[] = [
     expires_at INTEGER
   )`,
   `CREATE TABLE IF NOT EXISTS anonymous_friction_stats (
+    course_id TEXT NOT NULL DEFAULT 'prep3-term1',
     lesson_id TEXT NOT NULL,
     block_id TEXT NOT NULL,
     block_type TEXT NOT NULL,
@@ -100,6 +104,13 @@ function getSchemaInitMap(): WeakMap<Client, Promise<void>> {
   return globalForSchema.__slSchemaInitPromises;
 }
 
+const COURSE_ID_MIGRATION_TABLES = [
+  'learning_events',
+  'friction_events',
+  'flashcard_state',
+  'anonymous_friction_stats',
+] as const;
+
 async function runSchemaInitialization(client: Client): Promise<void> {
   const statements: InStatement[] = [
     ...SCHEMA_STATEMENTS,
@@ -111,6 +122,25 @@ async function runSchemaInitialization(client: Client): Promise<void> {
   ];
 
   await client.batch(statements, 'write');
+
+  // Safely migrate any pre-catalog local SQLite tables lacking course_id
+  for (const table of COURSE_ID_MIGRATION_TABLES) {
+    try {
+      await client.execute(
+        `ALTER TABLE ${table} ADD COLUMN course_id TEXT NOT NULL DEFAULT 'prep3-term1'`,
+      );
+    } catch (err) {
+      const msg =
+        err instanceof Error ? err.message.toLowerCase() : String(err).toLowerCase();
+      if (!msg.includes('duplicate column')) {
+        throw err;
+      }
+    }
+  }
+
+  await client.execute(
+    `CREATE INDEX IF NOT EXISTS idx_learning_events_user_course ON learning_events(user_id, course_id, created_at)`,
+  );
 }
 
 /**

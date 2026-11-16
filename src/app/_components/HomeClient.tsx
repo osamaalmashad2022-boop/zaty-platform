@@ -4,12 +4,15 @@ import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import {
   ArrowLeft,
+  BookOpen,
   CheckCircle2,
+  ChevronDown,
   ClipboardCheck,
   Cloud,
   CloudOff,
   Crown,
   Flame,
+  GraduationCap,
   Layers,
   Play,
   ShieldAlert,
@@ -17,13 +20,30 @@ import {
   Target,
   Trophy,
 } from 'lucide-react';
+import {
+  CATALOG_GRADES,
+  CATALOG_TERMS_META,
+  DEFAULT_COURSE_ID,
+  PLATFORM_BRAND,
+  getCourseManifest,
+  getCoursesByFilter,
+  getStoredActiveCourseId,
+  setStoredActiveCourseId,
+} from '@/content/catalog';
 import { deriveLearnerStats, getLearnerStats } from '@/lib/storage/progress';
 import {
   fetchCurrentUser,
   type CloudUser,
   type UserTier,
 } from '@/lib/sync/cloudSync';
-import type { LearnerStats, LessonPack, StationPack, UnitPack } from '@/types/curriculum';
+import type {
+  CourseGradeId,
+  CourseTermId,
+  LearnerStats,
+  LessonPack,
+  StationPack,
+  UnitPack,
+} from '@/types/curriculum';
 
 export interface HomeClientProps {
   units: UnitPack[];
@@ -111,10 +131,33 @@ export function HomeClient({ units }: HomeClientProps) {
   const [loaded, setLoaded] = useState(false);
   const [cloudUser, setCloudUser] = useState<CloudUser | null>(null);
   const [authLoaded, setAuthLoaded] = useState(false);
+  const [activeCourseId, setActiveCourseId] = useState<string>(DEFAULT_COURSE_ID);
+  const [catalogOpen, setCatalogOpen] = useState(false);
+  const [filterGrade, setFilterGrade] = useState<CourseGradeId | 'all'>('prep-3');
+  const [filterTerm, setFilterTerm] = useState<CourseTermId | 'all'>('all');
+
+  const activeCourse = useMemo(
+    () => getCourseManifest(activeCourseId),
+    [activeCourseId],
+  );
+
+  const filteredCatalogCourses = useMemo(
+    () =>
+      getCoursesByFilter(
+        filterGrade === 'all' ? undefined : filterGrade,
+        filterTerm === 'all' ? undefined : filterTerm,
+      ),
+    [filterGrade, filterTerm],
+  );
 
   useEffect(() => {
     let cancelled = false;
-    getLearnerStats()
+    const storedCourse = getStoredActiveCourseId();
+    if (storedCourse !== DEFAULT_COURSE_ID) {
+      setActiveCourseId(storedCourse);
+    }
+
+    getLearnerStats(undefined, { courseId: storedCourse })
       .then((nextStats) => {
         if (!cancelled) {
           setStats(nextStats);
@@ -178,8 +221,202 @@ export function HomeClient({ units }: HomeClientProps) {
 
   const dailyGoalMet = stats.todayLessonsCount >= 1;
 
+  const handleSelectCourse = (courseId: string) => {
+    const persisted = setStoredActiveCourseId(courseId);
+    setActiveCourseId(persisted);
+    setCatalogOpen(false);
+  };
+
   return (
     <div className="space-y-6">
+      {/* Multi-Grade / Multi-Subject Quick Switcher Bar */}
+      <section
+        data-testid="course-switcher-bar"
+        aria-label="اختيار الصف الدراسي والمادة"
+        className="rounded-xl border border-[#E2ECE9] bg-white px-4 py-3 shadow-xs space-y-3"
+      >
+        <div className="flex flex-wrap items-center justify-between gap-3 min-h-[40px]">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <span className="w-9 h-9 rounded-lg bg-[#E5F1EE] text-[#006E5A] flex items-center justify-center shrink-0">
+              <GraduationCap className="w-5 h-5" />
+            </span>
+            <div className="min-w-0">
+              <div className="text-[11px] font-semibold text-[#3B5A58]">
+                المقرر النشط في منصة {PLATFORM_BRAND.nameAr} ({PLATFORM_BRAND.nameEn})
+              </div>
+              <p className="text-xs sm:text-sm font-bold text-[#163A3A] truncate">
+                {activeCourse.gradeLabel} · {activeCourse.termLabel} · {activeCourse.subjectName}
+              </p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            data-testid="toggle-course-catalog-btn"
+            aria-expanded={catalogOpen}
+            onClick={() => setCatalogOpen((prev) => !prev)}
+            className="inline-flex min-h-[40px] items-center gap-1.5 rounded-lg border border-[#006E5A]/30 bg-[#E5F1EE]/70 px-3 py-1.5 text-xs sm:text-sm font-bold text-[#006E5A] hover:border-[#006E5A] hover:bg-[#E5F1EE] transition-colors shrink-0"
+          >
+            <BookOpen className="w-4 h-4 shrink-0" />
+            <span>تغيير الصف أو المادة</span>
+            <ChevronDown
+              className={`w-4 h-4 shrink-0 transition-transform duration-200 ${
+                catalogOpen ? 'rotate-180' : ''
+              }`}
+            />
+          </button>
+        </div>
+
+        {catalogOpen && (
+          <div
+            data-testid="course-catalog-panel"
+            className="border-t border-[#E2ECE9] pt-4 space-y-4"
+          >
+            {/* Grade filter pills */}
+            <div className="space-y-2">
+              <div className="text-xs font-bold text-[#163A3A]">اختر الصف الدراسي</div>
+              <div className="flex flex-wrap gap-2" role="group" aria-label="تصفية حسب الصف">
+                <button
+                  type="button"
+                  onClick={() => setFilterGrade('all')}
+                  className={`min-h-[36px] rounded-full px-3 py-1 text-xs font-bold border transition-colors ${
+                    filterGrade === 'all'
+                      ? 'bg-[#006E5A] text-white border-[#006E5A]'
+                      : 'bg-[#F6FAF9] text-[#3B5A58] border-[#E2ECE9] hover:border-[#006E5A]'
+                  }`}
+                >
+                  كل الصفوف
+                </button>
+                {CATALOG_GRADES.map((grade) => {
+                  const active = filterGrade === grade.id;
+                  return (
+                    <button
+                      key={grade.id}
+                      type="button"
+                      onClick={() => setFilterGrade(grade.id)}
+                      className={`min-h-[36px] rounded-full px-3 py-1 text-xs font-bold border transition-colors ${
+                        active
+                          ? 'bg-[#006E5A] text-white border-[#006E5A]'
+                          : 'bg-[#F6FAF9] text-[#3B5A58] border-[#E2ECE9] hover:border-[#006E5A]'
+                      }`}
+                    >
+                      {grade.shortTitle}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Term filter pills */}
+            <div className="flex flex-wrap items-center gap-2" role="group" aria-label="تصفية حسب الفصل الدراسي">
+              <span className="text-xs font-bold text-[#163A3A] ml-1">الفصل الدراسي:</span>
+              <button
+                type="button"
+                onClick={() => setFilterTerm('all')}
+                className={`min-h-[34px] rounded-full px-3 py-1 text-xs font-bold border transition-colors ${
+                  filterTerm === 'all'
+                    ? 'bg-[#163A3A] text-white border-[#163A3A]'
+                    : 'bg-[#F6FAF9] text-[#3B5A58] border-[#E2ECE9] hover:border-[#163A3A]'
+                }`}
+              >
+                الكل
+              </button>
+              {CATALOG_TERMS_META.map((term) => {
+                const active = filterTerm === term.id;
+                return (
+                  <button
+                    key={term.id}
+                    type="button"
+                    onClick={() => setFilterTerm(term.id)}
+                    className={`min-h-[34px] rounded-full px-3 py-1 text-xs font-bold border transition-colors ${
+                      active
+                        ? 'bg-[#163A3A] text-white border-[#163A3A]'
+                        : 'bg-[#F6FAF9] text-[#3B5A58] border-[#E2ECE9] hover:border-[#163A3A]'
+                    }`}
+                  >
+                    {term.shortTitle}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Matching subjects grid */}
+            {filteredCatalogCourses.length === 0 ? (
+              <div className="rounded-xl border border-[#E2ECE9] bg-[#F6FAF9] p-4 text-center text-xs sm:text-sm text-[#3B5A58]">
+                لا توجد مواد مضافة لهذا الاختيار بعد — جارٍ تجهيزها قريبًا في {PLATFORM_BRAND.nameAr}.
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {filteredCatalogCourses.map((course) => {
+                  const isAvailable = course.status === 'available';
+                  const isSelected = course.id === activeCourse.id;
+                  return (
+                    <div
+                      key={course.id}
+                      data-testid={`catalog-course-${course.id}`}
+                      className={`rounded-xl border p-3.5 flex flex-col justify-between gap-3 transition-colors ${
+                        isSelected
+                          ? 'border-[#006E5A] bg-[#E5F1EE]/45'
+                          : isAvailable
+                            ? 'border-[#E2ECE9] bg-white hover:border-[#006E5A]'
+                            : 'border-[#E2ECE9] bg-[#F6FAF9]/75'
+                      }`}
+                    >
+                      <div className="space-y-1.5">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <span className="text-[11px] font-semibold text-[#3B5A58]">
+                            {course.gradeLabel} · {course.termLabel}
+                          </span>
+                          {isAvailable ? (
+                            <span className="rounded-full bg-[#E5F1EE] border border-[#006E5A]/30 px-2.5 py-0.5 text-[11px] font-bold text-[#006E5A]">
+                              متاح الآن ✓
+                            </span>
+                          ) : (
+                            <span className="rounded-full bg-white border border-[#E2ECE9] px-2.5 py-0.5 text-[11px] font-bold text-[#3B5A58]">
+                              قريبًا في {PLATFORM_BRAND.nameAr}
+                            </span>
+                          )}
+                        </div>
+                        <h3 className="text-sm sm:text-base font-bold text-[#163A3A]">
+                          {course.subjectName}
+                        </h3>
+                        <p className="text-xs text-[#3B5A58] line-clamp-2">
+                          {course.description}
+                        </p>
+                      </div>
+
+                      <div className="flex items-center justify-between gap-2 pt-1 border-t border-[#E2ECE9]/70">
+                        <span className="text-[11px] font-medium text-[#3B5A58]">
+                          {course.stationsCount} محطات · {course.lessonsCount} درس
+                        </span>
+                        {isAvailable ? (
+                          <button
+                            type="button"
+                            onClick={() => handleSelectCourse(course.id)}
+                            disabled={isSelected}
+                            className={`min-h-[36px] rounded-lg px-3 py-1 text-xs font-bold transition-colors ${
+                              isSelected
+                                ? 'bg-[#006E5A] text-white cursor-default'
+                                : 'bg-[#E5F1EE] text-[#006E5A] hover:bg-[#006E5A] hover:text-white'
+                            }`}
+                          >
+                            {isSelected ? 'المقرر النشط حاليًا' : 'اختيار المادة'}
+                          </button>
+                        ) : (
+                          <span className="text-xs font-semibold text-[#3B5A58]">
+                            قيد الإعداد
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+      </section>
+
       {/* Warm Hero Greeting & Primary CTA */}
       <section className="orchid-card p-5 sm:p-7 space-y-5">
         <div className="flex flex-wrap items-start justify-between gap-4">
@@ -187,7 +424,9 @@ export function HomeClient({ units }: HomeClientProps) {
             <div className="flex flex-col items-start sm:flex-row sm:items-center gap-2">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E5F1EE] px-3 py-1 text-xs font-bold text-[#006E5A] h-[26px] whitespace-nowrap">
                 <Sparkles className="w-3.5 h-3.5 shrink-0" />
-                <span>مسار المبرمج الصغير · تالتة إعدادي</span>
+                <span>
+                  {activeCourse.gradeLabel} · {activeCourse.subjectName}
+                </span>
               </span>
               <Link
                 href="/progress"
@@ -220,11 +459,10 @@ export function HomeClient({ units }: HomeClientProps) {
               </Link>
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold text-[#163A3A]">
-              أهلًا يا مبرمج! جاهز لخطوة جديدة؟
+              أهلًا بك في {PLATFORM_BRAND.nameAr}! جاهز لخطوة جديدة؟
             </h1>
             <p className="text-sm sm:text-base text-[#3B5A58] max-w-2xl">
-              منهج الكمبيوتر وتكنولوجيا المعلومات (الترم الأول) في جلسات قصيرة
-              ٧–١٠ دقائق، مع تشغيل حقيقي لكود Python على جهازك بدون إنترنت.
+              {activeCourse.description}
             </p>
           </div>
 

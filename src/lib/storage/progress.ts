@@ -18,6 +18,7 @@ import type {
   StationProgressSummary,
   StationUnlockedPayload,
 } from '@/types/curriculum';
+import { DEFAULT_COURSE_ID } from '@/content/catalog';
 import { getDb, isIndexedDbAvailable, type IctDatabase } from './db';
 
 export interface CurriculumTopology {
@@ -197,13 +198,24 @@ export function deriveLearnerStats(
   options?: {
     todayCairoDate?: string;
     topology?: CurriculumTopology;
+    courseId?: string;
   },
 ): LearnerStats {
   const topology = options?.topology ?? PREP3_TERM1_TOPOLOGY;
   const todayCairoDate = options?.todayCairoDate ?? getCairoDate();
+  const targetCourseId = options?.courseId;
+
+  const filteredEvents = targetCourseId
+    ? events.filter((e) => (e.courseId ?? DEFAULT_COURSE_ID) === targetCourseId)
+    : events;
+  const filteredFriction = targetCourseId
+    ? frictionEvents.filter(
+        (f) => (f.courseId ?? DEFAULT_COURSE_ID) === targetCourseId,
+      )
+    : frictionEvents;
 
   const dedupedMap = new Map<string, LearningEvent>();
-  for (const evt of events) {
+  for (const evt of filteredEvents) {
     if (!dedupedMap.has(evt.eventId)) {
       dedupedMap.set(evt.eventId, evt);
     }
@@ -471,7 +483,7 @@ export function deriveLearnerStats(
   });
 
   const completedLessonIds = Array.from(completedLessonSet);
-  const weakSpots = deriveWeakSpots(frictionEvents);
+  const weakSpots = deriveWeakSpots(filteredFriction);
 
   return {
     xp,
@@ -498,6 +510,7 @@ export function deriveLearnerStats(
 
 export interface RecordLearningEventInput {
   eventId?: string;
+  courseId?: string;
   type: LearningEventType;
   lessonId: string;
   stationId?: string;
@@ -514,6 +527,7 @@ export async function recordLearningEvent(
   const createdAt = input.createdAt ?? Date.now();
   const cairoDate = input.cairoDate ?? getCairoDate(createdAt);
   const eventId = input.eventId ?? createEventId(input.type);
+  const courseId = input.courseId?.trim() || DEFAULT_COURSE_ID;
 
   const existing = await db.learningEvents.where('eventId').equals(eventId).first();
   if (existing) {
@@ -522,6 +536,7 @@ export async function recordLearningEvent(
 
   const event: LearningEvent = {
     eventId,
+    courseId,
     type: input.type,
     lessonId: input.lessonId,
     stationId: input.stationId,
@@ -534,6 +549,7 @@ export async function recordLearningEvent(
     const attempt = input.payload as Partial<ActivityAttemptPayload>;
     const friction: FrictionEvent = {
       eventId: `friction_${eventId}`,
+      courseId,
       lessonId: input.lessonId,
       stationId: input.stationId,
       blockId: attempt.blockId ?? 'unknown',
@@ -692,6 +708,7 @@ export async function getLearnerStats(
   options?: {
     todayCairoDate?: string;
     topology?: CurriculumTopology;
+    courseId?: string;
   },
 ): Promise<LearnerStats> {
   if (!dbOverride && !isIndexedDbAvailable()) {
@@ -737,6 +754,7 @@ export async function getCachedLesson(
 export async function syncLessonCache(
   pack: LessonPack,
   dbOverride?: IctDatabase,
+  courseId = DEFAULT_COURSE_ID,
 ): Promise<{ updated: boolean; record: CachedLessonRecord }> {
   const db = resolveDb(dbOverride);
   const existing = await db.cachedLessons.get(pack.id);
@@ -746,6 +764,7 @@ export async function syncLessonCache(
 
   const nextRecord: CachedLessonRecord = {
     lessonId: pack.id,
+    courseId,
     contentVersion: pack.contentVersion,
     pack,
     cachedAt: Date.now(),
@@ -893,6 +912,10 @@ export async function importProgressBackup(
         existingEventIds.add(evt.eventId);
         newEvents.push({
           eventId: evt.eventId,
+          courseId:
+            typeof evt.courseId === 'string' && evt.courseId.trim()
+              ? evt.courseId.trim()
+              : DEFAULT_COURSE_ID,
           type: evt.type,
           lessonId: evt.lessonId,
           stationId: evt.stationId,
@@ -919,6 +942,10 @@ export async function importProgressBackup(
         existingFrictionIds.add(fe.eventId);
         newFriction.push({
           eventId: fe.eventId,
+          courseId:
+            typeof fe.courseId === 'string' && fe.courseId.trim()
+              ? fe.courseId.trim()
+              : DEFAULT_COURSE_ID,
           lessonId: fe.lessonId,
           stationId: fe.stationId,
           blockId: fe.blockId,

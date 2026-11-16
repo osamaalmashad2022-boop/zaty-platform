@@ -396,4 +396,47 @@ describe('storage/progress event-sourced layer', () => {
     expect(evt2.eventId).toBe('dup_evt_1');
     expect(await db.learningEvents.count()).toBe(1);
   });
+
+  it('defaults courseId to prep3-term1 and isolates stats when filtering by courseId', async () => {
+    const ts = Date.UTC(2026, 10, 16, 15, 0, 0);
+    const defaultEvt = await recordLearningEvent(
+      {
+        eventId: 'evt_ict_1',
+        type: 'lesson_completed',
+        lessonId: '1.1',
+        stationId: 'station-1',
+        payload: { xpAwarded: 50 },
+        createdAt: ts,
+      },
+      db,
+    );
+    expect(defaultEvt.courseId).toBe('prep3-term1');
+
+    await recordLearningEvent(
+      {
+        eventId: 'evt_sci_1',
+        courseId: 'prep3-term1-science',
+        type: 'lesson_completed',
+        lessonId: 'sci-1.1',
+        stationId: 'sci-station-1',
+        payload: { xpAwarded: 40 },
+        createdAt: ts + 1000,
+      },
+      db,
+    );
+
+    const ictStats = await getLearnerStats(db, {
+      todayCairoDate: getCairoDate(ts),
+      courseId: 'prep3-term1',
+    });
+    expect(ictStats.xp).toBe(50);
+    expect(ictStats.completedLessonIds).toEqual(['1.1']);
+
+    const scienceStats = await getLearnerStats(db, {
+      todayCairoDate: getCairoDate(ts),
+      courseId: 'prep3-term1-science',
+    });
+    expect(scienceStats.xp).toBe(40);
+    expect(scienceStats.completedLessonIds).toEqual(['sci-1.1']);
+  });
 });

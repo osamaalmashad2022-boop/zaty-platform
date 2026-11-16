@@ -8,6 +8,20 @@ import type {
 } from '@/types/curriculum';
 import { PREP3_TERM1_PACK } from './prep3-term1/term';
 
+export {
+  ACTIVE_COURSE_STORAGE_KEY,
+  CATALOG_GRADES,
+  CATALOG_TERMS_META,
+  COURSE_CATALOG,
+  DEFAULT_COURSE_ID,
+  PLATFORM_BRAND,
+  getCourseCatalog,
+  getCourseManifest,
+  getCoursesByFilter,
+  getStoredActiveCourseId,
+  setStoredActiveCourseId,
+} from './catalog';
+
 export const TERM_1_PACK: TermPack = PREP3_TERM1_PACK;
 export const CATALOG_TERMS: TermPack[] = [PREP3_TERM1_PACK];
 

@@ -1,3 +1,4 @@
+import { DEFAULT_COURSE_ID } from '@/content/catalog';
 import { getDb, isIndexedDbAvailable, type IctDatabase } from '@/lib/storage/db';
 import {
   clearAllProgress,
@@ -64,6 +65,7 @@ export interface LoginInput {
 }
 
 export interface AnonymousFrictionInput {
+  courseId?: string;
   lessonId: string;
   blockId: string;
   blockType: BlockType | 'quiz';
@@ -93,6 +95,7 @@ interface SyncApiResponse {
   >;
   flashcardStates?: Array<{
     cardId: string;
+    courseId?: string;
     box: number;
     status: 'known' | 'review_again';
     reviewCount: number;
@@ -326,6 +329,7 @@ export async function syncProgressWithCloud(
               existingEventIds.add(evt.eventId);
               toInsertEvents.push({
                 eventId: evt.eventId,
+                courseId: evt.courseId ?? DEFAULT_COURSE_ID,
                 type: evt.type,
                 lessonId: evt.lessonId,
                 stationId: evt.stationId,
@@ -347,6 +351,7 @@ export async function syncProgressWithCloud(
                 existingEventIds.add(syntheticEventId);
                 toInsertEvents.push({
                   eventId: syntheticEventId,
+                  courseId: fc.courseId ?? DEFAULT_COURSE_ID,
                   type: 'flashcard_reviewed',
                   lessonId: fc.stationId ?? 'review',
                   stationId: fc.stationId,
@@ -369,6 +374,7 @@ export async function syncProgressWithCloud(
               existingFrictionIds.add(eventId);
               toInsertFriction.push({
                 eventId,
+                courseId: fe.courseId ?? DEFAULT_COURSE_ID,
                 lessonId: fe.lessonId,
                 stationId: fe.stationId,
                 blockId: fe.blockId,
@@ -476,6 +482,7 @@ export async function sendAnonymousFriction(
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
+        courseId: input.courseId ?? DEFAULT_COURSE_ID,
         lessonId: input.lessonId,
         blockId: input.blockId,
         blockType: input.blockType,

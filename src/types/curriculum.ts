@@ -1,6 +1,6 @@
 /**
- * Core curriculum, 15-block lesson schema, quiz/flashcard banks,
- * and event-sourced learner progress types for ICT Prep 3 Term 1.
+ * Core curriculum, 15-block lesson schema, multi-grade/subject catalog,
+ * quiz/flashcard banks, and event-sourced learner progress types for Zaty (ذاتي).
  */
 
 // ---------------------------------------------------------------------------
@@ -476,10 +476,56 @@ export interface UnitPack {
 
 export interface TermPack {
   id: string;
+  courseId?: string;
   title: string;
   grade: string;
   term: string;
   units: UnitPack[];
+}
+
+export type CourseGradeId = 'prep-1' | 'prep-2' | 'prep-3' | 'sec-1';
+export type CourseTermId = 'term-1' | 'term-2';
+export type CourseSubjectId =
+  | 'ict'
+  | 'science'
+  | 'math'
+  | 'social'
+  | 'arabic'
+  | 'english';
+export type CourseCatalogStatus = 'available' | 'coming_soon';
+
+export interface GradeCatalogItem {
+  id: CourseGradeId;
+  title: string;
+  shortTitle: string;
+  stage: 'preparatory' | 'secondary';
+  order: number;
+}
+
+export interface TermCatalogItem {
+  id: CourseTermId;
+  title: string;
+  shortTitle: string;
+  order: number;
+}
+
+export interface CourseManifest {
+  id: string;
+  gradeId: CourseGradeId;
+  gradeLabel: string;
+  termId: CourseTermId;
+  termLabel: string;
+  subjectId: CourseSubjectId;
+  subjectName: string;
+  title: string;
+  description: string;
+  status: CourseCatalogStatus;
+  access: ContentAccess;
+  stationsCount: number;
+  lessonsCount: number;
+  quizCount: number;
+  hasCodeLab: boolean;
+  packId?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -538,6 +584,7 @@ export interface StationUnlockedPayload {
 export interface LearningEvent {
   id?: number;
   eventId: string;
+  courseId?: string;
   type: LearningEventType;
   lessonId: string;
   stationId?: string;
@@ -549,6 +596,7 @@ export interface LearningEvent {
 export interface FrictionEvent {
   id?: number;
   eventId: string;
+  courseId?: string;
   lessonId: string;
   stationId?: string;
   blockId: string;
@@ -636,6 +684,7 @@ export interface LearnerStats {
 
 export interface CachedLessonRecord {
   lessonId: string;
+  courseId?: string;
   contentVersion: number;
   pack: LessonPack;
   cachedAt: number;

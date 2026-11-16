@@ -1,4 +1,5 @@
 import type { Client, InStatement } from '@libsql/client';
+import { DEFAULT_COURSE_ID } from '@/content/catalog';
 import { ensureSchema } from '@/db/schema';
 import { getUserById, type CloudUser, type UserTier } from '@/lib/auth/server';
 import { getCairoDate } from '@/lib/storage/progress';
@@ -22,6 +23,7 @@ const VALID_LEARNING_EVENT_TYPES = new Set<LearningEventType>([
 export interface IncomingFrictionRecord {
   id?: string;
   eventId?: string;
+  courseId?: string;
   lessonId: string;
   stationId?: string;
   blockId: string;
@@ -37,6 +39,7 @@ export interface IncomingFrictionRecord {
 
 export interface IncomingFlashcardState {
   cardId: string;
+  courseId?: string;
   box?: number;
   status?: 'known' | 'review_again';
   reviewCount?: number;
@@ -58,6 +61,7 @@ export interface ServerFrictionDTO extends FrictionEvent {
 
 export interface ServerFlashcardStateDTO {
   cardId: string;
+  courseId?: string;
   box: number;
   status: 'known' | 'review_again';
   reviewCount: number;
@@ -86,6 +90,7 @@ export interface ActivateServerResult {
 }
 
 export interface AnonymousFrictionPayloadItem {
+  courseId?: string;
   lessonId: string;
   blockId: string;
   blockType: string;
@@ -120,6 +125,9 @@ function normalizeLearningEvent(raw: unknown): LearningEvent | null {
 
   return {
     eventId: evt.eventId.trim(),
+    courseId: isNonEmptyString(evt.courseId)
+      ? evt.courseId.trim()
+      : DEFAULT_COURSE_ID,
     type: evt.type as LearningEventType,
     lessonId: evt.lessonId.trim(),
     stationId: isNonEmptyString(evt.stationId) ? evt.stationId.trim() : undefined,
@@ -131,6 +139,7 @@ function normalizeLearningEvent(raw: unknown): LearningEvent | null {
 
 function normalizeFrictionRecord(raw: unknown): {
   id: string;
+  courseId: string;
   lessonId: string;
   stationId: string | null;
   blockId: string;
@@ -188,6 +197,7 @@ function normalizeFrictionRecord(raw: unknown): {
 
   return {
     id,
+    courseId: isNonEmptyString(fe.courseId) ? fe.courseId.trim() : DEFAULT_COURSE_ID,
     lessonId: fe.lessonId.trim(),
     stationId: isNonEmptyString(fe.stationId) ? fe.stationId.trim() : null,
     blockId: fe.blockId.trim(),
@@ -233,6 +243,7 @@ function normalizeFlashcardState(raw: unknown): ServerFlashcardStateDTO | null {
 
   return {
     cardId: fc.cardId.trim(),
+    courseId: isNonEmptyString(fc.courseId) ? fc.courseId.trim() : DEFAULT_COURSE_ID,
     box,
     status,
     reviewCount,
@@ -262,12 +273,13 @@ export async function syncUserProgress(
   for (const evt of incomingEvents) {
     statements.push({
       sql: `INSERT INTO learning_events (
-              event_id, user_id, type, lesson_id, station_id, payload_json, cairo_date, created_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+              event_id, user_id, course_id, type, lesson_id, station_id, payload_json, cairo_date, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(event_id) DO NOTHING`,
       args: [
         evt.eventId,
         userId,
+        evt.courseId ?? DEFAULT_COURSE_ID,
         evt.type,
         evt.lessonId,
         evt.stationId ?? null,
@@ -287,13 +299,14 @@ export async function syncUserProgress(
   for (const fe of incomingFriction) {
     statements.push({
       sql: `INSERT INTO friction_events (
-              id, user_id, lesson_id, station_id, block_id, block_type,
+              id, user_id, course_id, lesson_id, station_id, block_id, block_type,
               attempts_before_pass, wrong_count, is_correct, error_kind, cairo_date, created_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(id) DO NOTHING`,
       args: [
         fe.id,
         userId,
+        fe.courseId,
         fe.lessonId,
         fe.stationId,
         fe.blockId,
@@ -322,6 +335,7 @@ export async function syncUserProgress(
       if (!existing || evt.createdAt >= existing.updatedAt) {
         flashcardMap.set(parsed.cardId, {
           cardId: parsed.cardId,
+          courseId: evt.courseId ?? DEFAULT_COURSE_ID,
           box: status === 'known' ? 2 : 1,
           status,
           reviewCount: nextCount,
@@ -348,9 +362,10 @@ export async function syncUserProgress(
   for (const fc of flashcardMap.values()) {
     statements.push({
       sql: `INSERT INTO flashcard_state (
-              user_id, card_id, box, status, review_count, station_id, updated_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?)
+              user_id, card_id, course_id, box, status, review_count, station_id, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(user_id, card_id) DO UPDATE SET
+              course_id = excluded.course_id,
               box = excluded.box,
               status = excluded.status,
               review_count = MAX(flashcard_state.review_count, excluded.review_count),
@@ -360,6 +375,7 @@ export async function syncUserProgress(
       args: [
         userId,
         fc.cardId,
+        fc.courseId ?? DEFAULT_COURSE_ID,
         fc.box,
         fc.status,
         fc.reviewCount,
@@ -375,14 +391,14 @@ export async function syncUserProgress(
 
   const [eventsRes, frictionRes, flashcardsRes, user] = await Promise.all([
     client.execute({
-      sql: `SELECT event_id, type, lesson_id, station_id, payload_json, cairo_date, created_at
+      sql: `SELECT event_id, course_id, type, lesson_id, station_id, payload_json, cairo_date, created_at
             FROM learning_events
             WHERE user_id = ?
             ORDER BY created_at ASC, event_id ASC`,
       args: [userId],
     }),
     client.execute({
-      sql: `SELECT id, lesson_id, station_id, block_id, block_type,
+      sql: `SELECT id, course_id, lesson_id, station_id, block_id, block_type,
                    attempts_before_pass, wrong_count, is_correct, error_kind, cairo_date, created_at
             FROM friction_events
             WHERE user_id = ?
@@ -390,7 +406,7 @@ export async function syncUserProgress(
       args: [userId],
     }),
     client.execute({
-      sql: `SELECT card_id, box, status, review_count, station_id, updated_at
+      sql: `SELECT card_id, course_id, box, status, review_count, station_id, updated_at
             FROM flashcard_state
             WHERE user_id = ?
             ORDER BY updated_at DESC, card_id ASC`,
@@ -405,6 +421,7 @@ export async function syncUserProgress(
 
   const learningEvents: LearningEvent[] = eventsRes.rows.map((row) => ({
     eventId: String(row.event_id),
+    courseId: row.course_id ? String(row.course_id) : DEFAULT_COURSE_ID,
     type: String(row.type) as LearningEventType,
     lessonId: String(row.lesson_id),
     stationId: row.station_id ? String(row.station_id) : undefined,
@@ -420,6 +437,7 @@ export async function syncUserProgress(
     return {
       idString: idStr,
       eventId: idStr,
+      courseId: row.course_id ? String(row.course_id) : DEFAULT_COURSE_ID,
       lessonId: String(row.lesson_id),
       stationId: row.station_id ? String(row.station_id) : undefined,
       blockId: String(row.block_id),
@@ -436,6 +454,7 @@ export async function syncUserProgress(
 
   const flashcardStates: ServerFlashcardStateDTO[] = flashcardsRes.rows.map((row) => ({
     cardId: String(row.card_id),
+    courseId: row.course_id ? String(row.course_id) : DEFAULT_COURSE_ID,
     box: Number(row.box ?? 1),
     status: row.status === 'known' ? 'known' : 'review_again',
     reviewCount: Number(row.review_count ?? 0),
@@ -604,16 +623,22 @@ export async function recordAnonymousFrictionBatch(
           ? 1
           : 0;
 
+    const courseId = isNonEmptyString(item.courseId)
+      ? item.courseId.trim()
+      : DEFAULT_COURSE_ID;
+
     statements.push({
       sql: `INSERT INTO anonymous_friction_stats (
-              lesson_id, block_id, block_type, total_attempts, total_wrong, updated_at
-            ) VALUES (?, ?, ?, ?, ?, ?)
+              course_id, lesson_id, block_id, block_type, total_attempts, total_wrong, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(lesson_id, block_id) DO UPDATE SET
+              course_id = excluded.course_id,
               block_type = excluded.block_type,
               total_attempts = anonymous_friction_stats.total_attempts + excluded.total_attempts,
               total_wrong = anonymous_friction_stats.total_wrong + excluded.total_wrong,
               updated_at = excluded.updated_at`,
       args: [
+        courseId,
         item.lessonId.trim(),
         item.blockId.trim(),
         item.blockType.trim(),

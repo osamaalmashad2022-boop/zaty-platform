@@ -268,4 +268,36 @@ describe('Core learner journey screens', () => {
     );
     expect(screen.getByText('محتوى مبدئي')).toBeInTheDocument();
   });
+
+  it('displays the Zaty (ذاتي) quick grade/term/subject switcher and filters courses cleanly', async () => {
+    const { container } = render(<HomeClient units={SAMPLE_UNITS} />);
+    await waitFor(() =>
+      expect(screen.getByTestId('course-switcher-bar')).toBeInTheDocument(),
+    );
+    expect(screen.getByText(/منصة ذاتي \(Zaty\)/)).toBeInTheDocument();
+
+    const toggleBtn = screen.getByTestId('toggle-course-catalog-btn');
+    expect(toggleBtn).toHaveAttribute('aria-expanded', 'false');
+    fireEvent.click(toggleBtn);
+    expect(toggleBtn).toHaveAttribute('aria-expanded', 'true');
+
+    const panel = screen.getByTestId('course-catalog-panel');
+    expect(panel).toBeInTheDocument();
+    expect(screen.getByTestId('catalog-course-prep3-term1')).toHaveTextContent(
+      'متاح الآن ✓',
+    );
+    expect(
+      screen.getByTestId('catalog-course-prep3-term1-science'),
+    ).toHaveTextContent('قريبًا في ذاتي');
+
+    fireEvent.click(screen.getByRole('button', { name: 'أولى إعدادي' }));
+    expect(screen.getByTestId('catalog-course-prep1-term1-ict')).toBeInTheDocument();
+    expect(
+      screen.queryByTestId('catalog-course-prep3-term1-science'),
+    ).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'أولى ثانوي' }));
+    expect(screen.getByTestId('catalog-course-sec1-term1-ict')).toBeInTheDocument();
+    expect(container.textContent).not.toMatch(/(?:ال)?طالب/);
+  });
 });

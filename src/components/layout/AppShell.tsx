@@ -151,10 +151,10 @@ export function AppShell({ children, title, backHref, backLabel }: AppShellProps
                 </span>
                 <span className="flex flex-col leading-tight">
                   <span className="text-base sm:text-lg font-bold text-[#163A3A]">
-                    {title ?? 'تعلّم ICT'}
+                    {title ?? 'ذاتي'}
                   </span>
                   <span className="text-xs text-[#3B5A58]">
-                    ٣ إعدادي · الترم الأول
+                    منصتك للتعلّم الذاتي · ٣ إعدادي
                   </span>
                 </span>
               </Link>

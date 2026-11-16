@@ -4,9 +4,15 @@ import vm from 'node:vm';
 import { describe, expect, it } from 'vitest';
 import { evaluateStdoutCheck } from '@/lib/python/skulptRunner';
 import {
+  CATALOG_GRADES,
+  CATALOG_TERMS_META,
+  COURSE_CATALOG,
+  PLATFORM_BRAND,
   getAllLessons,
   getAllStations,
   getAllUnits,
+  getCourseManifest,
+  getCoursesByFilter,
   getExamQuizPool,
   getFlashcardsByStation,
   getLessonById,
@@ -253,5 +259,32 @@ describe('ICT Prep 3 Term 1 curriculum integrity & importer', () => {
 
     expect(codeLabCount).toBeGreaterThanOrEqual(12);
     expect(codeViewCount).toBeGreaterThanOrEqual(10);
+  });
+
+  it('exposes the multi-grade/multi-subject Zaty (ذاتي) catalog and filtering helpers', () => {
+    expect(PLATFORM_BRAND.nameAr).toBe('ذاتي');
+    expect(PLATFORM_BRAND.nameEn).toBe('Zaty');
+    expect(PLATFORM_BRAND.repoSlug).toBe('zaty-platform');
+    expect(CATALOG_GRADES.map((g) => g.id)).toEqual([
+      'prep-1',
+      'prep-2',
+      'prep-3',
+      'sec-1',
+    ]);
+    expect(CATALOG_TERMS_META.map((t) => t.id)).toEqual(['term-1', 'term-2']);
+    expect(COURSE_CATALOG).toHaveLength(8);
+
+    const active = getCourseManifest('prep3-term1');
+    expect(active.status).toBe('available');
+    expect(active.hasCodeLab).toBe(true);
+    expect(getCourseManifest('unknown-course-id').id).toBe('prep3-term1');
+
+    const prep3Courses = getCoursesByFilter('prep-3');
+    expect(prep3Courses.length).toBeGreaterThanOrEqual(5);
+    expect(getCoursesByFilter('prep-3', 'term-1').length).toBe(4);
+    expect(getCoursesByFilter('prep-3', 'term-2').some((c) => c.id === 'prep3-term2-ict')).toBe(
+      true,
+    );
+    expect(getCoursesByFilter('sec-1', 'term-1')[0]?.id).toBe('sec1-term1-ict');
   });
 });

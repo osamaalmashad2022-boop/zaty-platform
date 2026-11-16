@@ -2,10 +2,10 @@ import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'منصة تعلّم ICT — الثالث الإعدادي',
-    short_name: 'تعلّم ICT',
+    name: 'ذاتي (Zaty) | منصتك للتعلّم الذاتي التفاعلي',
+    short_name: 'ذاتي',
     description:
-      'منصة تعلّم ذاتي تفاعلية لمادة الكمبيوتر وتكنولوجيا المعلومات للصف الثالث الإعدادي (الترم الأول): Python والذكاء الاصطناعي والأمن السيبراني بدون إنترنت.',
+      'منصة ذاتي للتعلّم الذاتي التفاعلي لمختلف الصفوف والمواد الدراسية، وتبدأ بمقرر الكمبيوتر وتكنولوجيا المعلومات للصف الثالث الإعدادي (الترم الأول) بدون إنترنت.',
     start_url: '/',
     display: 'standalone',
     orientation: 'portrait-primary',
