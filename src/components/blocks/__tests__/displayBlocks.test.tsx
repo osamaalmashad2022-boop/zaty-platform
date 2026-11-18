@@ -301,8 +301,9 @@ describe('Display and media blocks', () => {
     );
 
     // Warm friendly exploration banner & badge
-    expect(container.textContent).toContain('تحدي استكشاف وفضول');
-    expect(container.textContent).toContain('مش مهم الإجابة صح ولا غلط لأنها حاجات لسه هنعرفها سوا!');
+    expect(container.textContent).toContain('استكشاف وتوقّع · مش مهم صح ولا خطأ');
+    expect(container.textContent).toContain('مش مهم الإجابة صح ولا خطأ نهائيًا!');
+    expect(container.textContent).toContain('سؤال التوقع والاستكشاف (جاوب بإحساسك، بدون أي قلق):');
     expect(container.textContent).toContain('صديقي');
     // Must never address user as student/learner
     expect(container.textContent).not.toContain('طالب');
@@ -322,7 +323,8 @@ describe('Display and media blocks', () => {
     expect(onComplete).toHaveBeenCalledWith(true);
     expect(onAttempt).toHaveBeenCalledWith({ isCorrect: false, attemptNumber: 1 });
     expect(onInteract).toHaveBeenCalled();
-    expect(container.textContent).toContain('محاولة استكشاف وتوقع ممتازة يا صديقي!');
+    expect(container.textContent).toContain('محاولة وتوقع استكشافي ممتاز يا صديقي!');
+    expect(container.textContent).toContain('عاش! تم إكمال التحدي الاستكشافي بنجاح');
     expect(container.textContent).toContain('شكرًا لتوقعك يا صديقي!');
   });
 });

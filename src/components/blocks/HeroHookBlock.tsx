@@ -14,6 +14,13 @@ export interface HeroHookBlockProps extends BlockInteractionProps {
   data: HeroHookData;
 }
 
+function cleanStarterPrompt(text: string): string {
+  return text
+    .replace(/^تحدي استكشاف وفضول\s*\([^)]*\)\s*:\s*/i, '')
+    .replace(/^تحدّ?ي البداية\s*:\s*/i, '')
+    .trim();
+}
+
 export function HeroHookBlock({
   data,
   onAttempt,
@@ -120,13 +127,13 @@ export function HeroHookBlock({
         <div className="rounded-xl border-2 border-[#006E5A]/30 bg-[#F6FAF9] p-4 sm:p-5 space-y-3.5">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#006E5A] px-3 py-1 text-xs font-bold text-white">
-                <Zap className="h-3.5 w-3.5" aria-hidden="true" />
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#006E5A] px-3 py-1 text-xs font-bold text-white shadow-xs">
+                <Zap className="h-3.5 w-3.5 text-[#F4A261]" aria-hidden="true" />
                 <span>تحدي البداية السريع · ١٥ ثانية</span>
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-[#006E5A]/30 bg-[#E5F1EE] px-2.5 py-1 text-xs font-semibold text-[#006E5A]">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-[#006E5A]/30 bg-[#E5F1EE] px-2.5 py-1 text-xs font-bold text-[#006E5A]">
                 <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
-                <span>تحدي استكشاف وفضول</span>
+                <span>تحدي استكشاف وفضول · مش مهم صح ولا غلط</span>
               </span>
             </div>
             {selectedOption && (
@@ -137,18 +144,29 @@ export function HeroHookBlock({
             )}
           </div>
 
-          {/* Friendly Curiosity & Exploration Banner */}
-          <div className="flex items-start gap-2.5 rounded-xl border border-[#006E5A]/25 bg-[#E5F1EE] p-3 sm:p-3.5 text-xs sm:text-sm text-[#163A3A]">
-            <Sparkles className="h-4 w-4 shrink-0 text-[#006E5A] mt-0.5" aria-hidden="true" />
-            <p className="leading-relaxed">
-              <span className="font-bold text-[#006E5A]">تحدي استكشاف وفضول يا صديقي ·</span>{' '}
-              مش مهم الإجابة صح ولا غلط لأنها حاجات لسه هنعرفها سوا! توقّعك هنا هدفه الفضول والاستكشاف الممتع قبل ما نبدأ الشرح سوا.
-            </p>
+          {/* Friendly Curiosity & Zero-Anxiety Exploration Banner */}
+          <div className="flex items-start gap-3 rounded-xl border-2 border-[#006E5A]/25 bg-[#E5F1EE] p-3.5 sm:p-4 text-xs sm:text-sm text-[#163A3A] shadow-xs">
+            <div className="rounded-lg bg-[#006E5A]/15 p-2 text-[#006E5A] shrink-0 mt-0.5">
+              <Sparkles className="h-4 w-4" aria-hidden="true" />
+            </div>
+            <div className="space-y-1">
+              <p className="font-bold text-[#006E5A] text-xs sm:text-sm">
+                🎯 توقّع وخمّن براحتك يا صديقي · مش مهم الإجابة صح ولا خطأ نهائيًا!
+              </p>
+              <p className="leading-relaxed text-[#2D4A47] text-xs sm:text-[13px]">
+                دي مجرد بداية وفزورة استكشافية لتنشيط الفضول والتفكير قبل ما نبدأ الشرح سوا، ومفيش أي درجات بتنقص ولا تقييم!
+              </p>
+            </div>
           </div>
 
-          <h3 className="text-base sm:text-lg font-bold leading-relaxed text-[#163A3A]">
-            <InlineFormatted text={starterChallenge.prompt} />
-          </h3>
+          <div className="space-y-1.5 pt-0.5">
+            <span className="inline-flex items-center gap-1 text-xs font-bold text-[#006E5A]">
+              <span>سؤال التوقع والاستكشاف (جاوب بإحساسك، بدون أي قلق):</span>
+            </span>
+            <h3 className="text-base sm:text-lg font-bold leading-relaxed text-[#163A3A]">
+              <InlineFormatted text={cleanStarterPrompt(starterChallenge.prompt)} />
+            </h3>
+          </div>
 
           <div className="space-y-2" role="radiogroup" aria-label="اختيارات تحدي البداية">
             {starterChallenge.options.map((option) => {
@@ -180,18 +198,18 @@ export function HeroHookBlock({
           {selectedOption && (
             <div
               role="status"
-              className={`rounded-xl border p-3.5 space-y-1.5 ${
+              className={`rounded-xl border-2 p-4 space-y-2.5 ${
                 selectedOption.isCorrect
                   ? 'border-[#006E5A]/40 bg-[#E5F1EE]'
                   : 'border-[#F4A261]/50 bg-[#FFF8F0]'
               }`}
             >
-              <div className="flex items-center gap-1.5 text-xs font-bold text-[#006E5A]">
-                <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
+              <div className="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#006E5A]">
+                <Sparkles className="h-4 w-4" aria-hidden="true" />
                 <span>
                   {selectedOption.isCorrect
-                    ? 'توقع في محله يا صديقي! ✨'
-                    : 'محاولة استكشاف وتوقع ممتازة يا صديقي! 💡'}
+                    ? 'توقّع استكشافي في محله يا صديقي! ✨'
+                    : 'محاولة وتوقع استكشافي ممتاز يا صديقي! 💡 (مش مهم صح ولا خطأ، الأهم هو فضولك وتفكيرك)'}
                 </span>
               </div>
               <p className="text-sm sm:text-[15px] font-bold text-[#163A3A]">
@@ -202,6 +220,10 @@ export function HeroHookBlock({
                   <InlineFormatted text={starterChallenge.revealNote} />
                 </p>
               )}
+              <div className="pt-1.5 text-[11px] sm:text-xs text-[#006E5A] font-semibold border-t border-[#006E5A]/15 flex items-center gap-1.5">
+                <CheckCircle2 className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                <span>عاش! تم إكمال التحدي الاستكشافي بنجاح · يلا بينا ننطلق للشرح الكامل في البطاقات التالية 🚀</span>
+              </div>
             </div>
           )}
         </div>
