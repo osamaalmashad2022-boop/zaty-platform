@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@libsql/client": "^0.18.0",
+    "@sentry/nextjs": "^11.14.0",
     "@vinext/cloudflare": "^1.4.0",
     "dexie": "^4.4.7",
     "lucide-react": "^1.73.0",
