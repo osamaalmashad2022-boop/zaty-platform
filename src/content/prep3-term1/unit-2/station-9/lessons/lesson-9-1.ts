@@ -70,7 +70,25 @@ export const LESSON_9_1: LessonPack = {
       id: '9.1-c2',
       title: 'مفهوم التزييف العميق وشبكات GANs (ص ٨٨)',
       role: 'concept',
+      requireInteraction: true,
       blocks: [
+        {
+          id: '9.1-video',
+          type: 'mediaPlayer',
+          data: {
+            kind: 'video',
+            title: 'فيديو وايت بورد (٩٦ ثانية): حلبة صراع المزوّر والمحقّق في شبكات GANs',
+            src: '/media/video-9-1.mp4',
+            vttSrc: '/media/caption-9-1.vtt',
+            durationSec: 96,
+            aspect: 'landscape',
+            transcript:
+              'جوه شبكات GANs مفيش ذكاء واحد — فيه اتنين بيتنافسوا ضد بعض في حلقة مغلقة.\n' +
+              'المولّد Generator، المزوّر، يصنع صورة مبدئية مكسرة ويرسلها للفحص.\n' +
+              'المميّز Discriminator، المحقّق، يقارنها بصور حقيقية ويرفضها مع كشف موضع العيب.\n' +
+              'مع كل رفض يتعلم المزوّر ويزيد المحقّق دقة، فتتقارب الصور المزيفة من الواقعية التامة.',
+          },
+        },
         {
           id: '9.1-gans-text',
           type: 'richText',
