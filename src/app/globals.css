@@ -1,0 +1,161 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-orchid-page: #F6FAF9;
+  --color-orchid-card: #FFFFFF;
+  --color-orchid-border: #E2ECE9;
+  --color-orchid-header: #163A3A;
+  --color-orchid-body: #3B5A58;
+  --color-orchid-accent: #006E5A;
+  --color-orchid-accent-light: #E5F1EE;
+  --color-orchid-secondary: #E14B63;
+  --color-orchid-secondary-light: #FBEAEC;
+  --color-orchid-code: #0F2929;
+
+  --font-sans: var(--font-ibm-plex-sans-arabic), "IBM Plex Sans Arabic", system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), "JetBrains Mono", ui-monospace, monospace;
+}
+
+:root {
+  color-scheme: light;
+  --orchid-page: #F6FAF9;
+  --orchid-card: #FFFFFF;
+  --orchid-border: #E2ECE9;
+  --orchid-header: #163A3A;
+  --orchid-body: #3B5A58;
+  --orchid-accent: #006E5A;
+  --orchid-accent-light: #E5F1EE;
+  --orchid-secondary: #E14B63;
+  --orchid-secondary-light: #FBEAEC;
+  --orchid-code: #0F2929;
+  --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+}
+
+@layer base {
+  html {
+    direction: rtl;
+    background-color: var(--orchid-page);
+    color: var(--orchid-body);
+    font-family: var(--font-sans);
+    scroll-behavior: smooth;
+    scroll-padding-bottom: 6rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  button, a, input, textarea, select, [role="button"] {
+    scroll-margin-bottom: 6rem;
+  }
+
+  body {
+    background-color: var(--orchid-page);
+    color: var(--orchid-body);
+    font-family: var(--font-sans);
+    font-size: 17px;
+    line-height: 1.75;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--orchid-header);
+    font-weight: 700;
+    line-height: 1.4;
+  }
+
+  code, pre, kbd, .font-mono {
+    font-family: var(--font-mono);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--orchid-accent);
+    outline-offset: 2px;
+  }
+}
+
+.orchid-card {
+  background-color: var(--orchid-card);
+  border: 1px solid var(--orchid-border);
+  border-radius: 0.75rem;
+  box-shadow: var(--card-shadow);
+}
+
+.orchid-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 48px;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.5rem;
+  background-color: var(--orchid-accent);
+  color: #FFFFFF;
+  font-weight: 600;
+  transition: background-color 150ms ease, transform 120ms ease;
+}
+
+.orchid-btn-primary:hover:not(:disabled) {
+  background-color: #007A66;
+}
+
+.orchid-btn-primary:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.orchid-btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.orchid-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 48px;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.5rem;
+  background-color: var(--orchid-card);
+  color: var(--orchid-header);
+  border: 1px solid var(--orchid-border);
+  font-weight: 600;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.orchid-btn-secondary:hover:not(:disabled) {
+  background-color: var(--orchid-accent-light);
+  border-color: var(--orchid-accent);
+}
+
+@keyframes cardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-card-enter {
+  animation: cardEnter 220ms ease-out both;
+}
+
+/* Perspective helper for flashcards */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}

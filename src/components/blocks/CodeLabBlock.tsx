@@ -1,0 +1,625 @@
+'use client';
+
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  CheckCircle2,
+  Code2,
+  Eye,
+  Lightbulb,
+  Play,
+  RotateCcw,
+  Sparkles,
+  Square,
+  XCircle,
+} from 'lucide-react';
+import type { CodeLabData } from '@/types/curriculum';
+import {
+  runCodeLabChecks,
+  runPython,
+  type CodeLabEvaluationResult,
+  type PythonErrorInfo,
+} from '@/lib/python/skulptRunner';
+import { FormattedText } from './FormattedText';
+import { PythonCodeLines } from './pythonHighlight';
+import { PythonTerminal, type PendingPythonInput } from './PythonTerminal';
+import type { BlockInteractionProps } from './types';
+
+export interface CodeLabBlockProps extends BlockInteractionProps {
+  data: CodeLabData;
+}
+
+const MOBILE_PYTHON_SNIPPETS = [
+  { label: 'Tab', insert: '    ' },
+  { label: ':', insert: ':' },
+  { label: '()', insert: '()' },
+  { label: '""', insert: '""' },
+  { label: '[]', insert: '[]' },
+  { label: '=', insert: ' = ' },
+  { label: '==', insert: ' == ' },
+  { label: '+', insert: ' + ' },
+  { label: '%', insert: ' % ' },
+  { label: '#', insert: '# ' },
+];
+
+const FILL_MARKER_REGEX = /___|TODO|#\s*(?:اكتب|أكمل|اكمل|اطبع|استدع|حدد)/;
+const ARABIC_DIGITS = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+
+function toArabicDigits(value: number): string {
+  return String(value).replace(/\d/g, (d) => ARABIC_DIGITS[Number(d)] ?? d);
+}
+
+export function CodeLabBlock({
+  data,
+  onAttempt,
+  onComplete,
+  onInteract,
+  className = '',
+}: CodeLabBlockProps) {
+  const [code, setCode] = useState(data.starterCode);
+  const [isRunning, setIsRunning] = useState(false);
+  const [isChecking, setIsChecking] = useState(false);
+  const [stdout, setStdout] = useState('');
+  const [hasConsoleActivity, setHasConsoleActivity] = useState(false);
+  const [runError, setRunError] = useState<PythonErrorInfo | null>(null);
+  const [evalResult, setEvalResult] = useState<CodeLabEvaluationResult | null>(null);
+  const [hintsExpanded, setHintsExpanded] = useState(false);
+  const [revealedHintCount, setRevealedHintCount] = useState(0);
+  const [showSolution, setShowSolution] = useState(false);
+  const [attemptCount, setAttemptCount] = useState(0);
+  const [pendingInput, setPendingInput] = useState<PendingPythonInput | null>(null);
+
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
+  const pendingInputRef = useRef<PendingPythonInput | null>(null);
+
+  const dataSignature = JSON.stringify({
+    mode: data.mode,
+    prompt: data.prompt,
+    starterCode: data.starterCode,
+    checks: data.checks.map((c) => c.id),
+    hints: data.hints ?? [],
+    quickChips: data.quickChips ?? [],
+  });
+
+  useEffect(() => {
+    setCode(data.starterCode);
+    setStdout('');
+    setHasConsoleActivity(false);
+    setRunError(null);
+    setEvalResult(null);
+    setHintsExpanded(false);
+    setRevealedHintCount(0);
+    setShowSolution(false);
+    setAttemptCount(0);
+    setPendingInput(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dataSignature]);
+
+  useEffect(() => {
+    return () => {
+      abortRef.current?.abort();
+      pendingInputRef.current?.reject(new Error('Unmounted'));
+    };
+  }, []);
+
+  const lineCount = Math.max(4, code.replace(/\r\n/g, '\n').split('\n').length);
+
+  const effectiveHints =
+    data.hints && data.hints.length > 0 ? data.hints : data.hint ? [data.hint] : [];
+  const hasMultiHints = effectiveHints.length > 1;
+
+  const handleHintClick = () => {
+    if (effectiveHints.length === 0) return;
+
+    if (!hasMultiHints) {
+      const nextExpanded = !hintsExpanded;
+      setHintsExpanded(nextExpanded);
+      if (nextExpanded && revealedHintCount === 0) {
+        setRevealedHintCount(1);
+      }
+      return;
+    }
+
+    if (!hintsExpanded) {
+      setHintsExpanded(true);
+      if (revealedHintCount === 0) {
+        setRevealedHintCount(1);
+      }
+      return;
+    }
+
+    if (revealedHintCount < effectiveHints.length) {
+      setRevealedHintCount((prev) => Math.min(effectiveHints.length, prev + 1));
+      return;
+    }
+
+    setHintsExpanded(false);
+  };
+
+  const hintButtonLabel = (() => {
+    if (!hasMultiHints) {
+      return hintsExpanded ? 'إخفاء التلميح' : 'تلميح';
+    }
+    const totalAr = toArabicDigits(effectiveHints.length);
+    if (!hintsExpanded) {
+      if (revealedHintCount === 0) {
+        return `تلميح ١ من ${totalAr}`;
+      }
+      if (revealedHintCount < effectiveHints.length) {
+        return `تلميح ${toArabicDigits(revealedHintCount + 1)} من ${totalAr}`;
+      }
+      return `عرض التلميحات (${totalAr})`;
+    }
+    if (revealedHintCount < effectiveHints.length) {
+      return `تلميح ${toArabicDigits(revealedHintCount + 1)} من ${totalAr}`;
+    }
+    return 'إخفاء التلميحات';
+  })();
+
+  const insertSnippet = (snippet: string) => {
+    const el = textareaRef.current;
+    if (!el) {
+      setCode((prev) => prev + snippet);
+      return;
+    }
+    const start = el.selectionStart ?? code.length;
+    const end = el.selectionEnd ?? code.length;
+    const nextCode = code.slice(0, start) + snippet + code.slice(end);
+    const nextCursor =
+      snippet === '()' || snippet === '""' || snippet === '[]'
+        ? start + 1
+        : start + snippet.length;
+    setCode(nextCode);
+    requestAnimationFrame(() => {
+      el.focus();
+      el.setSelectionRange(nextCursor, nextCursor);
+    });
+  };
+
+  const insertQuickChip = (chip: string) => {
+    const el = textareaRef.current;
+    const isFocused =
+      typeof document !== 'undefined' && el !== null && document.activeElement === el;
+
+    if (el && isFocused) {
+      const start = el.selectionStart ?? code.length;
+      const end = el.selectionEnd ?? code.length;
+      if (start !== end) {
+        insertSnippet(chip);
+        return;
+      }
+      if (code.slice(start, start + 3) === '___') {
+        setCode(code.slice(0, start) + chip + code.slice(start + 3));
+        return;
+      }
+    }
+
+    // Replace the next ___ placeholder directly (even if textarea remains focused on iOS Safari)
+    // and skip el.focus() so mobile soft keyboard does not pop up between sequential chip taps.
+    if (code.includes('___')) {
+      setCode((prev) => {
+        const idx = prev.indexOf('___');
+        if (idx < 0) return prev;
+        return prev.slice(0, idx) + chip + prev.slice(idx + 3);
+      });
+      return;
+    }
+
+    if (el && isFocused) {
+      insertSnippet(chip);
+      return;
+    }
+
+    setCode((prev) => {
+      if (!prev) return chip;
+      return prev.endsWith('\n') ? `${prev}${chip}` : `${prev}\n${chip}`;
+    });
+  };
+
+  const handleEditorKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      insertSnippet('    ');
+    }
+  };
+
+  const handleStopRun = () => {
+    pendingInputRef.current?.reject(new Error('Stopped'));
+    pendingInputRef.current = null;
+    setPendingInput(null);
+    abortRef.current?.abort();
+    setIsRunning(false);
+  };
+
+  const handleRun = async () => {
+    if (isChecking) return;
+    onInteract?.();
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    setIsRunning(true);
+    setHasConsoleActivity(true);
+    setStdout('');
+    setRunError(null);
+    setEvalResult(null);
+
+    const res = await runPython(code, {
+      hiddenPrefix: data.hiddenPrefix,
+      signal: controller.signal,
+      onStdout: (_chunk, fullStdout) => setStdout(fullStdout),
+      onInputRequest: (prompt) =>
+        new Promise<string>((resolve, reject) => {
+          const entry: PendingPythonInput = { prompt, resolve, reject };
+          pendingInputRef.current = entry;
+          setPendingInput(entry);
+        }),
+    });
+
+    pendingInputRef.current = null;
+    setPendingInput(null);
+    setIsRunning(false);
+    setStdout(res.stdout);
+    if (!res.ok && res.error) {
+      setRunError(res.error);
+    }
+  };
+
+  const handleSubmitInput = (value: string) => {
+    if (!pendingInputRef.current) return;
+    const { resolve } = pendingInputRef.current;
+    pendingInputRef.current = null;
+    setPendingInput(null);
+    resolve(value);
+  };
+
+  const handleCancelInput = () => {
+    if (!pendingInputRef.current) return;
+    const { reject } = pendingInputRef.current;
+    pendingInputRef.current = null;
+    setPendingInput(null);
+    reject(new Error('Cancelled by learner'));
+  };
+
+  const handleCheckSolution = async () => {
+    if (isRunning || isChecking) return;
+    onInteract?.();
+    setIsChecking(true);
+    setHasConsoleActivity(true);
+    setRunError(null);
+
+    const evaluation = await runCodeLabChecks(
+      code,
+      data.checks,
+      data.hiddenPrefix,
+    );
+
+    const nextAttempt = attemptCount + 1;
+    setAttemptCount(nextAttempt);
+    setEvalResult(evaluation);
+    setIsChecking(false);
+
+    const firstFailedWithError = evaluation.results.find((r) => !r.passed && r.error);
+    if (firstFailedWithError?.error) {
+      setRunError(firstFailedWithError.error);
+    }
+    const latestOutput = evaluation.results[0]?.stdout;
+    if (latestOutput !== undefined) {
+      setStdout(latestOutput);
+    }
+
+    onAttempt?.({
+      isCorrect: evaluation.allPassed,
+      attemptNumber: nextAttempt,
+      errorKind: firstFailedWithError?.error?.errorType,
+    });
+    onComplete?.(evaluation.allPassed);
+  };
+
+  const handleReset = () => {
+    handleStopRun();
+    setCode(data.starterCode);
+    setStdout('');
+    setHasConsoleActivity(false);
+    setRunError(null);
+    setEvalResult(null);
+  };
+
+  const hasFillMarker = FILL_MARKER_REGEX.test(data.starterCode);
+  const fillLineNumbers = data.starterCode
+    .replace(/\r\n/g, '\n')
+    .split('\n')
+    .map((line, idx) => (FILL_MARKER_REGEX.test(line) ? idx + 1 : null))
+    .filter((n): n is number => n !== null);
+
+  return (
+    <section
+      dir="rtl"
+      className={`rounded-xl border border-[#E2ECE9] bg-[#FFFFFF] p-4 sm:p-6 shadow-[0_4px_6px_-1px_rgb(0_0_0/0.08),0_2px_4px_-2px_rgb(0_0_0/0.08)] space-y-4 ${className}`}
+    >
+      {/* Header */}
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E5F1EE] px-3 py-1 text-xs font-bold text-[#006E5A]">
+          <Code2 className="h-3.5 w-3.5" aria-hidden="true" />
+          <span>
+            {data.mode === 'fillLine'
+              ? 'أكمل السطر الناقص في Python'
+              : 'اكتب وشغّل Python مباشرة'}
+          </span>
+        </span>
+
+        {effectiveHints.length > 0 && (
+          <button
+            type="button"
+            onClick={handleHintClick}
+            className="inline-flex min-h-[48px] items-center gap-1.5 rounded-lg border border-[#E2ECE9] bg-[#F6FAF9] px-3.5 text-xs sm:text-sm font-bold text-[#163A3A] hover:border-[#006E5A]"
+          >
+            <Lightbulb className="h-4 w-4 text-[#006E5A]" aria-hidden="true" />
+            <span>{hintButtonLabel}</span>
+          </button>
+        )}
+      </div>
+
+      {data.title && (
+        <h3 className="text-lg sm:text-xl font-bold text-[#163A3A]">{data.title}</h3>
+      )}
+
+      <FormattedText text={data.prompt} />
+
+      {data.mode === 'fillLine' && hasFillMarker && (
+        <div className="rounded-lg border border-[#006E5A]/30 bg-[#E5F1EE]/75 px-3.5 py-2.5 text-sm font-medium text-[#163A3A] space-y-1">
+          <p>
+            ابحث عن علامة{' '}
+            <code
+              dir="ltr"
+              className="mx-0.5 inline-block rounded border border-[#F59E0B]/60 bg-[#FEF3C7] px-1.5 py-0.5 font-mono font-bold text-[#92400E]"
+            >
+              ___
+            </code>{' '}
+            أو تعليق الإكمال داخل الكود واستبدله بالإجابة الصحيحة.
+          </p>
+          {fillLineNumbers.length > 0 && (
+            <p className="text-xs font-bold text-[#006E5A]">
+              موضع الإكمال في الكود:{' '}
+              {fillLineNumbers.map((n) => `سطر ${n}`).join(' ، ')}
+            </p>
+          )}
+        </div>
+      )}
+
+      {hintsExpanded && revealedHintCount > 0 && (
+        <div className="rounded-xl border border-[#006E5A]/35 bg-[#E5F1EE] p-4 space-y-2.5 text-sm sm:text-base text-[#163A3A]">
+          <p className="font-bold text-[#006E5A]">
+            {hasMultiHints
+              ? `التلميحات المتدرجة (${toArabicDigits(revealedHintCount)} من ${toArabicDigits(effectiveHints.length)}):`
+              : 'تلميح سريع:'}
+          </p>
+          {hasMultiHints ? (
+            <ol className="space-y-2">
+              {effectiveHints.slice(0, revealedHintCount).map((hintText, idx) => (
+                <li
+                  key={idx}
+                  className="rounded-lg border border-[#006E5A]/20 bg-white/85 px-3.5 py-2.5"
+                >
+                  <span className="mb-1 block text-xs font-bold text-[#006E5A]">
+                    المستوى {toArabicDigits(idx + 1)}
+                  </span>
+                  <FormattedText text={hintText} />
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <FormattedText text={effectiveHints[0]} />
+          )}
+        </div>
+      )}
+
+      {/* Optional Mobile Quick Chips above editor */}
+      {data.quickChips && data.quickChips.length > 0 && (
+        <div className="rounded-xl border border-[#E2ECE9] bg-[#F6FAF9] p-3 space-y-2">
+          <div className="flex items-center gap-1.5 text-xs font-bold text-[#006E5A]">
+            <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
+            <span>اضغط لإدراج كود جاهز بدون كتابة يدوية:</span>
+          </div>
+          <div
+            dir="ltr"
+            className="flex flex-wrap gap-2"
+            role="group"
+            aria-label="رقائق الإدخال السريع للكود"
+          >
+            {data.quickChips.map((chip) => (
+              <button
+                key={chip}
+                type="button"
+                onClick={() => insertQuickChip(chip)}
+                className="min-h-[48px] rounded-lg border-2 border-[#006E5A]/35 bg-white px-3.5 py-2 font-mono text-xs sm:text-sm font-bold text-[#163A3A] hover:border-[#006E5A] hover:bg-[#E5F1EE]"
+              >
+                {chip}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Editor Card */}
+      <div className="overflow-hidden rounded-xl border border-[#1E4745] bg-[#0F2929]">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#1E4745] bg-[#163A3A] px-3.5 py-2">
+          <span className="font-mono text-xs font-semibold text-[#8CE9C8]" dir="ltr">
+            main.py · Python 3 (Offline)
+          </span>
+          <button
+            type="button"
+            onClick={handleReset}
+            className="inline-flex min-h-[48px] items-center gap-1.5 rounded-lg bg-white/10 px-3 text-xs font-bold text-white hover:bg-white/20"
+          >
+            <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
+            <span>إعادة الكود الأصلي</span>
+          </button>
+        </div>
+
+        {/* Mobile Python quick-insert symbol bar (>= 48px touch targets) */}
+        <div
+          dir="ltr"
+          className="flex items-center gap-1.5 overflow-x-auto border-b border-[#1E4745] bg-[#123333] px-3 py-2"
+          aria-label="أزرار رموز بايثون السريعة"
+        >
+          {MOBILE_PYTHON_SNIPPETS.map((item) => (
+            <button
+              key={item.label}
+              type="button"
+              onClick={() => insertSnippet(item.insert)}
+              className="min-h-[48px] min-w-[48px] shrink-0 rounded-md border border-[#2EC4B6]/30 bg-[#0F2929] px-2.5 font-mono text-xs font-bold text-[#8CE9C8] hover:bg-[#1E4745]"
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+
+        <div dir="ltr" className="flex items-stretch">
+          <div
+            aria-hidden="true"
+            className="select-none border-r border-[#1E4745] bg-[#0B2020] px-3 py-3 text-right font-mono text-xs leading-6 text-[#6E928E]"
+          >
+            {Array.from({ length: lineCount }, (_, idx) => (
+              <div key={idx}>{idx + 1}</div>
+            ))}
+          </div>
+          <textarea
+            ref={textareaRef}
+            dir="ltr"
+            aria-label="محرر كود Python"
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            onKeyDown={handleEditorKeyDown}
+            rows={Math.min(16, Math.max(5, lineCount + 1))}
+            spellCheck={false}
+            autoCapitalize="none"
+            autoCorrect="off"
+            autoComplete="off"
+            className="w-full resize-y bg-[#0F2929] p-3 font-mono text-sm leading-6 text-[#F4F9FC] placeholder:text-white/40 focus:outline-none"
+          />
+        </div>
+      </div>
+
+      {/* Primary action buttons */}
+      <div className="flex flex-wrap items-center gap-3">
+        <button
+          type="button"
+          onClick={isRunning ? handleStopRun : handleRun}
+          disabled={isChecking}
+          className={`inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-lg px-4 text-base font-bold text-white transition-colors ${
+            isRunning
+              ? 'bg-[#E14B63] hover:bg-[#c93d54]'
+              : 'bg-[#163A3A] hover:bg-[#1f4d4d]'
+          } disabled:opacity-40`}
+        >
+          {isRunning ? (
+            <>
+              <Square className="h-4 w-4" aria-hidden="true" />
+              <span>إيقاف التشغيل</span>
+            </>
+          ) : (
+            <>
+              <Play className="h-4 w-4" aria-hidden="true" />
+              <span>شغّل الكود</span>
+            </>
+          )}
+        </button>
+
+        <button
+          type="button"
+          onClick={handleCheckSolution}
+          disabled={isRunning || isChecking}
+          className="inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-lg bg-[#006E5A] px-4 text-base font-bold text-white hover:bg-[#007a66] disabled:opacity-40"
+        >
+          <CheckCircle2 className="h-5 w-5" aria-hidden="true" />
+          <span>{isChecking ? 'جاري الفحص...' : 'تحقق من الحل'}</span>
+        </button>
+      </div>
+
+      {hasConsoleActivity && (
+        <PythonTerminal
+          stdout={stdout}
+          isRunning={isRunning}
+          runError={runError}
+          pendingInput={pendingInput}
+          onSubmitInput={handleSubmitInput}
+          onCancelInput={handleCancelInput}
+        />
+      )}
+
+      {/* Automated Check Results */}
+      {evalResult && (
+        <div
+          role="status"
+          className={`rounded-xl border p-4 space-y-3 ${
+            evalResult.allPassed
+              ? 'border-[#006E5A]/40 bg-[#E5F1EE]'
+              : 'border-[#E14B63]/40 bg-[#FBEAEC]'
+          }`}
+        >
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              {evalResult.allPassed ? (
+                <CheckCircle2 className="h-5 w-5 text-[#006E5A]" aria-hidden="true" />
+              ) : (
+                <XCircle className="h-5 w-5 text-[#E14B63]" aria-hidden="true" />
+              )}
+              <p className="text-base font-bold text-[#163A3A]">
+                {evalResult.allPassed
+                  ? 'ممتاز يا مبرمج! كل الاختبارات نجحت.'
+                  : `نجح ${evalResult.passedCount} من ${evalResult.totalCount} اختبار — عدّل الكود وجرّب تاني!`}
+              </p>
+            </div>
+          </div>
+
+          <ul className="space-y-2">
+            {evalResult.results.map((res, idx) => (
+              <li
+                key={res.checkId}
+                className={`rounded-lg border px-3.5 py-2.5 text-sm ${
+                  res.passed
+                    ? 'border-[#006E5A]/30 bg-white text-[#163A3A]'
+                    : 'border-[#E14B63]/30 bg-white text-[#163A3A]'
+                }`}
+              >
+                <div className="flex items-center justify-between gap-2 font-bold">
+                  <span>{res.label || `اختبار ${idx + 1}`}</span>
+                  <span className={res.passed ? 'text-[#006E5A]' : 'text-[#E14B63]'}>
+                    {res.passed ? 'نجح ✓' : 'لم يطابق ✗'}
+                  </span>
+                </div>
+                {res.reasonAr && (
+                  <p className="mt-1 text-xs sm:text-sm text-[#3B5A58]">{res.reasonAr}</p>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Optional Solution reveal after attempting */}
+      {attemptCount > 0 && !evalResult?.allPassed && data.solutionCode && (
+        <div className="space-y-2">
+          <button
+            type="button"
+            onClick={() => setShowSolution((prev) => !prev)}
+            className="inline-flex min-h-[48px] items-center gap-2 rounded-lg border border-[#E2ECE9] bg-[#F6FAF9] px-4 text-sm font-bold text-[#163A3A] hover:border-[#006E5A]"
+          >
+            <Eye className="h-4 w-4 text-[#006E5A]" aria-hidden="true" />
+            <span>{showSolution ? 'إخفاء الحل النموذجي' : 'عرض الحل النموذجي للمساعدة'}</span>
+          </button>
+
+          {showSolution && (
+            <div className="overflow-hidden rounded-xl border border-[#1E4745] bg-[#0F2929]">
+              <div className="border-b border-[#1E4745] bg-[#163A3A] px-4 py-2 text-xs font-bold text-[#8CE9C8]">
+                الحل النموذجي — اقرأه وافهمه وبعدين جربه بنفسك
+              </div>
+              <PythonCodeLines code={data.solutionCode} />
+            </div>
+          )}
+        </div>
+      )}
+    </section>
+  );
+}
