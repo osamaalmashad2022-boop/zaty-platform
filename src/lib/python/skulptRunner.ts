@@ -189,7 +189,18 @@ export function evaluateStdoutCheck(
   const normalizedOut = stdout.replace(/\r\n/g, '\n');
 
   if (check.expectedOutputRegex) {
-    const regex = new RegExp(check.expectedOutputRegex, 'm');
+    let regex: RegExp;
+    try {
+      regex = new RegExp(check.expectedOutputRegex, 'm');
+    } catch {
+      return {
+        checkId: check.id,
+        label: check.label,
+        passed: false,
+        stdout: normalizedOut,
+        reasonAr: 'تعذر التحقق من نمط الإجابة المتوقع في هذا التمرين.',
+      };
+    }
     if (!regex.test(normalizedOut)) {
       return {
         checkId: check.id,
@@ -258,19 +269,53 @@ export class SkulptWorkerRunner {
 
   terminate(): void {
     if (this.worker) {
-      this.worker.terminate();
+      try {
+        this.worker.terminate();
+      } catch {
+        // Ignore worker termination errors
+      }
       this.worker = null;
     }
   }
 
+  private terminateWorkerInstance(target: Worker): void {
+    if (this.worker === target) {
+      this.terminate();
+      return;
+    }
+    try {
+      target.terminate();
+    } catch {
+      // Ignore worker termination errors
+    }
+  }
+
   run(code: string, options: PythonRunOptions = {}, lineOffset = 0): Promise<PythonRunResult> {
-    const execLimitMs = options.execLimitMs ?? 3000;
+    const execLimitMs =
+      typeof options.execLimitMs === 'number' &&
+      Number.isFinite(options.execLimitMs) &&
+      options.execLimitMs > 0
+        ? options.execLimitMs
+        : 3000;
     const composed = options.hiddenPrefix
       ? composeCodeWithPrefix(code, options.hiddenPrefix)
       : { fullCode: code, prefixLines: lineOffset };
     const effectiveCode = composed.fullCode;
     const effectiveLineOffset = composed.prefixLines;
-    const worker = this.ensureWorker();
+    let worker: Worker;
+    try {
+      worker = this.ensureWorker();
+    } catch (err) {
+      return Promise.resolve({
+        ok: false,
+        stdout: '',
+        durationMs: 0,
+        error: formatPythonErrorAr(
+          err instanceof Error ? err.message : 'Worker initialization failed',
+          effectiveLineOffset,
+        ),
+      });
+    }
     this.runSeq += 1;
     const runId = `py_${Date.now()}_${this.runSeq}`;
 
@@ -291,7 +336,7 @@ export class SkulptWorkerRunner {
         clearWatchdog();
         watchdogId = setTimeout(() => {
           if (settled || waitingForInput) return;
-          this.terminate();
+          this.terminateWorkerInstance(worker);
           finish({
             ok: false,
             stdout,
@@ -317,8 +362,25 @@ export class SkulptWorkerRunner {
         resolve(result);
       };
 
+      const postToWorker = (payload: Record<string, unknown>) => {
+        try {
+          worker.postMessage(payload);
+        } catch (err) {
+          this.terminateWorkerInstance(worker);
+          finish({
+            ok: false,
+            stdout,
+            durationMs: 0,
+            error: formatPythonErrorAr(
+              err instanceof Error ? err.message : 'Worker communication error',
+              effectiveLineOffset,
+            ),
+          });
+        }
+      };
+
       const onAbort = () => {
-        this.terminate();
+        this.terminateWorkerInstance(worker);
         finish({
           ok: false,
           stdout,
@@ -333,7 +395,7 @@ export class SkulptWorkerRunner {
       };
 
       const onError = (err: ErrorEvent) => {
-        this.terminate();
+        this.terminateWorkerInstance(worker);
         finish({
           ok: false,
           stdout,
@@ -347,6 +409,7 @@ export class SkulptWorkerRunner {
         if (!msg || typeof msg !== 'object') return;
 
         if (msg.type === 'init_error') {
+          this.terminateWorkerInstance(worker);
           finish({
             ok: false,
             stdout,
@@ -362,7 +425,11 @@ export class SkulptWorkerRunner {
 
         if (msg.type === 'stdout') {
           stdout += msg.chunk;
-          options.onStdout?.(msg.chunk, stdout);
+          try {
+            options.onStdout?.(msg.chunk, stdout);
+          } catch {
+            // Do not let UI stdout listener errors reject the worker message handler
+          }
           return;
         }
 
@@ -376,7 +443,7 @@ export class SkulptWorkerRunner {
             if (settled) return;
             waitingForInput = false;
             startWatchdog();
-            worker.postMessage({
+            postToWorker({
               type: 'input_response',
               runId,
               requestId: msg.requestId,
@@ -385,7 +452,8 @@ export class SkulptWorkerRunner {
           } catch {
             if (settled) return;
             waitingForInput = false;
-            worker.postMessage({
+            startWatchdog();
+            postToWorker({
               type: 'input_cancel',
               runId,
               requestId: msg.requestId,
@@ -422,7 +490,7 @@ export class SkulptWorkerRunner {
       worker.addEventListener('error', onError);
 
       startWatchdog();
-      worker.postMessage({
+      postToWorker({
         type: 'run',
         runId,
         code: effectiveCode,

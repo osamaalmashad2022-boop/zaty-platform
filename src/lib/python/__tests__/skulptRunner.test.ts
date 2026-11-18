@@ -181,6 +181,26 @@ describe('python/skulptRunner helpers', () => {
     expect(failContains.reasonAr).toContain('زوجي');
   });
 
+  it('returns passed: false instead of throwing when expectedOutputRegex is invalid', () => {
+    const invalidRegexResult = evaluateStdoutCheck(
+      '42\n',
+      {
+        id: 'bad-regex',
+        label: 'فحص النمط',
+        stdin: [],
+        expectedOutputRegex: '[unclosed(',
+      },
+      true,
+    );
+    expect(invalidRegexResult).toEqual({
+      checkId: 'bad-regex',
+      label: 'فحص النمط',
+      passed: false,
+      stdout: '42\n',
+      reasonAr: 'تعذر التحقق من نمط الإجابة المتوقع في هذا التمرين.',
+    });
+  });
+
   it('bridges Worker messages for interactive input(), stdout streaming, and runCodeLabChecks', async () => {
     class MockWorker {
       private listeners = new Map<string, Set<(ev: unknown) => void>>();

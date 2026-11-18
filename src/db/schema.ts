@@ -111,15 +111,25 @@ const COURSE_ID_MIGRATION_TABLES = [
   'anonymous_friction_stats',
 ] as const;
 
+export function shouldSeedDemoActivationCodes(): boolean {
+  return (
+    process.env.NODE_ENV !== 'production' ||
+    process.env.SEED_DEMO_CODES === 'true'
+  );
+}
+
 async function runSchemaInitialization(client: Client): Promise<void> {
-  const statements: InStatement[] = [
-    ...SCHEMA_STATEMENTS,
-    ...DEMO_ACTIVATION_CODES.map((seed) => ({
-      sql: `INSERT OR IGNORE INTO activation_codes (code, plan, max_uses, used_count, expires_at)
-            VALUES (?, ?, ?, 0, NULL)`,
-      args: [seed.code, seed.plan, seed.maxUses],
-    })),
-  ];
+  const statements: InStatement[] = [...SCHEMA_STATEMENTS];
+
+  if (shouldSeedDemoActivationCodes()) {
+    statements.push(
+      ...DEMO_ACTIVATION_CODES.map((seed) => ({
+        sql: `INSERT OR IGNORE INTO activation_codes (code, plan, max_uses, used_count, expires_at)
+              VALUES (?, ?, ?, 0, NULL)`,
+        args: [seed.code, seed.plan, seed.maxUses],
+      })),
+    );
+  }
 
   await client.batch(statements, 'write');
 

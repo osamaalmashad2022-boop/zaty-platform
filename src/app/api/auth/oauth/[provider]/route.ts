@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server';
-import { getOAuthProviderConfig } from '@/lib/auth/server';
+import {
+  getOAuthProviderConfig,
+  setOAuthStateCookie,
+} from '@/lib/auth/server';
 
 export const dynamic = 'force-dynamic';
 
@@ -23,7 +26,7 @@ export async function GET(
     );
   }
 
-  if (!result.configured || !result.authUrl) {
+  if (!result.configured || !result.authUrl || !result.state) {
     return NextResponse.json(
       {
         ok: false,
@@ -39,18 +42,20 @@ export async function GET(
   const shouldRedirect =
     url.searchParams.get('redirect') === '1' ||
     url.searchParams.get('mode') === 'redirect';
-  if (shouldRedirect) {
-    return NextResponse.redirect(result.authUrl);
-  }
 
-  return NextResponse.json(
-    {
-      ok: true,
-      configured: true,
-      provider: result.provider,
-      authUrl: result.authUrl,
-      message: result.message,
-    },
-    { status: 200 },
-  );
+  const response = shouldRedirect
+    ? NextResponse.redirect(result.authUrl)
+    : NextResponse.json(
+        {
+          ok: true,
+          configured: true,
+          provider: result.provider,
+          authUrl: result.authUrl,
+          message: result.message,
+        },
+        { status: 200 },
+      );
+
+  setOAuthStateCookie(response, result.state);
+  return response;
 }

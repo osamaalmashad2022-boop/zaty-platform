@@ -244,24 +244,35 @@ export function CodeLabBlock({
     setRunError(null);
     setEvalResult(null);
 
-    const res = await runPython(code, {
-      hiddenPrefix: data.hiddenPrefix,
-      signal: controller.signal,
-      onStdout: (_chunk, fullStdout) => setStdout(fullStdout),
-      onInputRequest: (prompt) =>
-        new Promise<string>((resolve, reject) => {
-          const entry: PendingPythonInput = { prompt, resolve, reject };
-          pendingInputRef.current = entry;
-          setPendingInput(entry);
-        }),
-    });
+    try {
+      const res = await runPython(code, {
+        hiddenPrefix: data.hiddenPrefix,
+        signal: controller.signal,
+        onStdout: (_chunk, fullStdout) => setStdout(fullStdout),
+        onInputRequest: (prompt) =>
+          new Promise<string>((resolve, reject) => {
+            const entry: PendingPythonInput = { prompt, resolve, reject };
+            pendingInputRef.current = entry;
+            setPendingInput(entry);
+          }),
+      });
 
-    pendingInputRef.current = null;
-    setPendingInput(null);
-    setIsRunning(false);
-    setStdout(res.stdout);
-    if (!res.ok && res.error) {
-      setRunError(res.error);
+      setStdout(res.stdout);
+      if (!res.ok && res.error) {
+        setRunError(res.error);
+      }
+    } catch (err) {
+      const rawMessage = err instanceof Error ? err.message : 'Unexpected run error';
+      setRunError({
+        errorType: 'RuntimeError',
+        rawMessage,
+        friendlyMessageAr: 'حدث خطأ غير متوقع أثناء تشغيل الكود. جرّب مرة أخرى.',
+        hintAr: 'أعد تشغيل الكود أو اضغط "إعادة الكود الأصلي" ثم جرّب تاني.',
+      });
+    } finally {
+      pendingInputRef.current = null;
+      setPendingInput(null);
+      setIsRunning(false);
     }
   };
 
@@ -288,32 +299,56 @@ export function CodeLabBlock({
     setHasConsoleActivity(true);
     setRunError(null);
 
-    const evaluation = await runCodeLabChecks(
-      code,
-      data.checks,
-      data.hiddenPrefix,
-    );
+    try {
+      const evaluation = await runCodeLabChecks(
+        code,
+        data.checks,
+        data.hiddenPrefix,
+      );
 
-    const nextAttempt = attemptCount + 1;
-    setAttemptCount(nextAttempt);
-    setEvalResult(evaluation);
-    setIsChecking(false);
+      const nextAttempt = attemptCount + 1;
+      setAttemptCount(nextAttempt);
+      setEvalResult(evaluation);
 
-    const firstFailedWithError = evaluation.results.find((r) => !r.passed && r.error);
-    if (firstFailedWithError?.error) {
-      setRunError(firstFailedWithError.error);
+      const firstFailedWithError = evaluation.results.find((r) => !r.passed && r.error);
+      if (firstFailedWithError?.error) {
+        setRunError(firstFailedWithError.error);
+      }
+      const latestOutput = evaluation.results[0]?.stdout;
+      if (latestOutput !== undefined) {
+        setStdout(latestOutput);
+      }
+
+      onAttempt?.({
+        isCorrect: evaluation.allPassed,
+        attemptNumber: nextAttempt,
+        errorKind: firstFailedWithError?.error?.errorType,
+      });
+      onComplete?.(evaluation.allPassed);
+    } catch (err) {
+      const rawMessage = err instanceof Error ? err.message : 'Unexpected evaluation error';
+      setRunError({
+        errorType: 'RuntimeError',
+        rawMessage,
+        friendlyMessageAr: 'حدث خطأ غير متوقع أثناء فحص الحل. جرّب مرة أخرى.',
+        hintAr: 'تأكد من كتابة الكود بشكل صحيح ثم اضغط "تحقق من الحل" من جديد.',
+      });
+      setEvalResult({
+        allPassed: false,
+        passedCount: 0,
+        totalCount: Math.max(1, data.checks.length),
+        results: [
+          {
+            checkId: 'unexpected-error',
+            passed: false,
+            stdout,
+            reasonAr: 'تعذّر إكمال فحص الحل مؤقتًا. جرّب الضغط على "تحقق من الحل" مرة أخرى.',
+          },
+        ],
+      });
+    } finally {
+      setIsChecking(false);
     }
-    const latestOutput = evaluation.results[0]?.stdout;
-    if (latestOutput !== undefined) {
-      setStdout(latestOutput);
-    }
-
-    onAttempt?.({
-      isCorrect: evaluation.allPassed,
-      attemptNumber: nextAttempt,
-      errorKind: firstFailedWithError?.error?.errorType,
-    });
-    onComplete?.(evaluation.allPassed);
   };
 
   const handleReset = () => {

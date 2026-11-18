@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
+import * as Sentry from '@sentry/nextjs';
 import {
   ArrowLeft,
   ArrowRight,
@@ -88,6 +89,7 @@ export function LessonPlayerClient({
   const [activeExtraId, setActiveExtraId] = useState<string | null>(null);
   const [completed, setCompleted] = useState(false);
   const [isCompleting, setIsCompleting] = useState(false);
+  const [completionWarning, setCompletionWarning] = useState<string | null>(null);
   const [stats, setStats] = useState<LearnerStats | null>(null);
 
   const startedAtRef = useRef<number>(Date.now());
@@ -206,6 +208,7 @@ export function LessonPlayerClient({
   const handleFinishLesson = async () => {
     if (!isCardUnlocked || isCompleting) return;
     setIsCompleting(true);
+    setCompletionWarning(null);
     try {
       const durationSec = Math.max(
         1,
@@ -217,6 +220,12 @@ export function LessonPlayerClient({
       });
       const updated = await getLearnerStats();
       setStats(updated);
+      setCompleted(true);
+    } catch (err) {
+      Sentry.captureException(err);
+      setCompletionWarning(
+        'تعذّر حفظ التقدم محليًا في المتصفح، لكنك أنهيت الدرس بنجاح!',
+      );
       setCompleted(true);
     } finally {
       setIsCompleting(false);
@@ -303,6 +312,15 @@ export function LessonPlayerClient({
                 {lesson.summary}
               </p>
             </div>
+
+            {completionWarning && (
+              <div
+                role="status"
+                className="rounded-xl border border-[#F59E0B]/40 bg-[#FEF3C7] px-4 py-3 text-sm font-medium text-[#92400E]"
+              >
+                {completionWarning}
+              </div>
+            )}
 
             {stats && (
               <div className="flex flex-wrap items-center justify-center gap-3">

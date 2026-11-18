@@ -29,6 +29,7 @@ import { POST as loginRoute } from '@/app/api/auth/login/route';
 import { POST as logoutRoute } from '@/app/api/auth/logout/route';
 import { GET as meRoute } from '@/app/api/auth/me/route';
 import { GET as oauthRoute } from '@/app/api/auth/oauth/[provider]/route';
+import { GET as oauthCallbackRoute } from '@/app/api/auth/oauth/[provider]/callback/route';
 import { POST as registerRoute } from '@/app/api/auth/register/route';
 import { POST as activateRoute } from '@/app/api/activate/route';
 import { POST as syncRoute } from '@/app/api/sync/route';
@@ -39,6 +40,17 @@ function extractCookieValue(setCookieHeader: string | null, name: string): strin
   const regex = new RegExp(`${name}=([^;]+)`);
   const match = regex.exec(setCookieHeader);
   return match ? match[1] : null;
+}
+
+function getSetCookieHeaders(res: Response): string[] {
+  const headersWithList = res.headers as Headers & {
+    getSetCookie?: () => string[];
+  };
+  if (typeof headersWithList.getSetCookie === 'function') {
+    return headersWithList.getSetCookie();
+  }
+  const single = res.headers.get('set-cookie');
+  return single ? [single] : [];
 }
 
 describe('v2/v3 libSQL schema, auth, sync, activation, telemetry & deletion', () => {
@@ -604,6 +616,252 @@ describe('v2/v3 libSQL schema, auth, sync, activation, telemetry & deletion', ()
     const confBody = await configuredRes.json();
     expect(confBody.configured).toBe(true);
     expect(confBody.authUrl).toContain('accounts.google.com');
+
+    const authUrlObj = new URL(confBody.authUrl);
+    const urlState = authUrlObj.searchParams.get('state');
+    expect(urlState).toBeTruthy();
+
+    const setCookies = getSetCookieHeaders(configuredRes);
+    const stateCookieHeader = setCookies.find((c) =>
+      c.startsWith('zaty_oauth_state='),
+    );
+    expect(stateCookieHeader).toBeTruthy();
+    expect(extractCookieValue(stateCookieHeader ?? null, 'zaty_oauth_state')).toBe(
+      urlState,
+    );
+    expect(stateCookieHeader).toMatch(/HttpOnly/i);
+    expect(stateCookieHeader).toMatch(/SameSite=Lax/i);
+    expect(stateCookieHeader).toMatch(/Max-Age=600/i);
+  });
+
+  it('skips seeding demo activation codes in production unless SEED_DEMO_CODES is true', async () => {
+    const prodFileA = path.join(
+      os.tmpdir(),
+      `sl-prod-nosed-${Date.now()}-${Math.random().toString(36).slice(2)}.db`,
+    );
+    const prodFileB = path.join(
+      os.tmpdir(),
+      `sl-prod-seed-${Date.now()}-${Math.random().toString(36).slice(2)}.db`,
+    );
+
+    const prodClientNoSeed = createDbClient({
+      url: `file:${prodFileA.replace(/\\/g, '/')}`,
+    });
+    const prodClientWithSeed = createDbClient({
+      url: `file:${prodFileB.replace(/\\/g, '/')}`,
+    });
+
+    try {
+      vi.stubEnv('NODE_ENV', 'production');
+      vi.stubEnv('SEED_DEMO_CODES', '');
+      await ensureSchema(prodClientNoSeed);
+
+      const noSeedRes = await prodClientNoSeed.execute(
+        `SELECT code FROM activation_codes`,
+      );
+      expect(noSeedRes.rows).toHaveLength(0);
+
+      vi.stubEnv('SEED_DEMO_CODES', 'true');
+      await ensureSchema(prodClientWithSeed);
+
+      const seededRes = await prodClientWithSeed.execute(
+        `SELECT code FROM activation_codes ORDER BY code ASC`,
+      );
+      expect(seededRes.rows.map((r) => String(r.code))).toEqual([
+        'ICT-2027-PRO',
+        'PREP3-VIP',
+      ]);
+    } finally {
+      prodClientNoSeed.close();
+      prodClientWithSeed.close();
+      for (const filePath of [prodFileA, prodFileB]) {
+        for (const suffix of ['', '-wal', '-shm', '-journal']) {
+          try {
+            fs.rmSync(`${filePath}${suffix}`, { force: true });
+          } catch {
+            // Ignore temp sqlite cleanup timing on Windows
+          }
+        }
+      }
+    }
+  });
+
+  it('rejects missing or mismatched OAuth state and provider errors while clearing zaty_oauth_state cookie', async () => {
+    vi.stubEnv('GOOGLE_CLIENT_ID', 'demo-google-id');
+    vi.stubEnv('GOOGLE_CLIENT_SECRET', 'demo-google-secret');
+
+    // Mismatched state
+    const mismatchRes = await oauthCallbackRoute(
+      new Request(
+        'http://localhost:3000/api/auth/oauth/google/callback?code=abc&state=attacker-state',
+        {
+          headers: { Cookie: 'zaty_oauth_state=legit-state' },
+        },
+      ),
+      { params: Promise.resolve({ provider: 'google' }) },
+    );
+    expect(mismatchRes.status).toBe(400);
+    const mismatchBody = await mismatchRes.json();
+    expect(mismatchBody.ok).toBe(false);
+    expect(mismatchBody.error).not.toMatch(/طالب/);
+    const mismatchStateCookie = getSetCookieHeaders(mismatchRes).find((c) =>
+      c.startsWith('zaty_oauth_state='),
+    );
+    expect(mismatchStateCookie).toMatch(/Max-Age=0/i);
+
+    // Missing cookie state
+    const missingCookieRes = await oauthCallbackRoute(
+      new Request(
+        'http://localhost:3000/api/auth/oauth/google/callback?code=abc&state=some-state',
+      ),
+      { params: Promise.resolve({ provider: 'google' }) },
+    );
+    expect(missingCookieRes.status).toBe(400);
+    const missingCookieHeader = getSetCookieHeaders(missingCookieRes).find((c) =>
+      c.startsWith('zaty_oauth_state='),
+    );
+    expect(missingCookieHeader).toMatch(/Max-Age=0/i);
+
+    // Provider error query param handled cleanly
+    const providerErrRes = await oauthCallbackRoute(
+      new Request(
+        'http://localhost:3000/api/auth/oauth/google/callback?error=access_denied',
+        {
+          headers: { Cookie: 'zaty_oauth_state=legit-state' },
+        },
+      ),
+      { params: Promise.resolve({ provider: 'google' }) },
+    );
+    expect(providerErrRes.status).toBe(400);
+    const providerErrBody = await providerErrRes.json();
+    expect(providerErrBody.ok).toBe(false);
+    expect(providerErrBody.providerError).toBe('access_denied');
+    expect(
+      getSetCookieHeaders(providerErrRes).find((c) =>
+        c.startsWith('zaty_oauth_state='),
+      ),
+    ).toMatch(/Max-Age=0/i);
+  });
+
+  it('completes mocked Google OAuth callback, creates user + session cookie, clears state, and redirects to /', async () => {
+    vi.stubEnv('GOOGLE_CLIENT_ID', 'demo-google-id');
+    vi.stubEnv('GOOGLE_CLIENT_SECRET', 'demo-google-secret');
+
+    // Step 1: start OAuth flow to get state + cookie
+    const initRes = await oauthRoute(
+      new Request('http://localhost:3000/api/auth/oauth/google?redirect=1'),
+      { params: Promise.resolve({ provider: 'google' }) },
+    );
+    expect(initRes.status).toBe(307);
+    const redirectLocation = initRes.headers.get('location');
+    expect(redirectLocation).toBeTruthy();
+    const oauthState = new URL(redirectLocation!).searchParams.get('state');
+    expect(oauthState).toBeTruthy();
+    const stateCookieVal = extractCookieValue(
+      getSetCookieHeaders(initRes).find((c) => c.startsWith('zaty_oauth_state=')) ??
+        null,
+      'zaty_oauth_state',
+    );
+    expect(stateCookieVal).toBe(oauthState);
+
+    // Step 2: mock Google token exchange and userinfo fetch
+    const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
+      const targetUrl = typeof input === 'string' ? input : input.toString();
+      if (targetUrl === 'https://oauth2.googleapis.com/token') {
+        return new Response(
+          JSON.stringify({ access_token: 'google-access-token-123' }),
+          {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+          },
+        );
+      }
+      if (targetUrl === 'https://www.googleapis.com/oauth2/v2/userinfo') {
+        return new Response(
+          JSON.stringify({
+            id: 'google-user-42',
+            email: 'Nour.OAuth@Example.com',
+            verified_email: true,
+            name: 'نور محمد',
+          }),
+          {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+          },
+        );
+      }
+      return new Response('Not found', { status: 404 });
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    const callbackRes = await oauthCallbackRoute(
+      new Request(
+        `http://localhost:3000/api/auth/oauth/google/callback?code=valid-code-123&state=${encodeURIComponent(oauthState!)}`,
+        {
+          headers: { Cookie: `zaty_oauth_state=${oauthState}` },
+        },
+      ),
+      { params: Promise.resolve({ provider: 'google' }) },
+    );
+
+    expect(callbackRes.status).toBe(302);
+    expect(callbackRes.headers.get('location')).toBe('http://localhost:3000/');
+
+    const callbackCookies = getSetCookieHeaders(callbackRes);
+    const clearedStateCookie = callbackCookies.find((c) =>
+      c.startsWith('zaty_oauth_state='),
+    );
+    expect(clearedStateCookie).toMatch(/Max-Age=0/i);
+
+    const sessionCookieHeader = callbackCookies.find((c) =>
+      c.startsWith('sl_session='),
+    );
+    const sessionToken = extractCookieValue(
+      sessionCookieHeader ?? null,
+      'sl_session',
+    );
+    expect(sessionToken).toBeTruthy();
+
+    // Verify user was persisted cleanly with unguessable scrypt hash and guardian_consent_at
+    const dbUserRes = await client.execute({
+      sql: `SELECT id, email, name, password_hash, guardian_consent_at FROM users WHERE email = ?`,
+      args: ['nour.oauth@example.com'],
+    });
+    expect(dbUserRes.rows).toHaveLength(1);
+    const createdUserId = String(dbUserRes.rows[0]?.id);
+    expect(String(dbUserRes.rows[0]?.name)).toBe('نور محمد');
+    expect(String(dbUserRes.rows[0]?.password_hash).startsWith('scrypt$')).toBe(
+      true,
+    );
+    expect(Number(dbUserRes.rows[0]?.guardian_consent_at)).toBeGreaterThan(0);
+
+    // Verify session cookie authenticates /api/auth/me
+    const meRes = await meRoute(
+      new Request('http://localhost:3000/api/auth/me', {
+        headers: { Cookie: `sl_session=${sessionToken}` },
+      }),
+    );
+    const meBody = await meRes.json();
+    expect(meBody.authenticated).toBe(true);
+    expect(meBody.user.id).toBe(createdUserId);
+    expect(meBody.user.email).toBe('nour.oauth@example.com');
+
+    // Second callback for same email reuses existing user without duplicating rows
+    const secondCallbackRes = await oauthCallbackRoute(
+      new Request(
+        `http://localhost:3000/api/auth/oauth/google/callback?code=valid-code-456&state=${encodeURIComponent(oauthState!)}`,
+        {
+          headers: { Cookie: `zaty_oauth_state=${oauthState}` },
+        },
+      ),
+      { params: Promise.resolve({ provider: 'google' }) },
+    );
+    expect(secondCallbackRes.status).toBe(302);
+    const usersAfterSecond = await client.execute({
+      sql: `SELECT COUNT(*) AS cnt FROM users WHERE email = ?`,
+      args: ['nour.oauth@example.com'],
+    });
+    expect(Number(usersAfterSecond.rows[0]?.cnt)).toBe(1);
   });
 
   it('integrates client cloudSync helper end-to-end with Dexie IndexedDB and Route Handlers', async () => {

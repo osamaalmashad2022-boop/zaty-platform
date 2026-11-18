@@ -1,6 +1,7 @@
 import '@testing-library/jest-dom/vitest';
 import fs from 'node:fs';
 import path from 'node:path';
+import vm from 'node:vm';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { AppShell } from '../AppShell';
@@ -39,5 +40,60 @@ describe('Safari iOS Range media slicing and RTL AppShell', () => {
     expect(swText).toContain('Content-Range');
     expect(swText).toContain('Accept-Ranges');
     expect(swText).toContain('/vendor/skulpt/skulpt.min.js');
+  });
+
+  it('excludes /api/ routes from Service Worker caching in public/sw.js', () => {
+    const swPath = path.resolve(process.cwd(), 'public/sw.js');
+    const swText = fs.readFileSync(swPath, 'utf8');
+    expect(swText).toContain("startsWith('/api/')");
+
+    const listeners = new Map<string, (event: unknown) => void>();
+    const cachesOpen = vi.fn();
+    const fetchMock = vi.fn(() => Promise.resolve(new Response('ok', { status: 200 })));
+
+    const ctx: Record<string, unknown> = {
+      URL,
+      Request,
+      Response,
+      Headers,
+      Set,
+      Promise,
+      Number,
+      String,
+      Array,
+      Math,
+      parseInt,
+      location: { origin: 'https://zaty.example' },
+      navigator: { onLine: true },
+      caches: { open: cachesOpen, keys: vi.fn(), delete: vi.fn() },
+      fetch: fetchMock,
+      addEventListener: (type: string, cb: (event: unknown) => void) => {
+        listeners.set(type, cb);
+      },
+      skipWaiting: vi.fn(),
+      clients: { claim: vi.fn() },
+    };
+    ctx.self = ctx;
+
+    vm.createContext(ctx);
+    vm.runInContext(swText, ctx);
+
+    const onFetch = listeners.get('fetch');
+    expect(onFetch).toBeTypeOf('function');
+
+    for (const apiUrl of [
+      'https://zaty.example/api/auth/me',
+      'https://zaty.example/api/sync',
+      'https://zaty.example/api',
+    ]) {
+      const respondWith = vi.fn();
+      onFetch!({
+        request: { method: 'GET', url: apiUrl, mode: 'cors', headers: new Headers() },
+        respondWith,
+        waitUntil: vi.fn(),
+      });
+      expect(respondWith).not.toHaveBeenCalled();
+    }
+    expect(cachesOpen).not.toHaveBeenCalled();
   });
 });

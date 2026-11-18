@@ -1,14 +1,19 @@
 import '@testing-library/jest-dom/vitest';
 import 'fake-indexeddb/auto';
+import * as Sentry from '@sentry/nextjs';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { db } from '@/lib/storage/db';
-import { recordLessonCompleted } from '@/lib/storage/progress';
+import * as progressStorage from '@/lib/storage/progress';
 import * as skulptRunner from '@/lib/python/skulptRunner';
 import type { LessonPack, StationPack, UnitPack } from '@/types/curriculum';
 import { HomeClient } from '../_components/HomeClient';
 import { LessonPlayerClient } from '../_components/LessonPlayerClient';
 import { StationClient } from '../_components/StationClient';
+
+vi.mock('@sentry/nextjs', () => ({
+  captureException: vi.fn(),
+}));
 
 const SAMPLE_LESSON: LessonPack = {
   id: '1.1',
@@ -121,7 +126,7 @@ describe('Core learner journey screens', () => {
     expect(container.textContent).not.toMatch(/(?:ال)?طالب/);
     unmount();
 
-    await recordLessonCompleted('1.1', 'station-1', { xpAwarded: 50 });
+    await progressStorage.recordLessonCompleted('1.1', 'station-1', { xpAwarded: 50 });
     render(<HomeClient units={SAMPLE_UNITS} />);
     await waitFor(() =>
       expect(
@@ -455,5 +460,95 @@ describe('Core learner journey screens', () => {
     // Clicking "تحقق من الحل" triggers onComplete -> unlocks Next
     fireEvent.click(screen.getByRole('button', { name: /تحقق من الحل/ }));
     await waitFor(() => expect(nextBtn).toBeEnabled());
+  });
+
+  it('completes lesson gracefully with a friendly warning when local storage throws', async () => {
+    const storageError = new Error('QuotaExceededError: IndexedDB unavailable');
+    vi.spyOn(progressStorage, 'recordLessonCompleted').mockRejectedValueOnce(storageError);
+    const captureSpy = vi.mocked(Sentry.captureException);
+    captureSpy.mockClear();
+
+    const singleCardLesson: LessonPack = {
+      ...SAMPLE_LESSON,
+      id: '1.5',
+      cards: [
+        {
+          id: 'only-card',
+          title: 'الختام',
+          role: 'summary',
+          blocks: [{ id: 'r-only', type: 'richText', data: { body: 'ملخص الدرس.' } }],
+        },
+      ],
+    };
+
+    render(
+      <LessonPlayerClient
+        lesson={singleCardLesson}
+        stationTitle="المحطة 1: التفكير الحاسوبي"
+      />,
+    );
+
+    const finishBtn = await screen.findByRole('button', { name: /إنهاء الدرس/ });
+    fireEvent.click(finishBtn);
+
+    await waitFor(() =>
+      expect(screen.getByText(/أنهيت الدرس 1\.5/)).toBeInTheDocument(),
+    );
+    expect(
+      screen.getByText('تعذّر حفظ التقدم محليًا في المتصفح، لكنك أنهيت الدرس بنجاح!'),
+    ).toBeInTheDocument();
+    expect(captureSpy).toHaveBeenCalledWith(storageError);
+    expect(screen.getByRole('link', { name: /الدرس الجاي/ })).toHaveAttribute(
+      'href',
+      '/lesson/1.2',
+    );
+  });
+
+  it('recovers CodeLabBlock checking state instead of locking up if runCodeLabChecks rejects', async () => {
+    vi.spyOn(skulptRunner, 'runCodeLabChecks').mockRejectedValueOnce(
+      new Error('Unexpected worker crash'),
+    );
+
+    const codeLesson: LessonPack = {
+      ...SAMPLE_LESSON,
+      id: '1.6',
+      cards: [
+        {
+          id: 'code-c-err',
+          title: 'جرّب الكود',
+          blocks: [
+            {
+              id: 'cl-err',
+              type: 'codeLab',
+              data: {
+                mode: 'fillLine',
+                prompt: 'اطبع 10',
+                starterCode: 'print(10)',
+                solutionCode: 'print(10)',
+                checks: [{ id: 'c1', stdin: [], contains: '10' }],
+                hint: 'اكتب 10',
+              },
+            },
+          ],
+        },
+      ],
+    };
+
+    render(
+      <LessonPlayerClient
+        lesson={codeLesson}
+        stationTitle="المحطة 1: التفكير الحاسوبي"
+      />,
+    );
+
+    const checkBtn = await screen.findByRole('button', { name: /تحقق من الحل/ });
+    fireEvent.click(checkBtn);
+
+    await waitFor(() =>
+      expect(
+        screen.getByText(/حدث خطأ غير متوقع أثناء فحص الحل/),
+      ).toBeInTheDocument(),
+    );
+    expect(screen.getByRole('button', { name: /تحقق من الحل/ })).toBeEnabled();
   });
 });

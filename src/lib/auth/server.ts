@@ -12,6 +12,8 @@ import { ensureSchema } from '@/db/schema';
 export const SESSION_COOKIE_NAME = 'sl_session';
 export const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 export const SESSION_TTL_SEC = 30 * 24 * 60 * 60;
+export const OAUTH_STATE_COOKIE_NAME = 'zaty_oauth_state';
+export const OAUTH_STATE_TTL_SEC = 600; // 10 minutes
 
 export type UserTier = 'free' | 'premium';
 
@@ -41,9 +43,19 @@ export interface OAuthProviderConfigResult {
   configured: boolean;
   provider: string;
   authUrl?: string;
+  state?: string;
   requiredEnvVars?: string[];
   message: string;
 }
+
+export interface OAuthUserProfile {
+  email: string;
+  name: string;
+}
+
+export type OAuthProfileExchangeResult =
+  | { ok: true; profile: OAuthUserProfile }
+  | { ok: false; status: number; error: string };
 
 export function normalizeEmail(email: string): string {
   return email.trim().toLowerCase();
@@ -97,15 +109,10 @@ export function hashSessionToken(token: string): string {
   return createHash('sha256').update(token).digest('hex');
 }
 
-export function extractSessionTokenFromRequest(request: Request): string | null {
-  const authHeader = request.headers.get('authorization');
-  if (authHeader) {
-    const match = /^Bearer\s+(.+)$/i.exec(authHeader.trim());
-    if (match && match[1]) {
-      return match[1].trim();
-    }
-  }
-
+function extractCookieFromRequest(
+  request: Request,
+  cookieName: string,
+): string | null {
   const cookieHeader = request.headers.get('cookie');
   if (!cookieHeader) {
     return null;
@@ -116,7 +123,7 @@ export function extractSessionTokenFromRequest(request: Request): string | null 
     const eqIndex = pair.indexOf('=');
     if (eqIndex <= 0) continue;
     const key = pair.slice(0, eqIndex).trim();
-    if (key !== SESSION_COOKIE_NAME) continue;
+    if (key !== cookieName) continue;
     const rawVal = pair.slice(eqIndex + 1).trim();
     if (!rawVal) return null;
     try {
@@ -127,6 +134,48 @@ export function extractSessionTokenFromRequest(request: Request): string | null 
   }
 
   return null;
+}
+
+export function extractSessionTokenFromRequest(request: Request): string | null {
+  const authHeader = request.headers.get('authorization');
+  if (authHeader) {
+    const match = /^Bearer\s+(.+)$/i.exec(authHeader.trim());
+    if (match && match[1]) {
+      return match[1].trim();
+    }
+  }
+
+  return extractCookieFromRequest(request, SESSION_COOKIE_NAME);
+}
+
+export function extractOAuthStateFromRequest(request: Request): string | null {
+  return extractCookieFromRequest(request, OAUTH_STATE_COOKIE_NAME);
+}
+
+export function generateOAuthState(): string {
+  return randomBytes(32).toString('base64url');
+}
+
+/**
+ * Compares expected and actual OAuth CSRF state tokens in constant time
+ * by comparing SHA-256 digests so length differences never throw or leak timing.
+ */
+export function verifyOAuthState(
+  expectedState: string | null | undefined,
+  actualState: string | null | undefined,
+): boolean {
+  if (
+    typeof expectedState !== 'string' ||
+    typeof actualState !== 'string' ||
+    expectedState.length === 0 ||
+    actualState.length === 0
+  ) {
+    return false;
+  }
+
+  const expectedDigest = createHash('sha256').update(expectedState).digest();
+  const actualDigest = createHash('sha256').update(actualState).digest();
+  return timingSafeEqual(expectedDigest, actualDigest);
 }
 
 export function setSessionCookie(response: NextResponse, token: string): void {
@@ -141,6 +190,26 @@ export function setSessionCookie(response: NextResponse, token: string): void {
 
 export function clearSessionCookie(response: NextResponse): void {
   response.cookies.set(SESSION_COOKIE_NAME, '', {
+    httpOnly: true,
+    sameSite: 'lax',
+    path: '/',
+    maxAge: 0,
+    secure: process.env.NODE_ENV === 'production',
+  });
+}
+
+export function setOAuthStateCookie(response: NextResponse, state: string): void {
+  response.cookies.set(OAUTH_STATE_COOKIE_NAME, state, {
+    httpOnly: true,
+    sameSite: 'lax',
+    path: '/',
+    maxAge: OAUTH_STATE_TTL_SEC,
+    secure: process.env.NODE_ENV === 'production',
+  });
+}
+
+export function clearOAuthStateCookie(response: NextResponse): void {
+  response.cookies.set(OAUTH_STATE_COOKIE_NAME, '', {
     httpOnly: true,
     sameSite: 'lax',
     path: '/',
@@ -409,12 +478,52 @@ export async function getUserById(
   return row ? mapUserRow(row) : null;
 }
 
+export function isSupportedOAuthProvider(
+  provider: string,
+): provider is OAuthProvider {
+  return provider === 'google' || provider === 'facebook';
+}
+
+export interface OAuthProviderCredentials {
+  clientId: string;
+  clientSecret: string;
+  redirectUri: string;
+}
+
+export function getOAuthProviderCredentials(
+  provider: OAuthProvider,
+  origin = 'http://localhost:3000',
+): OAuthProviderCredentials | null {
+  if (provider === 'google') {
+    const clientId = process.env.GOOGLE_CLIENT_ID?.trim();
+    const clientSecret = process.env.GOOGLE_CLIENT_SECRET?.trim();
+    if (!clientId || !clientSecret) {
+      return null;
+    }
+    const redirectUri =
+      process.env.GOOGLE_REDIRECT_URI?.trim() ||
+      `${origin}/api/auth/oauth/google/callback`;
+    return { clientId, clientSecret, redirectUri };
+  }
+
+  const clientId = process.env.FACEBOOK_CLIENT_ID?.trim();
+  const clientSecret = process.env.FACEBOOK_CLIENT_SECRET?.trim();
+  if (!clientId || !clientSecret) {
+    return null;
+  }
+  const redirectUri =
+    process.env.FACEBOOK_REDIRECT_URI?.trim() ||
+    `${origin}/api/auth/oauth/facebook/callback`;
+  return { clientId, clientSecret, redirectUri };
+}
+
 export function getOAuthProviderConfig(
   providerRaw: string,
   origin = 'http://localhost:3000',
+  stateOverride?: string,
 ): OAuthProviderConfigResult {
   const provider = providerRaw.trim().toLowerCase();
-  if (provider !== 'google' && provider !== 'facebook') {
+  if (!isSupportedOAuthProvider(provider)) {
     return {
       supported: false,
       configured: false,
@@ -423,10 +532,9 @@ export function getOAuthProviderConfig(
     };
   }
 
-  if (provider === 'google') {
-    const clientId = process.env.GOOGLE_CLIENT_ID?.trim();
-    const clientSecret = process.env.GOOGLE_CLIENT_SECRET?.trim();
-    if (!clientId || !clientSecret) {
+  const credentials = getOAuthProviderCredentials(provider, origin);
+  if (!credentials) {
+    if (provider === 'google') {
       return {
         supported: true,
         configured: false,
@@ -437,30 +545,6 @@ export function getOAuthProviderConfig(
       };
     }
 
-    const redirectUri =
-      process.env.GOOGLE_REDIRECT_URI?.trim() ||
-      `${origin}/api/auth/oauth/google/callback`;
-    const params = new URLSearchParams({
-      client_id: clientId,
-      redirect_uri: redirectUri,
-      response_type: 'code',
-      scope: 'openid email profile',
-      access_type: 'offline',
-      prompt: 'consent',
-    });
-
-    return {
-      supported: true,
-      configured: true,
-      provider: 'google',
-      authUrl: `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`,
-      message: 'تسجيل الدخول عبر Google جاهز ومُعد.',
-    };
-  }
-
-  const fbId = process.env.FACEBOOK_CLIENT_ID?.trim();
-  const fbSecret = process.env.FACEBOOK_CLIENT_SECRET?.trim();
-  if (!fbId || !fbSecret) {
     return {
       supported: true,
       configured: false,
@@ -471,14 +555,38 @@ export function getOAuthProviderConfig(
     };
   }
 
-  const redirectUri =
-    process.env.FACEBOOK_REDIRECT_URI?.trim() ||
-    `${origin}/api/auth/oauth/facebook/callback`;
+  const state =
+    stateOverride && stateOverride.trim().length > 0
+      ? stateOverride.trim()
+      : generateOAuthState();
+
+  if (provider === 'google') {
+    const params = new URLSearchParams({
+      client_id: credentials.clientId,
+      redirect_uri: credentials.redirectUri,
+      response_type: 'code',
+      scope: 'openid email profile',
+      access_type: 'offline',
+      prompt: 'consent',
+      state,
+    });
+
+    return {
+      supported: true,
+      configured: true,
+      provider: 'google',
+      authUrl: `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`,
+      state,
+      message: 'تسجيل الدخول عبر Google جاهز ومُعد.',
+    };
+  }
+
   const params = new URLSearchParams({
-    client_id: fbId,
-    redirect_uri: redirectUri,
+    client_id: credentials.clientId,
+    redirect_uri: credentials.redirectUri,
     response_type: 'code',
     scope: 'email,public_profile',
+    state,
   });
 
   return {
@@ -486,6 +594,219 @@ export function getOAuthProviderConfig(
     configured: true,
     provider: 'facebook',
     authUrl: `https://www.facebook.com/v19.0/dialog/oauth?${params.toString()}`,
+    state,
     message: 'تسجيل الدخول عبر Facebook جاهز ومُعد.',
   };
+}
+
+export async function exchangeOAuthCodeForProfile(
+  provider: OAuthProvider,
+  code: string,
+  origin = 'http://localhost:3000',
+): Promise<OAuthProfileExchangeResult> {
+  const credentials = getOAuthProviderCredentials(provider, origin);
+  if (!credentials) {
+    return {
+      ok: false,
+      status: 501,
+      error: 'تسجيل الدخول السريع غير مُعد على الخادم حاليًا.',
+    };
+  }
+
+  try {
+    let tokenResponse: Response;
+    if (provider === 'google') {
+      tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          Accept: 'application/json',
+        },
+        body: new URLSearchParams({
+          code,
+          client_id: credentials.clientId,
+          client_secret: credentials.clientSecret,
+          redirect_uri: credentials.redirectUri,
+          grant_type: 'authorization_code',
+        }).toString(),
+      });
+    } else {
+      tokenResponse = await fetch(
+        'https://graph.facebook.com/v19.0/oauth/access_token',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            Accept: 'application/json',
+          },
+          body: new URLSearchParams({
+            code,
+            client_id: credentials.clientId,
+            client_secret: credentials.clientSecret,
+            redirect_uri: credentials.redirectUri,
+          }).toString(),
+        },
+      );
+    }
+
+    if (!tokenResponse.ok) {
+      return {
+        ok: false,
+        status: 502,
+        error: 'تعذّر تبادل رمز التفويض مع مزوّد تسجيل الدخول.',
+      };
+    }
+
+    const tokenJson = (await tokenResponse.json()) as {
+      access_token?: unknown;
+    };
+    const accessToken =
+      typeof tokenJson?.access_token === 'string'
+        ? tokenJson.access_token.trim()
+        : '';
+    if (!accessToken) {
+      return {
+        ok: false,
+        status: 502,
+        error: 'لم يُرجع مزوّد تسجيل الدخول رمز وصول صالحًا.',
+      };
+    }
+
+    const userInfoUrl =
+      provider === 'google'
+        ? 'https://www.googleapis.com/oauth2/v2/userinfo'
+        : 'https://graph.facebook.com/v19.0/me?fields=id,name,email';
+
+    const profileResponse = await fetch(userInfoUrl, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        Accept: 'application/json',
+      },
+    });
+
+    if (!profileResponse.ok) {
+      return {
+        ok: false,
+        status: 502,
+        error: 'تعذّر جلب بيانات الملف الشخصي من مزوّد تسجيل الدخول.',
+      };
+    }
+
+    const profileJson = (await profileResponse.json()) as {
+      email?: unknown;
+      verified_email?: unknown;
+      name?: unknown;
+    };
+
+    if (provider === 'google' && profileJson.verified_email === false) {
+      return {
+        ok: false,
+        status: 403,
+        error: 'البريد الإلكتروني في حساب Google غير مُوثّق.',
+      };
+    }
+
+    const rawEmail =
+      typeof profileJson.email === 'string' ? profileJson.email : '';
+    const email = normalizeEmail(rawEmail);
+    if (!email || !isValidEmail(email)) {
+      return {
+        ok: false,
+        status: 400,
+        error:
+          'لم يشارك مزوّد تسجيل الدخول بريدًا إلكترونيًا صالحًا لإتمام التسجيل.',
+      };
+    }
+
+    const rawName =
+      typeof profileJson.name === 'string' ? profileJson.name.trim() : '';
+    const name = (rawName || email.split('@')[0] || 'صديق ذاتي').slice(0, 80);
+
+    return {
+      ok: true,
+      profile: { email, name },
+    };
+  } catch {
+    return {
+      ok: false,
+      status: 502,
+      error: 'حدث خطأ أثناء الاتصال بمزوّد تسجيل الدخول. حاول مرة أخرى.',
+    };
+  }
+}
+
+export async function loginOrCreateOAuthUser(
+  profile: OAuthUserProfile,
+  clientOverride?: Client,
+): Promise<AuthServerResult> {
+  const email = normalizeEmail(profile.email);
+  if (!email || !isValidEmail(email)) {
+    return {
+      ok: false,
+      status: 400,
+      error: 'البريد الإلكتروني المرتبط بحساب تسجيل الدخول غير صالح.',
+    };
+  }
+
+  const client = await ensureSchema(clientOverride);
+  const existingRes = await client.execute({
+    sql: `SELECT id, email, name, tier, guardian_consent_at, created_at
+          FROM users
+          WHERE email = ?
+          LIMIT 1`,
+    args: [email],
+  });
+
+  let user: CloudUser;
+  const existingRow = existingRes.rows[0] as Record<string, unknown> | undefined;
+  if (existingRow) {
+    user = mapUserRow(existingRow);
+  } else {
+    const now = Date.now();
+    const userId = `usr_${randomUUID()}`;
+    const name = (profile.name.trim() || email.split('@')[0] || 'صديق ذاتي').slice(
+      0,
+      80,
+    );
+    const unguessablePasswordHash = hashPassword(
+      randomBytes(32).toString('base64url'),
+    );
+
+    try {
+      await client.execute({
+        sql: `INSERT INTO users (id, email, name, password_hash, guardian_consent_at, tier, created_at)
+              VALUES (?, ?, ?, ?, ?, 'free', ?)`,
+        args: [userId, email, name, unguessablePasswordHash, now, now],
+      });
+      user = {
+        id: userId,
+        email,
+        name,
+        tier: 'free',
+        guardianConsentAt: now,
+        createdAt: now,
+      };
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : '';
+      if (!msg.includes('UNIQUE') && !msg.includes('constraint')) {
+        throw err;
+      }
+      const retryRes = await client.execute({
+        sql: `SELECT id, email, name, tier, guardian_consent_at, created_at
+              FROM users
+              WHERE email = ?
+              LIMIT 1`,
+        args: [email],
+      });
+      const retryRow = retryRes.rows[0] as Record<string, unknown> | undefined;
+      if (!retryRow) {
+        throw err;
+      }
+      user = mapUserRow(retryRow);
+    }
+  }
+
+  const { token } = await createSession(user.id, client);
+  return { ok: true, user, token };
 }

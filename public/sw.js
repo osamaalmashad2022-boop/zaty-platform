@@ -6,7 +6,7 @@
 //    with graceful fallback to network streaming if range slicing fails.
 
 const SHELL_CACHE = 'ict-prep3-shell-v2';
-const PAGES_CACHE = 'ict-prep3-pages-v2';
+const PAGES_CACHE = 'ict-prep3-pages-v3';
 const MEDIA_CACHE = 'ict-prep3-media-v2';
 
 const PRECACHE_URLS = [
@@ -105,24 +105,45 @@ function guessContentType(pathname) {
 
 async function createRangeResponse(cachedResponse, rangeHeader, pathname) {
   try {
-    const arrayBuffer = await cachedResponse.arrayBuffer();
-    const totalLength = arrayBuffer.byteLength;
-    const match = /bytes=(\d*)-(\d*)/i.exec(rangeHeader);
+    const match = /bytes=(\d*)-(\d*)/i.exec(String(rangeHeader || '').trim());
     if (!match) {
       return cachedResponse;
     }
 
-    let start = match[1] ? parseInt(match[1], 10) : 0;
-    let end = match[2] ? parseInt(match[2], 10) : totalLength - 1;
+    const arrayBuffer = await cachedResponse.clone().arrayBuffer();
+    const totalLength = arrayBuffer.byteLength;
+    const [, rawStart, rawEnd] = match;
 
-    if (!match[1] && match[2]) {
+    if (totalLength === 0 || (!rawStart && !rawEnd)) {
+      return new Response(null, {
+        status: 416,
+        statusText: 'Range Not Satisfiable',
+        headers: {
+          'Content-Range': `bytes */${totalLength}`,
+        },
+      });
+    }
+
+    let start = rawStart ? parseInt(rawStart, 10) : 0;
+    let end = rawEnd ? parseInt(rawEnd, 10) : totalLength - 1;
+
+    if (!rawStart && rawEnd) {
       // Suffix byte range: bytes=-500
-      const suffixLength = parseInt(match[2], 10);
+      const suffixLength = parseInt(rawEnd, 10);
+      if (Number.isNaN(suffixLength) || suffixLength <= 0) {
+        return new Response(null, {
+          status: 416,
+          statusText: 'Range Not Satisfiable',
+          headers: {
+            'Content-Range': `bytes */${totalLength}`,
+          },
+        });
+      }
       start = Math.max(0, totalLength - suffixLength);
       end = totalLength - 1;
     }
 
-    if (Number.isNaN(start) || Number.isNaN(end) || start >= totalLength || start > end) {
+    if (Number.isNaN(start) || Number.isNaN(end) || start < 0 || start >= totalLength || start > end) {
       return new Response(null, {
         status: 416,
         statusText: 'Range Not Satisfiable',
@@ -227,6 +248,9 @@ self.addEventListener('fetch', (event) => {
 
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
+
+  // Never intercept or cache API routes (auth/session/sync)
+  if (url.pathname === '/api' || url.pathname.startsWith('/api/')) return;
 
   // 1. Media files (.mp4, .mp3, .vtt) -> Cache-on-demand + Range Request support
   if (isMediaAsset(url.pathname)) {
