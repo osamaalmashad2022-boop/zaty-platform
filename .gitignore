@@ -27,3 +27,8 @@ _____________________________________________________________________/
 
 # Sentry Config File
 .env.sentry-build-plugin
+
+# Scratch directory
+scratch/
+scratch_downloads/
+
