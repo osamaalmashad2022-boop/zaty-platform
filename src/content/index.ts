@@ -7,6 +7,9 @@ import type {
   UnitPack,
 } from '@/types/curriculum';
 import { PREP3_TERM1_PACK } from './prep3-term1/term';
+import { PREP3_TERM2_PACK } from './prep3-term2/term';
+
+export { PREP3_TERM1_PACK, PREP3_TERM2_PACK };
 
 export {
   ACTIVE_COURSE_STORAGE_KEY,
@@ -23,7 +26,8 @@ export {
 } from './catalog';
 
 export const TERM_1_PACK: TermPack = PREP3_TERM1_PACK;
-export const CATALOG_TERMS: TermPack[] = [PREP3_TERM1_PACK];
+export const TERM_2_PACK: TermPack = PREP3_TERM2_PACK;
+export const CATALOG_TERMS: TermPack[] = [PREP3_TERM1_PACK, PREP3_TERM2_PACK];
 
 function normalizeLessonId(lessonId: string): string {
   const trimmed = lessonId.trim();
@@ -34,7 +38,16 @@ function normalizeLessonId(lessonId: string): string {
 }
 
 export function getTermPack(termId = 'prep3-term1'): TermPack {
-  return CATALOG_TERMS.find((t) => t.id === termId) ?? TERM_1_PACK;
+  return (
+    CATALOG_TERMS.find(
+      (t) =>
+        t.id === termId ||
+        t.courseId === termId ||
+        t.id === `prep3-${termId}` ||
+        (termId === 'term-2' && t.id === 'prep3-term2') ||
+        (termId === 'term-1' && t.id === 'prep3-term1'),
+    ) ?? TERM_1_PACK
+  );
 }
 
 export function getAllUnits(): UnitPack[] {
