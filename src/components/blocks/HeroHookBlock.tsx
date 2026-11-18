@@ -133,7 +133,7 @@ export function HeroHookBlock({
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-full border border-[#006E5A]/30 bg-[#E5F1EE] px-2.5 py-1 text-xs font-bold text-[#006E5A]">
                 <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
-                <span>استكشاف وتوقّع · مش مهم صح ولا خطأ</span>
+                <span>تحدي استكشاف وتوقّع · مش مهم صح ولا خطأ</span>
               </span>
             </div>
             {selectedOption && (
