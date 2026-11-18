@@ -24,5 +24,16 @@ export const STATION_2_PACK: StationPack = {
   lessons: [LESSON_2_1, LESSON_2_2, LESSON_2_3, LESSON_2_4],
   quizBank: STATION_2_QUIZ_BANK,
   flashcards: STATION_2_FLASHCARDS,
-  mediaAssets: ['/media/robot-path.png'],
+  mediaAssets: [
+    '/media/robot-path.png',
+    '/media/video-2-1.mp4',
+    '/media/video-2-1-thumb.png',
+    '/media/caption-2-1.vtt',
+    '/media/podcast-2-4.mp3',
+    '/media/caption-2-4.vtt',
+    '/media/infographic-2-1.png',
+    '/media/infographic-2-2.png',
+    '/media/infographic-2-3.png',
+    '/media/infographic-2-4.png',
+  ],
 };

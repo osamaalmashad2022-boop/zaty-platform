@@ -138,6 +138,30 @@ describe('Display and media blocks', () => {
     expect(container.textContent).not.toContain('طالب');
   });
 
+  it('frames portrait 9:16 videos cleanly and keeps WebVTT track non-default when burnedInCaptions is set', () => {
+    renderNode(
+      <MediaPlayerBlock
+        data={{
+          kind: 'video',
+          title: 'فيديو NotebookLM عمودي',
+          src: 'video-1-1.mp4',
+          vttSrc: 'caption-1-1.vtt',
+          durationSec: 97,
+          aspect: 'portrait',
+          burnedInCaptions: true,
+        }}
+      />
+    );
+
+    const video = container.querySelector('video')!;
+    expect(video.className).toContain('aspect-[9/16]');
+    expect(video.className).toContain('max-w-[340px]');
+
+    const track = video.querySelector('track')!;
+    expect(track.getAttribute('src')).toBe('/media/caption-1-1.vtt');
+    expect(track.default).toBe(false);
+  });
+
   it('renders audio player with 1x/1.25x/1.5x speeds and offline transcript fallback', () => {
     renderNode(
       <MediaPlayerBlock
@@ -225,11 +249,80 @@ describe('Display and media blocks', () => {
     expect(container.textContent).toContain('-5');
     expect(container.textContent).toContain('خلّي بالك');
 
+    const zoomBtn = Array.from(container.querySelectorAll('button')).find((b) =>
+      b.getAttribute('aria-label')?.includes('تكبير الصورة')
+    )!;
+    expect(zoomBtn).toBeTruthy();
+    act(() => {
+      zoomBtn.click();
+    });
+    expect(container.ownerDocument.querySelector('[role="dialog"]')).toBeTruthy();
+    const closeZoomBtn = Array.from(container.querySelectorAll('button')).find((b) =>
+      b.getAttribute('aria-label')?.includes('إغلاق تكبير الصورة')
+    )!;
+    act(() => {
+      closeZoomBtn.click();
+    });
+    expect(container.ownerDocument.querySelector('[role="dialog"]')).toBeNull();
+
     const img = container.querySelector('img')!;
     act(() => {
       img.dispatchEvent(new Event('error'));
     });
     expect(container.textContent).toContain('روبوت الأحجية');
     expect(container.textContent).toContain('غير محمّلة حاليًا');
+  });
+
+  it('renders HeroHookBlock with warm low-stakes curiosity banner addressing friend (صديق) and completes positively regardless of choice', () => {
+    const onComplete = vi.fn();
+    const onAttempt = vi.fn();
+    const onInteract = vi.fn();
+
+    renderNode(
+      <HeroHookBlock
+        onComplete={onComplete}
+        onAttempt={onAttempt}
+        onInteract={onInteract}
+        data={{
+          title: 'مدخل إلى الخوارزميات',
+          durationMin: 5,
+          goal: 'تتعرف على مفهوم الخطوات المرتبة',
+          hook: 'تخيل بتعمل كوباية شاي الصبح',
+          starterChallenge: {
+            prompt: 'يا ترى لو بدّلنا خطوة غلي المية مع وضع السكر، إيه اللي هيحصل؟',
+            options: [
+              { id: 'opt-1', text: 'هتفضل تظبط عادي', isCorrect: false, feedback: 'تخمين لطيف! بس السكر مش هيدوب لو المية باردة.' },
+              { id: 'opt-2', text: 'الترتيب مهم جدًا', isCorrect: true, feedback: 'توقع دقيق وممتاز! الترتيب هو روح الخوارزمية.' },
+            ],
+            revealNote: 'في الدرس ده هنكتشف سوا إزاي الترتيب بيفرق.',
+          },
+        }}
+      />
+    );
+
+    // Warm friendly exploration banner & badge
+    expect(container.textContent).toContain('تحدي استكشاف وفضول');
+    expect(container.textContent).toContain('مش مهم الإجابة صح ولا غلط لأنها حاجات لسه هنعرفها سوا!');
+    expect(container.textContent).toContain('صديقي');
+    // Must never address user as student/learner
+    expect(container.textContent).not.toContain('طالب');
+    expect(container.textContent).not.toContain('متعلم');
+
+    // Click the exploratory choice (even if isCorrect is false)
+    const optionBtn = Array.from(container.querySelectorAll('button')).find((b) =>
+      b.textContent?.includes('هتفضل تظبط عادي')
+    )!;
+    expect(optionBtn).toBeTruthy();
+
+    act(() => {
+      optionBtn.click();
+    });
+
+    // Completes positively and gracefully regardless of option choice
+    expect(onComplete).toHaveBeenCalledWith(true);
+    expect(onAttempt).toHaveBeenCalledWith({ isCorrect: false, attemptNumber: 1 });
+    expect(onInteract).toHaveBeenCalled();
+    expect(container.textContent).toContain('محاولة استكشاف وتوقع ممتازة يا صديقي!');
+    expect(container.textContent).toContain('شكرًا لتوقعك يا صديقي!');
   });
 });

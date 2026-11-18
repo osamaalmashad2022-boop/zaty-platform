@@ -1,85 +1,147 @@
 import type { LessonPack } from '@/types/curriculum';
 
+const PODCAST_1_3_TRANSCRIPT =
+  'بص يا صاحبي، تخيل معايا كده إن البرمجة عاملة زي مكنة السناكس والمشروبات بالظبط: الفلوس اللي بتدخلها هي الـ Input، والعصير والفكة اللي بتطلعلك هي الـ Output.\n' +
+  'أولًا: دالة input() بتستلم البيانات كحتة ورقة أو نص جوه طرد مقفول، ودور دالة int() إنها تفك الطرد ده وتحوله لرقم صحيح — بس خد بالك من فخ ValueError لو كتبت حروف زي «خمسة» بدل أرقام لأن int() ما بتفهمش الحروف نهائيًا.\n' +
+  'ثانيًا: علامة باقي القسمة % افتكرها بحسب الشوكولاتة: لو معانا ٢٥ قطعة على ٤ علب، كل علبة تاخد ٦ وتتبقى في إيدك قطعة واحدة (25 % 4 = 1).\n' +
+  'أخيرًا: علامة = الواحدة عشان نخزن قيمة جوه صندوق، لكن == المزدوجة وظيفتها تسأل وتقارن جوه جملة الشرط if. خلاصة القول يا صديقي: دخل أرقامك صح، افهم فكة باقي القسمة، وميّز دايمًا بين صندوق التخزين وسؤال المقارنة!';
+
+const VIDEO_1_3_TRANSCRIPT =
+  'أهلًا بيك يا صاحبي، خلينا ندخل في الموضوع على طول: لغة بايثون شغالة بالظبط زي مكنة السناكس والمشروبات اللي بنشوفها في أي مول — بتدخلها فلوس وتضغط على الزرار فتطلعلك كيس شيبسي وباقي فكة (مدخلات تدينا مخرجات).\n' +
+  'بص يا صديقي: أي مدخلات بناخدها بدالة input() بتوصلنا في طرد مقفول على هيئة نص، وعشان نعمل حسابات لازم نعديها على دالة int() اللي بتفك الطرد وتشيل علامات التنصيص وتطلع رقم صافي — بس خلي بالك لو دخلنا حروف زي كلمة «خمسة» السيستم بيطلع ValueError فورًا.\n' +
+  'أما علامة % (الموديولو) فهي الفكة أو الباقي: لو وزعنا ٢٥ شوكولاتة على ٤ علب، كل علبة تاخد ٦ وتتبقى قطعة واحدة — ودي أسهل تريكة لمعرفة الزوجي والفردي!\n' +
+  'وأهم قاعدة: علامة = الواحدة بتخزن قيمة جوه صندوق، لكن == المزدوجة بتسأل وبتقارن جوه شرط if.';
+
 export const LESSON_1_3: LessonPack = {
   id: '1.3',
   stationId: 'station-1',
   unitId: 'unit-1',
   order: 3,
   title: 'أول برنامج Python: المدخلات وباقي القسمة',
-  subtitle: 'استقبل أرقام من المستخدم بـ input() و int() واكشف الزوجي والفردي بـ %',
-  durationMin: 9,
-  contentVersion: 1,
+  subtitle: 'افهم input() و int() و % والمسافة البادئة في if قبل كتابة أول كود حقيقي',
+  durationMin: 10,
+  contentVersion: 4,
   access: 'free',
   status: 'ready',
   objectives: [
-    'تستخدم دالة input() لاستقبال البيانات وint() لتحويلها لعدد صحيح وprint() لعرض النتيجة.',
-    'تحسب باقي القسمة بالمعامل % وتستخدمه في اختبار هل الرقم زوجي أم فردي.',
-    'تفهم سبب ظهور خطأ ValueError لو المستخدم كتب نص بدل رقم جوه int().',
+    'تفهم ليه input() بترجع نص (String) وإزاي int() بتحوّله لعدد صحيح تقدر تحسب بيه.',
+    'تحسب باقي القسمة % وتطبّقه في كشف الزوجي والفردي وفي مسائل التوزيع اليومية.',
+    'تكتب جملة if ... else: بمسافة بادئة صحيحة وتفهم سبب خطأ ValueError.',
   ],
   cards: [
     {
       id: '1.3-c1',
-      title: 'البداية والهدف',
+      title: 'البداية وتحدي ١٥ ثانية',
       role: 'hero',
+      requireInteraction: true,
       blocks: [
         {
           id: '1.3-hero',
           type: 'heroHook',
           data: {
             title: 'أول كود Python حقيقي على موبايلك',
-            durationMin: 9,
+            durationMin: 10,
             stationLabel: 'المحطة ١ · الدرس ٣ من ٥',
-            goal: 'تكتب وتشغّل أول برنامج Python ياخد رقم من المستخدم ويفحص باقي قسمته بـ %.',
-            hook: 'تخيل إنك عملت برنامج آلة حاسبة، بس كل ما المستخدم يكتب رقمين، البرنامج يدمجهم جنب بعض زي "5" + "3" = "53" بدل 8! ده بيحصل لو نسينا نحوّل كلام المستخدم لرقم صحيح بـ int().',
+            goal: 'تفهم الفرق بين النص والرقم في Python، وتستخدم int() و % و if/else لبناء أول برامجك.',
+            hook: 'زي ماكينة السناكس اللي بتديها مدخلات وتطلعلك علبة العصير ومعاها الفكة! عملت آلة حاسبة بـ `a = input(); b = input(); print(a + b)` ودخلت `5` ثم `3`، بس الشاشة فاجأتك بنتيجة غريبة! توقعك إيه قبل ما نجرب سوا؟',
+            starterChallenge: {
+              prompt:
+                'تحدي استكشاف وفضول (جاوب بإحساسك، مش مهم صح ولا غلط لأننا لسه بنستكشف سوا!): لو كتبنا `a = input(); b = input(); print(a + b)` وأدخلنا `5` ثم `3`، الشاشة هتطبع إيه؟',
+              options: [
+                {
+                  id: 'sc-1',
+                  text: '8 (مجموع الرقمين)',
+                  isCorrect: false,
+                  feedback: 'توقع طبيعي وبداية استكشاف ممتازة! بس المفاجأة إن بايثون من غير int() بيعتبر الـ 5 والـ 3 نصوص زي الكلمات مش أرقام جمع.',
+                },
+                {
+                  id: 'sc-2',
+                  text: '53 (يلزق النصين جنب بعض)',
+                  isCorrect: true,
+                  feedback: 'عبقري يا صاحبي! لأن input() بترجع نص دائمًا ("5" و "3")، وعلامة + بين النصوص بتلزقهم جنب بعض فيطبع 53!',
+                },
+                {
+                  id: 'sc-3',
+                  text: 'خطأ ValueError',
+                  isCorrect: false,
+                  feedback: 'ولا يهمك خالص، تخمين ذكي! خطأ ValueError بيحصل لما نحاول نحول حروف لرقم جوه int()، وهنا مفيش int() لسه.',
+                },
+              ],
+              revealNote:
+                'المهم هنا إننا بنستكشف ونتوقع سوا بدون أي قلق من الصح والغلط! شوف إزاي دالة int() بتحل اللغز وتحول طرد النص "5" لرقم 5 حقيقي بالصورة والفيديو الجايين.',
+            },
           },
         },
       ],
     },
     {
       id: '1.3-c2',
-      title: 'الأدوات الأساسية: input و int و print',
+      title: 'النموذج البصري: من طرد النص إلى العدد',
       role: 'concept',
       blocks: [
         {
-          id: '1.3-tools-text',
-          type: 'richText',
+          id: '1.3-img',
+          type: 'imageBlock',
           data: {
-            heading: 'إزاي بايثون بياخد رقم ويعرض نتيجة؟',
-            body: '• `input()` بتستقبل الإدخال من المستخدم على شكل **نص (String)**.\n• `int()` بتحوّل النص لعدد صحيح (**Integer**) علشان نقدر نجمع ونضرب ونقسم.\n• `print()` بتطبع النتائج والمخرجات على الشاشة.\n• `%` علامة **باقي القسمة (Modulo)** — يعني لو قسمنا 7 على 2، الباقي 1؛ ولو قسمنا 8 على 2، الباقي 0.',
+            src: '/media/lesson-1-3-input-box.jpg',
+            alt: 'روبوت يضع طردًا نصيًا داخل آلة تحويل int فتخرج رقمًا صحيحًا وطبق باقي القسمة',
+            caption: 'input() بتسلمنا «طرد نصي» ("7")، و int() بتفك تغليفه لعدد صحيح (7).',
+            aspectRatio: '16/9',
           },
         },
         {
-          id: '1.3-sum-code',
-          type: 'codeView',
+          id: '1.3-video',
+          type: 'mediaPlayer',
           data: {
-            title: 'مثال الكتاب: جمع رقمين',
-            code: 'num1 = int(input("Enter first number: "))\nnum2 = int(input("Enter second number: "))\nsum_val = num1 + num2\nprint("Sum =", sum_val)',
-            caption: 'شغّلنا int() حوالين input() علشان يتحول الإدخال لرقم صحيح قبل الجمع.',
-            runnable: true,
+            kind: 'video',
+            title: 'فيديو بصري (٩٨ ثانية): تريكات بايثون السريعة — ماكينة السناكس وint() و%',
+            src: '/media/video-1-3.mp4',
+            vttSrc: '/media/caption-1-3.vtt',
+            durationSec: 98,
+            transcript: VIDEO_1_3_TRANSCRIPT,
           },
         },
       ],
     },
     {
       id: '1.3-c3',
-      title: 'المرحلة ١ · مثال محلول: زوجي أم فردي',
-      role: 'example',
+      title: 'قارن input() vs int(input()) وشغّل أول كود',
+      role: 'concept',
+      requireInteraction: true,
       blocks: [
         {
-          id: '1.3-even-text',
-          type: 'richText',
+          id: '1.3-tabs-str-int',
+          type: 'comparisonTabs',
           data: {
-            heading: 'مثال ١ من الكتاب: هل الرقم زوجي أم فردي؟',
-            body: '• **الأنماط:** أي رقم زوجي باقي قسمته على 2 يساوي `0`، وأي رقم فردي باقي قسمته لا يساوي `0`.\n• **في الكود:** `num % 2 == 0` بتفحص المساواة (لاحظ علامتي `==` للمقارنة، مش `=` الواحدة).',
+            heading: 'ليـه int(input()) حلّت لغز الـ 53؟',
+            instruction: 'اضغط بين الحالتين وشوف فرق علامة +، ثم شغّل المثال:',
+            tabs: [
+              {
+                id: 'tab-no-int',
+                label: 'input() لوحدها (نص)',
+                badge: 'دمج نصوص',
+                tone: 'coral',
+                body: '`input()` تخزّن الرقم كـ **نص** `"5"`، وعلامة `+` مع النصوص تلزقهم جنب بعض (`"53"`).',
+                code: 'a = input()  # "5"\nb = input()  # "3"\nprint(a + b) # 53',
+              },
+              {
+                id: 'tab-with-int',
+                label: 'int(input()) (عدد صحيح)',
+                badge: 'جمع حسابي ✓',
+                tone: 'emerald',
+                body: '`int(...)` تحول النص `"5"` للعدد `5`، فتجمع `+` حسابيًا وتطلع `8`.',
+                code: 'a = int(input())  # 5\nb = int(input())  # 3\nprint(a + b)      # 8',
+              },
+            ],
           },
         },
         {
-          id: '1.3-even-code',
+          id: '1.3-sum-code',
           type: 'codeView',
           data: {
-            title: 'الكود الكامل من الكتاب (ص ٨)',
-            code: 'num = int(input("Enter a number: "))\nif num % 2 == 0:\n    print("Even number")\nelse:\n    print("Odd number")',
-            caption: 'لو أدخلت 8 هيطبع Even number، ولو أدخلت 7 هيطبع Odd number.',
+            title: 'جرّب تشغيل مثال الكتاب: جمع رقمين',
+            code: 'num1 = int(input("Enter first number: "))\nnum2 = int(input("Enter second number: "))\nsum_val = num1 + num2\nprint("Sum =", sum_val)',
+            caption: 'اضغط «جرّب تشغيل الكود» واكتب رقمين بنفسك.',
             runnable: true,
           },
         },
@@ -87,7 +149,201 @@ export const LESSON_1_3: LessonPack = {
     },
     {
       id: '1.3-c4',
-      title: 'المرحلة ٢ · أكمل السطر الناقص',
+      title: '٣ مفاتيح سريعة: % و == و if/else',
+      role: 'concept',
+      requireInteraction: true,
+      blocks: [
+        {
+          id: '1.3-bridge-flips',
+          type: 'flipCards',
+          data: {
+            heading: 'اقلب البطاقات الثلاث قبل ما تقرأ كود الزوجي والفردي',
+            instruction: 'اضغط على كل بطاقة لتثبيت الرمز ووظيفته في Python:',
+            cards: [
+              {
+                id: 'br-mod',
+                frontLabel: 'مفتاح ١',
+                frontTitle: 'علامة % (باقي القسمة Modulo)',
+                frontHint: 'مش نسبة مئوية! بترجع إيه؟',
+                backTitle: 'المتبقي بعد التوزيع',
+                backBody: 'تقسم الرقمين وترجع **الباقي بس**: `8 % 2 = 0` (زوجي)، أما `7 % 2 = 1` (فردي).',
+              },
+              {
+                id: 'br-eq',
+                frontLabel: 'مفتاح ٢',
+                frontTitle: 'الفرق بين = و ==',
+                frontHint: 'واحدة للتخزين والتانية للسؤال…',
+                backTitle: 'تخزين مقابل سؤال',
+                backBody: '`=` تخزّن قيمة (`x = 8`)؛ أما `==` فتسأل **«هل متساويين؟»** وترجع `True` أو `False`.',
+                code: 'x = 8\nprint(x % 2 == 0)  # True',
+              },
+              {
+                id: 'br-if',
+                frontLabel: 'مفتاح ٣',
+                frontTitle: 'المسافة البادئة في if ... else:',
+                frontHint: 'ليه السطر اللي تحت if بيتزاح ٤ مسافات؟',
+                backTitle: '٤ مسافات = تابع للشرط',
+                backBody: 'بعد شرط `if` أو `else` نحط `:` ثم نترك **٤ مسافات** قبل الأوامر التابعة للشرط.',
+                code: 'if num % 2 == 0:\n    print("Even")\nelse:\n    print("Odd")',
+              },
+            ],
+          },
+        },
+      ],
+    },
+    {
+      id: '1.3-c5',
+      title: 'خلّي بالك من ValueError!',
+      role: 'warning',
+      blocks: [
+        {
+          id: '1.3-warn',
+          type: 'calloutWarning',
+          data: {
+            variant: 'warning',
+            title: 'خطأ شائع: كتابة حروف جوه int() بتطلع ValueError',
+            body: '• `int("10")` بتشتغل عادي وتحول النص الرقمي للعدد `10`.\n• لكن لو المستخدم كتب كلمة زي `"عشرة"` أو `"ten"` جوه `int(input())`، بايثون بيرفض ويوقف بـ **`ValueError`**!',
+          },
+        },
+      ],
+    },
+    {
+      id: '1.3-c6',
+      title: 'نقطة تحقق سريعة: سلوك int()',
+      role: 'concept',
+      requireInteraction: true,
+      blocks: [
+        {
+          id: '1.3-q1',
+          type: 'quizQuestion',
+          data: {
+            question: 'ماذا يحدث إذا أدخل المستخدم كلمة «عشرة» بدل الرقم 10 عند استخدام دالة `int(input())`؟',
+            multiple: false,
+            scored: false,
+            sourceTag: 'مرتبط بالكتاب · ص ١٤',
+            options: [
+              {
+                id: 'a',
+                text: 'تُحوّل للرقم 10 تلقائيًا',
+                isCorrect: false,
+                feedback: 'بايثون لا يترجم الكلمات العربية أو الإنجليزية لأرقام؛ التحويل ينجح مع أرقام مثل "10" فقط.',
+              },
+              {
+                id: 'b',
+                text: 'يظهر خطأ ValueError',
+                isCorrect: true,
+                feedback: 'مظبوط! int() ترفض أي حروف غير رقمية وتوقف التنفيذ بخطأ ValueError.',
+              },
+              {
+                id: 'c',
+                text: 'تُعطى القيمة 0 للمتغير',
+                isCorrect: false,
+                feedback: 'لا يعوّض بايثون القيمة بصفر؛ بل يرفع خطأ ValueError فورًا.',
+              },
+              {
+                id: 'd',
+                text: 'يتجاهل الإدخال ويكمل البرنامج',
+                isCorrect: false,
+                feedback: 'بدون حماية try/except، يتوقف البرنامج عند السطر اللي حصل فيه ValueError.',
+              },
+            ],
+            explanation: 'دالة int() تحول سلاسل الأرقام فقط مثل "10"، وإذا استقبلت حروفًا يحدث ValueError.',
+          },
+        },
+      ],
+    },
+    {
+      id: '1.3-c7',
+      title: 'توقّع المخرجات قبل مثال الزوجي والفردي',
+      role: 'example',
+      requireInteraction: true,
+      blocks: [
+        {
+          id: '1.3-predict',
+          type: 'predictOutput',
+          data: {
+            title: 'PRIMM: توقّع قبل التشغيل',
+            prompt: 'اقرأ السطرين كأنك المفسّر — ماذا سيطبع Python على الشاشة بالترتيب؟',
+            code: 'print(17 % 5)\nprint(7 % 2 == 0)',
+            runnable: true,
+            expectedOutput: '2\nFalse',
+            options: [
+              {
+                id: 'po-1',
+                text: '3 ثم True',
+                isCorrect: false,
+                feedback: '3 هي ناتج القسمة الصحيحة مش الباقي، والرقم 7 فردي فباقي قسمته على 2 يساوي 1 لا 0.',
+              },
+              {
+                id: 'po-2',
+                text: '2 ثم False',
+                isCorrect: true,
+                feedback: 'صح ١٠٠٪! 17 فيها 3 خمسات (= 15) ويتبقى 2، و 7 % 2 = 1 لا يساوي 0 فترجع False.',
+              },
+              {
+                id: 'po-3',
+                text: '2 ثم True',
+                isCorrect: false,
+                feedback: 'الباقي 2 صح، لكن 7 % 2 بيساوي 1 مش 0، إذًا تعبير المساواة يرجع False.',
+              },
+              {
+                id: 'po-4',
+                text: '3.4 ثم False',
+                isCorrect: false,
+                feedback: 'علامة % تعطي باقي القسمة الصحيحة (2) وليس القسمة العشرية (17 / 5).',
+              },
+            ],
+            explanation: 'المعامل % يرجّع الباقي فقط، وتعبير == يقارن القيمتين ويرجّع True أو False.',
+          },
+        },
+        {
+          id: '1.3-even-code',
+          type: 'codeView',
+          data: {
+            title: 'مثال ١ من الكتاب (ص ٨): هل الرقم زوجي أم فردي؟',
+            code: 'num = int(input("Enter a number: "))\nif num % 2 == 0:\n    print("Even number")\nelse:\n    print("Odd number")',
+            caption: 'دلوقتي بعد ما توقعت، شغّل الكود وجرّب بنفسك!',
+            runnable: true,
+          },
+        },
+      ],
+    },
+    {
+      id: '1.3-c8',
+      title: 'اكتشف الخطأ الخفي في الشرط',
+      role: 'tryIt',
+      requireInteraction: true,
+      blocks: [
+        {
+          id: '1.3-spotbug',
+          type: 'spotBug',
+          data: {
+            mode: 'code',
+            title: 'صيد خطأ = مقابل ==',
+            prompt: 'مبرمج كتب كود الزوجي والفردي لكن بايثون طلّع SyntaxError! اضغط على السطر اللي فيه الغلطة:',
+            codeLines: [
+              'num = int(input("Enter a number: "))',
+              'if num % 2 = 0:',
+              '    print("Even number")',
+              'else:',
+              '    print("Odd number")',
+            ],
+            lineFeedback: {
+              1: 'السطر 1 بيستقبل الرقم ويحوّله بـ int() بشكل سليم تمامًا.',
+              3: 'سطر الطباعة والمسافة البادئة (٤ مسافات) في السطر 3 سليم.',
+              4: 'كلمة else: بالنقطتين في السطر 4 سليمة.',
+              5: 'سطر طباعة Odd number في السطر 5 سليم.',
+            },
+            bugLine: 2,
+            fixedLine: 'if num % 2 == 0:',
+            fixExplanation: 'علامة = الواحدة للتخزين (Assignment)، أما داخل شرط if لازم نستخدم == المزدوجة لسؤال المساواة!',
+          },
+        },
+      ],
+    },
+    {
+      id: '1.3-c9',
+      title: 'أكمل السطر الناقص في Python',
       role: 'tryIt',
       requireInteraction: true,
       blocks: [
@@ -96,38 +352,50 @@ export const LESSON_1_3: LessonPack = {
           type: 'codeLab',
           data: {
             mode: 'fillLine',
-            title: 'أكمل طباعة الرقم الزوجي والفردي',
+            title: 'أكمل جملة الطباعة جوه if',
             prompt:
-              'السطر اللي جوه `if` ناقص! اكتب أمر `print("Even number")` مكان التعليق، وشغّل الاختبار علشان تتأكد من الحل.',
+              'استبدل علامة `___` في السطر ٣ بطباعة `"Even number"` مع الحفاظ على المسافة البادئة، ثم اضغط «تحقق من الحل».',
             starterCode:
-              'num = int(input("Enter a number: "))\nif num % 2 == 0:\n    # اكتب أمر طباعة Even number هنا\nelse:\n    print("Odd number")',
+              'num = int(input("Enter a number: "))\nif num % 2 == 0:\n    ___\nelse:\n    print("Odd number")',
             solutionCode:
               'num = int(input("Enter a number: "))\nif num % 2 == 0:\n    print("Even number")\nelse:\n    print("Odd number")',
-            checks: [
-              {
-                id: 'chk-even',
-                label: 'تجربة الرقم 8 (زوجي)',
-                stdin: ['8'],
-                expectedOutputRegex: '(Even|زوجي)',
-              },
-              {
-                id: 'chk-odd',
-                label: 'تجربة الرقم 7 (فردي)',
-                stdin: ['7'],
-                expectedOutputRegex: '(Odd|فردي)',
-              },
+            quickChips: [
+              'print("Even number")',
+              'print("Odd number")',
+              'num % 2 == 0',
+              'input("Even number")',
             ],
-            hint: 'جوه if لازم تسيب مسافة بادئة (4 مسافات) وتكتب print("Even number").',
+            checks: [
+              { id: 'chk-even', label: 'تجربة الرقم 8 (زوجي)', stdin: ['8'], expectedOutputRegex: '(Even|زوجي)' },
+              { id: 'chk-odd', label: 'تجربة الرقم 7 (فردي)', stdin: ['7'], expectedOutputRegex: '(Odd|فردي)' },
+            ],
+            hint: 'استبدل ___ بـ print("Even number") مع وجود ٤ مسافات قبلها.',
+            hints: [
+              'الهدف: لما الشرط يتحقق (الرقم زوجي)، السطر ٣ لازم يطبع رسالة Even number على الشاشة.',
+              'المبدأ: نستخدم دالة print() لعرض نص بين علامتي تنصيص، ونحافظ على الـ ٤ مسافات في بداية السطر.',
+              'الخطوة: استبدل ___ بالرقاقة print("Even number").',
+            ],
           },
         },
       ],
     },
     {
-      id: '1.3-c5',
-      title: 'المرحلة ٣ · جرّب لوحدك: يقبل القسمة على ٥',
+      id: '1.3-c10',
+      title: 'بودكاست التوزيع + تحدّي القسمة على ٥',
       role: 'tryIt',
       requireInteraction: true,
       blocks: [
+        {
+          id: '1.3-podcast',
+          type: 'mediaPlayer',
+          data: {
+            kind: 'audio',
+            title: 'بودكاست ١٠٠ ثانية: ماكينة السناكس وباقي القسمة وفخ = مقابل ==',
+            src: '/media/podcast-1-3.mp3',
+            durationSec: 100,
+            transcript: PODCAST_1_3_TRANSCRIPT,
+          },
+        },
         {
           id: '1.3-free-lab',
           type: 'codeLab',
@@ -135,110 +403,79 @@ export const LESSON_1_3: LessonPack = {
             mode: 'freeRun',
             title: 'تحدي المبرمج: القسمة على ٥',
             prompt:
-              'اكتب برنامج Python كامل يقرأ رقمًا صحيحًا من المستخدم باستخدام `int(input(...))`، ولو بيقبل القسمة على 5 يطبع `"Divisible by 5"`، ولو لأ يطبع `"Not divisible by 5"`.',
+              'اكتب شرطًا يختبر هل `num` يقبل القسمة على 5 (`num % 5 == 0`): يطبع `"Divisible by 5"` عند التحقق، و `"Not divisible by 5"` في `else`.',
             starterCode:
-              'num = int(input("Enter a number: "))\n# اكتب الشرط باستخدام num % 5 == 0 هنا\n',
+              'num = int(input("Enter a number: "))\n# اكتب جملة if و else بالأسفل\n',
             solutionCode:
               'num = int(input("Enter a number: "))\nif num % 5 == 0:\n    print("Divisible by 5")\nelse:\n    print("Not divisible by 5")',
-            checks: [
-              {
-                id: 'chk-div5',
-                label: 'تجربة الرقم 25 (يقبل القسمة)',
-                stdin: ['25'],
-                expectedOutputRegex: 'Divisible by 5',
-              },
-              {
-                id: 'chk-not5',
-                label: 'تجربة الرقم 12 (لا يقبل القسمة)',
-                stdin: ['12'],
-                expectedOutputRegex: 'Not divisible by 5',
-              },
+            quickChips: [
+              'if num % 5 == 0:',
+              '    print("Divisible by 5")',
+              'else:',
+              '    print("Not divisible by 5")',
+              'if num % 5 = 0:',
             ],
-            hint: 'نفس فكرة الزوجي والفردي، بس بدّل 2 بـ 5 في `num % 5 == 0`!',
+            checks: [
+              { id: 'chk-div5', label: 'تجربة الرقم 25 (يقبل القسمة)', stdin: ['25'], expectedOutputRegex: 'Divisible by 5' },
+              { id: 'chk-not5', label: 'تجربة الرقم 12 (لا يقبل القسمة)', stdin: ['12'], expectedOutputRegex: 'Not divisible by 5' },
+            ],
+            hint: 'نفس هيكل الزوجي والفردي، بس بدّل 2 بـ 5: if num % 5 == 0:',
+            hints: [
+              'الهدف: افحص هل باقي قسمة num على 5 يساوي صفرًا، واطبع الرسالة المناسبة في كل مسار.',
+              'المبدأ: استخدم علامة == (مش =) مع % 5، وحط : بعد الشرط و ٤ مسافات قبل كل print().',
+              'الخطوة: ركّب السطور بالترتيب: if num % 5 == 0: ← سطر مزاح print("Divisible by 5") ← else: ← سطر مزاح print("Not divisible by 5").',
+            ],
           },
         },
       ],
     },
     {
-      id: '1.3-c6',
-      title: 'خلّي بالك!',
-      role: 'warning',
-      blocks: [
-        {
-          id: '1.3-warn',
-          type: 'calloutWarning',
-          data: {
-            variant: 'warning',
-            title: 'خطأ شائع: كتابة كلمة جوه int()',
-            body: 'لو البرنامج سأل المستخدم عن رقم وراح كتب كلمة زي `"خمسة"` أو `"ten"` بدل `5`، الدالة `int()` مش هتقدر تحوّل الحروف لرقم وهيظهر خطأ اسمه `ValueError`! (هنتعلم في المحطة الخامسة إزاي نحمي البرنامج من الخطأ ده بـ `try / except`).',
-          },
-        },
-      ],
-    },
-    {
-      id: '1.3-c7',
-      title: 'التحقق السريع',
+      id: '1.3-c11',
+      title: 'تحدّي النقل (من خارج الكتاب)',
       role: 'quickCheck',
       requireInteraction: true,
       blocks: [
         {
-          id: '1.3-q1',
+          id: '1.3-q3',
           type: 'quizQuestion',
           data: {
-            question: 'ماذا يحدث إذا أدخل المستخدم كلمة «عشرة» بدل الرقم 10 عند استخدام دالة `int()`؟',
+            question: 'معك ١٧ قطعة حلوى وتريد توزيعها بالتساوي في أكياس، كل كيس به ٥ قطع. ما ناتج `17 % 5` في Python وماذا يمثّل؟',
             multiple: false,
             scored: false,
-            sourceTag: 'كتاب الوزارة ص ١٤',
+            sourceTag: 'فهم من خارج الكتاب',
             options: [
               {
                 id: 'a',
-                text: 'تُحوّل للرقم 10 تلقائيًا',
+                text: '3 (عدد الأكياس الممتلئة)',
                 isCorrect: false,
-                feedback: 'بايثون لا يترجم الكلمات العربية أو الإنجليزية لأرقام تلقائيًا.',
+                feedback: '3 هي ناتج القسمة الصحيحة (17 // 5)، أما % فترجع الباقي المتبقي بعد التوزيع.',
               },
               {
                 id: 'b',
-                text: 'يظهر خطأ ValueError',
+                text: '2 (عدد القطع المتبقية بعد التوزيع)',
                 isCorrect: true,
-                feedback: 'مظبوط! int() ترفض النصوص غير الرقمية وترفع ValueError.',
+                feedback: 'ممتاز! 17 فيها 3 خمسات (= 15) ويتبقى 2، وده بالظبط ناتج 17 % 5.',
               },
               {
                 id: 'c',
-                text: 'تُعطى القيمة 0 للمتغير',
+                text: '3.4 (ناتج القسمة العشرية)',
                 isCorrect: false,
-                feedback: 'لا، يتوقف التنفيذ بخطأ ValueError.',
+                feedback: '3.4 هو ناتج القسمة العادية 17 / 5، بينما % تحسب الباقي الصحيح فقط.',
               },
               {
                 id: 'd',
-                text: 'يُتجاهل الإدخال ويكمل البرنامج',
+                text: '0 لأنها قسمة صحيحة',
                 isCorrect: false,
-                feedback: 'لا يتجاهل الخطأ بدون معالجة مخصصة.',
+                feedback: '17 لا تقبل القسمة على 5 بدون باقي؛ يتبقى 2 بعد ملء 3 أكياس.',
               },
             ],
-            explanation: 'دالة int() تحول سلاسل الأرقام فقط مثل "10"، وإذا استقبلت حروفًا يحدث ValueError.',
-          },
-        },
-        {
-          id: '1.3-q2',
-          type: 'quizQuestion',
-          data: {
-            question: 'في الجملة `if num % 2 == 0:`، ماذا تمثّل العلامة `%` رياضيًا؟',
-            multiple: false,
-            scored: false,
-            sourceTag: 'كتاب الوزارة ص ١٤',
-            options: [
-              { id: 'a', text: 'النسبة المئوية', isCorrect: false, feedback: 'في بايثون % مش معناها نسبة مئوية.' },
-              { id: 'b', text: 'القسمة المطولة', isCorrect: false, feedback: 'القسمة بتتكتب / أو //.' },
-              { id: 'c', text: 'باقي القسمة', isCorrect: true, feedback: 'صح! % تحسب الباقي بعد قسمة الرقم الأول على التاني.' },
-              { id: 'd', text: 'الضرب المتكرر', isCorrect: false, feedback: 'الضرب المتكرر أو الأس بيتكتب **.' },
-            ],
-            explanation: 'المعامل % يُرجع باقي القسمة الصحيحة (Modulo).',
+            explanation: 'المعامل % يُرجع الباقي فقط بعد القسمة الصحيحة: 17 = (3 × 5) + 2، إذًا 17 % 5 = 2.',
           },
         },
       ],
     },
     {
-      id: '1.3-c8',
+      id: '1.3-c12',
       title: 'الخلاصة والمصادر الإضافية',
       role: 'summary',
       blocks: [
@@ -248,25 +485,47 @@ export const LESSON_1_3: LessonPack = {
           data: {
             heading: 'الخلاصة في فقرة',
             calloutStyle: 'summary',
-            body: 'كتبت وشغّلت أول برامج Python حقيقية! عرفت إن `input()` بتستقبل المدخلات كنص، و`int()` بتحوّله لعدد صحيح (ولو دخلت حروف يظهر `ValueError`)، و`print()` بتعرض المخرجات، و`%` بتجيب باقي القسمة اللي بنكشف بيه الرقم الزوجي والفردي أو القسمة على 5.',
+            body: 'عرفت إن `input()` بترجع نصًا (فنستخدم `int()` للأعداد الصحيحة، مع الانتباه لخطأ `ValueError` لو دخلت حروف). واتعلمت إن `%` بتجيب باقي القسمة، وإن `if ... else:` بتحتاج `==` ونقطتين `:` و٤ مسافات بادئة. في الدرس الجاي هنشوف إمتى `int()` يقطع الكسور وإمتى نحتاج `float()`!',
+          },
+        },
+        {
+          id: '1.3-infographic',
+          type: 'imageBlock',
+          data: {
+            src: '/media/infographic-1-3.png',
+            alt: 'إنفوجرافيك تشريح أول برنامج Python: المدخلات وint وValueError ومعامل % والفرق بين = و ==',
+            caption: 'إنفوجرافيك المراجعة (NotebookLM): ملخص بصري لتحويل int()، فخ ValueError، توزيع ٢٥ شوكولاتة بـ %، والفرق بين = و ==.',
           },
         },
       ],
     },
   ],
   summary:
-    'تعاملنا مع دوال الإدخال والإخراج input() و int() و print() ومعامل باقي القسمة % مع تطبيق عملي للزوجي والفردي والقسمة على ٥ وتنبيه ValueError.',
+    'استخدام input() و int() و print() ومعامل باقي القسمة % ومقدمة if/else و == وتنبيه ValueError.',
   additionalSources: [
+    {
+      id: 'nb-1-3-audio',
+      type: 'audio',
+      title: 'ملخص صوتي (بودكاست ١٠٠ ثانية)',
+      src: '/media/podcast-1-3.mp3',
+      durationSec: 100,
+      transcript: PODCAST_1_3_TRANSCRIPT,
+      notes: [
+        '"5" + "3" = "53" لأن input() بترجع نصًا دائمًا.',
+        'معامل % ينفع لأي مشكلة توزيع وبواقي مش الزوجي والفردي بس.',
+      ],
+    },
     {
       id: 'nb-1-3-summary',
       type: 'summary',
-      title: 'ملخص سريع (NotebookLM)',
+      title: 'ملخص سريع',
       content:
-        'الانتقال من التفكير النظري لكتابة كود Python عملي يعتمد على ٣ عمليات: إدخال وتحويل، معالجة حسابية أو شرطية، ثم طباعة النتيجة.',
+        'أول برنامج Python حقيقي بيجمع بين الاستقبال والتحويل (`int(input())`)، ثم الفحص الشرطي (`if / else`)، ثم الطباعة (`print()`).',
       bullets: [
-        'input() ترجع نصًا دائمًا، ونستخدم int() لتحويله إلى عدد صحيح.',
-        '% ترجع باقي القسمة (مثل 9 % 2 == 1 و 8 % 2 == 0).',
-        'print() للعرض على الشاشة وليس للإدخال.',
+        'input() ترجع String دائمًا؛ نحولها بـ int() للأعداد الصحيحة.',
+        '= لتخزين قيمة في متغير، و == لاختبار المساواة (True/False).',
+        '% ترجع باقي القسمة (مثل 17 % 5 == 2 و 8 % 2 == 0).',
+        'إدخال نص غير رقمي في int() يرفع خطأ ValueError.',
       ],
     },
     {
@@ -278,7 +537,7 @@ export const LESSON_1_3: LessonPack = {
           id: 'faq-1-3-1',
           question: 'إيه الفرق بين = و == في بايثون؟',
           answer:
-            'علامة = الواحدة بتخزن قيمة جوه متغير (مثل num = 5)، أما == المزدوجة فبتسأل هل الطرفين متساويين (مثل num % 2 == 0) وترجع True أو False.',
+            '= الواحدة بتخزن قيمة جوه متغير (num = 5)، أما == المزدوجة فبتسأل هل الطرفين متساويين (num % 2 == 0) وترجع True أو False.',
         },
         {
           id: 'faq-1-3-2',
@@ -293,12 +552,52 @@ export const LESSON_1_3: LessonPack = {
       title: 'خريطة ذهنية',
       root: {
         id: 'mm-1-3',
-        label: 'أول برنامج Python',
+        label: 'أول برنامج Python: المدخلات والشرط و %',
         children: [
-          { id: 'mm-1-3-in', label: 'الإدخال: input() + التحويل int()' },
-          { id: 'mm-1-3-mod', label: 'باقي القسمة: % (زوجي == 0 / فردي != 0)' },
-          { id: 'mm-1-3-out', label: 'الإخراج: print()' },
-          { id: 'mm-1-3-err', label: 'تنبيه: ValueError عند إدخال نص' },
+          {
+            id: 'mm-1-3-fns',
+            label: 'الدوال الأساسية',
+            children: [
+              { id: 'mm-1-3-in', label: 'input(): تقرأ مدخلات المستخدم كـ نص (String) دائمًا' },
+              {
+                id: 'mm-1-3-int',
+                label: 'int(): تحوّل النص الرقمي لعدد صحيح ("5" ← 5)',
+                children: [
+                  { id: 'mm-1-3-err', label: 'فخ شائع: إدخال حروف داخل int() يرفع خطأ ValueError' },
+                ],
+              },
+            ],
+          },
+          {
+            id: 'mm-1-3-ops',
+            label: 'المعاملات والمقارنات',
+            children: [
+              {
+                id: 'mm-1-3-mod',
+                label: 'معامل باقي القسمة (%)',
+                children: [
+                  { id: 'mm-1-3-m1', label: 'مثال: 7 % 2 = 1 و 8 % 2 = 0' },
+                  { id: 'mm-1-3-m2', label: 'تطبيق التوزيع: 25 شوكولاتة ÷ 4 علب (الباقي 1)' },
+                ],
+              },
+              {
+                id: 'mm-1-3-eq',
+                label: 'الفرق الحاسم بين = و ==',
+                children: [
+                  { id: 'mm-1-3-eq1', label: '= لتعيين وتخزين قيمة لمتغير' },
+                  { id: 'mm-1-3-eq2', label: '== للمقارنة واختبار المساواة داخل شرط if' },
+                ],
+              },
+            ],
+          },
+          {
+            id: 'mm-1-3-even',
+            label: 'تطبيق: تحديد الرقم الزوجي والفردي',
+            children: [
+              { id: 'mm-1-3-if', label: 'if num % 2 == 0: → زوجي (Even) + مسافة بادئة 4 مسافات' },
+              { id: 'mm-1-3-else', label: 'else: → فردي (Odd)' },
+            ],
+          },
         ],
       },
     },
@@ -321,9 +620,21 @@ export const LESSON_1_3: LessonPack = {
         },
         {
           id: 'gl-1-3-3',
+          termAr: 'المسافة البادئة',
+          termEn: 'Indentation (4 spaces)',
+          definition: 'مسافات في بداية السطر لتحديد الأوامر التابعة لـ if أو else أو الحلقات.',
+        },
+        {
+          id: 'gl-1-3-4',
           termAr: 'خطأ قيمة الإدخال',
           termEn: 'ValueError',
           definition: 'خطأ يظهر في Python عند محاولة تحويل نص غير رقمي إلى عدد.',
+        },
+        {
+          id: 'gl-1-3-5',
+          termAr: 'التعيين مقابل المقارنة',
+          termEn: 'Assignment (=) vs Comparison (==)',
+          definition: 'علامة = لتخزين قيمة في متغير، بينما == للمقارنة الشرطية وإرجاع True أو False.',
         },
       ],
     },
@@ -339,14 +650,14 @@ export const LESSON_1_3: LessonPack = {
     {
       id: 'src-1-3-nb',
       kind: 'notebooklm',
-      label: 'مصادر NotebookLM للدرس ١.٣',
-      detail: 'دليل الدوال المدمجة ومعامل باقي القسمة وتنبيه ValueError',
+      label: 'ملخصات ووسائط الدرس ١.٣',
+      detail: 'رسمة طرد النص + فيديو + بودكاست + إنفوجرافيك وخريطة ذهنية ودليل المراجعة',
     },
   ],
   nextStep: {
     kind: 'lesson',
     targetId: '1.4',
     label: 'الدرس الجاي: القرارات الحسابية والدقة العشرية',
-    description: 'هتحسب المتوسط بدقة float، ومساحة المستطيل والمربع، وتقارن بين رقمين بـ if / else.',
+    description: 'هتعرف إزاي float بيحفظ الكسور، وخطر نسيان الأقواس، والمقارنة بـ > في if/else.',
   },
 };

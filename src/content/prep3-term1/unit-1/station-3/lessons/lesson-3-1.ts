@@ -8,12 +8,12 @@ export const LESSON_3_1: LessonPack = {
   title: 'السلاسل النصية Strings: الفهرسة ودوال النصوص',
   subtitle: 'العد في Python بيبدأ من صفر! تعامل مع الحروف والطول والبحث والتكبير',
   durationMin: 9,
-  contentVersion: 2,
+  contentVersion: 3,
   access: 'free',
   status: 'ready',
   objectives: [
     'تعرّف السلسلة النصية (String) داخل علامتي تنصيص " " أو \' \'.',
-    'تستخرج أي حرف من النص باستخدام الفهرسة الموجبة (0, 1...) والسالبة (-1...).',
+    'تستخرج أي حرف من النص باستخدام الفهرسة الموجبة (0, 1...) والسالبة (-1...) وتتجنب IndexError.',
     'تستخدم الدوال والمعاملات: len() و in و upper() والتكرار for على الحروف.',
   ],
   cards: [
@@ -21,6 +21,7 @@ export const LESSON_3_1: LessonPack = {
       id: '3.1-c1',
       title: 'البداية والهدف',
       role: 'hero',
+      requireInteraction: true,
       blocks: [
         {
           id: '3.1-hero',
@@ -31,35 +32,146 @@ export const LESSON_3_1: LessonPack = {
             stationLabel: 'المحطة ٣ · الدرس ١ من ٤',
             goal: 'تقرأ طول النص وتوصل لأي حرف بالفهرسة الموجبة والسالبة وتبحث جوه النصوص.',
             hook: 'لما بتسجل اسمك أو كلمة سر على أي موقع، إزاي البرنامج بيعرف عدد الحروف، أو أول حرف إيه، أو هل فيها رمز معين؟ كل ده بيتم عن طريق السلاسل النصية (Strings)!',
+            starterChallenge: {
+              prompt: 'في السلسلة النصية `text = "Egypt"`، الأمر `print(text[1])` هيطبع حرف `"E"` ولا `"g"`؟',
+              options: [
+                {
+                  id: 'sc-a',
+                  text: '"E" — لأنه أول حرف في الكلمة',
+                  isCorrect: false,
+                  feedback: 'ده فخ العدّ من 1! في Python الفهرسة بتبدأ من 0، يعني الحرف الأول هو text[0] مش text[1].',
+                },
+                {
+                  id: 'sc-b',
+                  text: '"g" — لأن الترقيم يبدأ من 0 فـ [1] هو الحرف الثاني',
+                  isCorrect: true,
+                  feedback: 'توقّع دقيق! الحرف E فهرسه 0، والحرف g فهرسه 1 لأن العد في Python يبدأ من الصفر.',
+                },
+                {
+                  id: 'sc-c',
+                  text: '"t" — لأنه آخر حرف في الكلمة',
+                  isCorrect: false,
+                  feedback: 'آخر حرف فهرسه السالب -1 (أو 4)، بينما الفهرس الموجب [1] يعد من البداية بعد 0 مباشرة.',
+                },
+              ],
+              revealNote: 'القاعدة الذهبية في Python: أول حرف مكانه [0]، وآخر حرف مكانه [-1].',
+            },
           },
         },
       ],
     },
     {
       id: '3.1-c2',
-      title: 'جدول فهرسة "hello" والعمليات الخمس',
+      title: 'بطاقات فهرسة النصوص والطول',
       role: 'concept',
+      requireInteraction: true,
       blocks: [
         {
           id: '3.1-str-def',
           type: 'richText',
           data: {
             heading: 'السلسلة النصية والفهرسة (Indexing)',
-            body: '**السلسلة النصية (String)** هي مجموعة حروف أو أرقام أو رموز محاطة بعلامتي تنصيص `" "` أو `\' \'`، مثل `text = "hello"`.\nبص على جدول ترقيم الحروف من اليسار لليمين (موجب بيبدأ من `0`) ومن اليمين لليسار (سالب بيبدأ من `-1`):',
+            body: '**السلسلة النصية (String)** هي حروف أو أرقام أو رموز داخل علامتي تنصيص `" "` أو `\' \'`، وكل خانة فيها مرقمة من اليسار لليمين بدءًا من `0` ومن النهاية بدءًا من `-1`.',
           },
         },
         {
-          id: '3.1-index-table',
-          type: 'tableBlock',
+          id: '3.1-index-flips',
+          type: 'flipCards',
           data: {
-            heading: 'جدول فهرسة كلمة "hello" (ص ٣٢)',
-            headers: ['الحرف / الاتجاه', 'h', 'e', 'l', 'l', 'o'],
-            rows: [
-              ['الترقيم الموجب (من البداية)', '0', '1', '2', '3', '4'],
-              ['الترقيم السالب (من النهاية)', '-5', '-4', '-3', '-2', '-1'],
+            heading: 'اكتشف مواقع الحروف ودالة len()',
+            instruction: 'اقلب كل بطاقة لتشاهد موضع الحرف وكوده من اليسار لليمين بدون خلط.',
+            cards: [
+              {
+                id: 'idx-0',
+                frontLabel: 'الفهرس 0',
+                frontTitle: 'text[0] في "hello"',
+                frontHint: 'أين يقع الصفر في الكلمة؟',
+                backTitle: 'أول حرف من اليسار',
+                backBody: 'الفهرسة الموجبة تبدأ من 0 دائمًا من أول حرف في السلسلة.',
+                code: 'text = "hello"\nprint(text[0])  # h',
+              },
+              {
+                id: 'idx-1',
+                frontLabel: 'الفهرس 1',
+                frontTitle: 'text[1] في "hello"',
+                frontHint: 'انتبه: ليس الحرف الأول!',
+                backTitle: 'الحرف الثاني',
+                backBody: 'بما أن h فهرسها 0، فإن الفهرس 1 يشير للحرف الثاني e.',
+                code: 'text = "hello"\nprint(text[1])  # e',
+              },
+              {
+                id: 'idx-neg',
+                frontLabel: 'الفهرس السالب -1',
+                frontTitle: 'text[-1] في "hello"',
+                frontHint: 'طريقة سريعة للوصول للنهاية',
+                backTitle: 'آخر حرف من النهاية',
+                backBody: 'الفهرسة السالبة تبدأ من -1 عند آخر حرف وتتجه للخلف (-2 لـ l وهكذا).',
+                code: 'text = "hello"\nprint(text[-1])  # o',
+              },
+              {
+                id: 'idx-len',
+                frontLabel: 'الطول len()',
+                frontTitle: 'len("Hi Ali") يساوي كام؟',
+                frontHint: 'هل المسافة تتحسب؟',
+                backTitle: 'الطول = 6 (المسافة محسوبة!)',
+                backBody: 'دالة len() تعد كل رمز داخل علامتي التنصيص بما في ذلك المسافات الفارغة.',
+                code: 'print(len("Hi Ali"))  # 6',
+              },
             ],
           },
         },
+      ],
+    },
+    {
+      id: '3.1-c3',
+      title: 'توقّع قبل التشغيل: الفهرسة مع len()',
+      role: 'example',
+      requireInteraction: true,
+      blocks: [
+        {
+          id: '3.1-predict',
+          type: 'predictOutput',
+          data: {
+            title: 'اقرأ السطرين وتوقّع المخرج الدقيق',
+            prompt: 'ماذا سيطبع الكود التالي عند تشغيله؟ ركّز على `text[1]` و `len(text)`:',
+            code: 'text = "hello"\nprint(text[1], len(text))',
+            expectedOutput: 'e 5',
+            options: [
+              {
+                id: 'p1',
+                text: 'h 5',
+                isCorrect: false,
+                feedback: 'تذكّر أن text[0] هي "h"، أما text[1] فتشير للحرف الثاني "e".',
+              },
+              {
+                id: 'p2',
+                text: 'e 5',
+                isCorrect: true,
+                feedback: 'ممتاز! text[1] تطبع الحرف الثاني "e"، ودالة len("hello") تعد ٥ حروف فتطبع 5.',
+              },
+              {
+                id: 'p3',
+                text: 'e 4',
+                isCorrect: false,
+                feedback: 'آخر فهرس هو 4 لكن عدد الحروف الإجمالي len() يساوي 5 لأن العد للطول يبدأ من 1.',
+              },
+              {
+                id: 'p4',
+                text: 'h 4',
+                isCorrect: false,
+                feedback: 'الفهرسة تبدأ من 0 (فـ text[1] هي "e")، بينما الطول len() يحسب عدد الحروف الكلي وهو 5.',
+              },
+            ],
+            explanation: 'الفهرسة تبدأ من 0 (text[1] -> "e")، بينما دالة len() ترجع العدد الكلي للحروف (5).',
+          },
+        },
+      ],
+    },
+    {
+      id: '3.1-c4',
+      title: 'مثال محلول: العمليات الخمس على النصوص',
+      role: 'example',
+      blocks: [
         {
           id: '3.1-code-ex',
           type: 'codeView',
@@ -73,63 +185,9 @@ export const LESSON_3_1: LessonPack = {
       ],
     },
     {
-      id: '3.1-c3',
-      title: 'المرحلة ٢ و ٣ · أكمل وحل لوحدك',
-      role: 'tryIt',
-      requireInteraction: true,
-      blocks: [
-        {
-          id: '3.1-fill',
-          type: 'codeLab',
-          data: {
-            mode: 'fillLine',
-            title: 'أكمل طباعة الحرف الأول',
-            prompt: 'أكمل السطر الناقص علشان يطبع الحرف الأول من `"hello"` باستخدام الفهرس الصحيح.',
-            starterCode: 'text = "hello"\n# اطبع الحرف الأول هنا\nprint(text[-1])',
-            solutionCode: 'text = "hello"\nprint(text[0])\nprint(text[-1])',
-            checks: [
-              { id: 'c-h-o', label: 'يطبع h ثم o', stdin: [], contains: ['h', 'o'] },
-            ],
-            hint: 'العد في Python بيبدأ من صفر، يبقى الحرف الأول هو text[0].',
-          },
-        },
-        {
-          id: '3.1-free',
-          type: 'codeLab',
-          data: {
-            mode: 'freeRun',
-            title: 'مسألة قريبة: بطاقة الاسم "Sara"',
-            prompt: 'لنفترض `name = "Sara"`. اكتب برنامجًا يطبع طول الاسم (`len`)، ثم الحرف الأول، ثم الحرف الأخير، كل واحد في سطر `print()`.',
-            starterCode: 'name = "Sara"\n# اطبع الطول والحرف الأول والأخير هنا\n',
-            solutionCode: 'name = "Sara"\nprint(len(name))\nprint(name[0])\nprint(name[-1])',
-            checks: [
-              { id: 'sara', label: 'النتيجة 4 و S و a', stdin: [], contains: ['4', 'S', 'a'] },
-            ],
-            hint: 'استخدم print(len(name)) و print(name[0]) و print(name[-1]).',
-          },
-        },
-      ],
-    },
-    {
-      id: '3.1-c4',
-      title: 'خلّي بالك!',
-      role: 'warning',
-      blocks: [
-        {
-          id: '3.1-warn',
-          type: 'calloutWarning',
-          data: {
-            variant: 'warning',
-            title: 'أشهر فخ في الامتحان: العد بيبدأ من 0 مش 1!',
-            body: 'في `"hello"`، العنصر `text[1]` هو الحرف **`"e"`** مش `"h"`!\nالحرف الأول دايمًا مكانه **`text[0]`**، والحرف الأخير مكانه **`text[-1]`**.',
-          },
-        },
-      ],
-    },
-    {
       id: '3.1-c5',
-      title: 'التحقق السريع',
-      role: 'quickCheck',
+      title: 'نقطة فحص: استخراج أول حرف',
+      role: 'concept',
       requireInteraction: true,
       blocks: [
         {
@@ -141,35 +199,174 @@ export const LESSON_3_1: LessonPack = {
             scored: false,
             sourceTag: 'كتاب الوزارة ص ٣٨',
             options: [
-              { id: 'a', text: '"e"', isCorrect: false, feedback: 'ده text[1] مش text[0].' },
-              { id: 'b', text: '"l"', isCorrect: false, feedback: 'ده text[2].' },
-              { id: 'c', text: '"h"', isCorrect: true, feedback: 'صح! الفهرس 0 هو أول حرف.' },
-              { id: 'd', text: '"o"', isCorrect: false, feedback: 'ده آخر حرف text[-1].' },
+              {
+                id: 'a',
+                text: '"e"',
+                isCorrect: false,
+                feedback: '"e" هو الحرف الثاني ويقع عند الفهرس text[1] لأن الترقيم يبدأ من 0.',
+              },
+              {
+                id: 'b',
+                text: '"l"',
+                isCorrect: false,
+                feedback: '"l" تقع عند الفهرس text[2] و text[3] وليس عند البداية 0.',
+              },
+              {
+                id: 'c',
+                text: '"h"',
+                isCorrect: true,
+                feedback: 'صح! الفهرس 0 يشير دائمًا إلى أول حرف من اليسار وهو "h".',
+              },
+              {
+                id: 'd',
+                text: '"o"',
+                isCorrect: false,
+                feedback: '"o" هو آخر حرف في الكلمة ومكانه text[4] أو text[-1].',
+              },
             ],
-            explanation: 'الفهرسة تبدأ من 0، لذلك text[0] هي الحرف الأول "h".',
-          },
-        },
-        {
-          id: '3.1-q2',
-          type: 'quizQuestion',
-          data: {
-            question: 'ما النتيجة المتوقعة للكود `text = "Python"; print(len(text))`؟',
-            multiple: false,
-            scored: false,
-            sourceTag: 'كتاب الوزارة ص ٣٨',
-            options: [
-              { id: 'a', text: '5', isCorrect: false, feedback: 'عدّ الحروف بدقة: P-y-t-h-o-n.' },
-              { id: 'b', text: '6', isCorrect: true, feedback: 'إجابة صحيحة: كلمة Python مكونة من 6 حروف.' },
-              { id: 'c', text: '7', isCorrect: false, feedback: 'عدد الحروف 6 فقط.' },
-              { id: 'd', text: 'خطأ في البرنامج', isCorrect: false, feedback: 'الكود صحيح.' },
-            ],
-            explanation: 'len("Python") تحسب عدد الحروف وهو 6.',
+            explanation: 'الفهرسة الموجبة تبدأ من 0، لذلك text[0] هي الحرف الأول "h".',
           },
         },
       ],
     },
     {
       id: '3.1-c6',
+      title: 'خلّي بالك! فخ IndexError',
+      role: 'warning',
+      requireInteraction: true,
+      blocks: [
+        {
+          id: '3.1-bug',
+          type: 'spotBug',
+          data: {
+            mode: 'code',
+            title: 'لماذا توقف الكود برسالة IndexError؟',
+            prompt: 'كلمة `"Egypt"` مكونة من ٥ حروف، فحاول مبرمج طباعة الحرف الأخير بـ `text[5]` فتوقف البرنامج! اضغط على السطر الخاطئ:',
+            codeLines: [
+              'text = "Egypt"',
+              'print(len(text))',
+              'print(text[5])',
+            ],
+            bugLine: 3,
+            lineFeedback: {
+              1: 'تعريف السلسلة النصية داخل علامتي تنصيص سليم تمامًا.',
+              2: 'طباعة len(text) ستخرج الرقم 5 بشكل سليم.',
+            },
+            fixedLine: 'print(text[4])  # أو print(text[-1])',
+            fixExplanation: 'بما أن العد يبدأ من 0، فالحروف الخمسة في "Egypt" تقع في الفهارس 0 و1 و2 و3 و4 فقط؛ طلب text[5] يتجاوز طول النص ويسبب IndexError.',
+          },
+        },
+      ],
+    },
+    {
+      id: '3.1-c7',
+      title: 'المرحلة ٢ · أكمل الفهرس الناقص',
+      role: 'tryIt',
+      requireInteraction: true,
+      blocks: [
+        {
+          id: '3.1-fill',
+          type: 'codeLab',
+          data: {
+            mode: 'fillLine',
+            title: 'أكمل طباعة الحرف الأول',
+            prompt: 'استبدل `___` بالفهرس الصحيح لطباعة الحرف الأول من `"hello"`، ثم تحقق من النتيجة.',
+            starterCode: 'text = "hello"\nprint(text[___])\nprint(text[-1])',
+            solutionCode: 'text = "hello"\nprint(text[0])\nprint(text[-1])',
+            quickChips: ['0', '1', '-1', '5'],
+            checks: [
+              { id: 'c-h-o', label: 'يطبع h ثم o', stdin: [], expectedOutputRegex: '^h\\no', contains: ['h', 'o'] },
+            ],
+            hint: 'العد في Python بيبدأ من صفر، يبقى الفهرس المطلوب للحرف الأول هو 0.',
+            hints: [
+              'الهدف: طباعة أول حرف من كلمة "hello" وهو "h" في السطر الثاني.',
+              'الفهرسة الموجبة تبدأ دائمًا من الصفر (0) عند أول حرف من اليسار.',
+              'استبدل ___ بالرقم 0 ليصبح السطر: print(text[0]).',
+            ],
+          },
+        },
+      ],
+    },
+    {
+      id: '3.1-c8',
+      title: 'المرحلة ٣ · تحدي بطاقة الاسم "Sara"',
+      role: 'tryIt',
+      requireInteraction: true,
+      blocks: [
+        {
+          id: '3.1-free',
+          type: 'codeLab',
+          data: {
+            mode: 'freeRun',
+            title: 'مسألة قريبة: بطاقة الاسم "Sara"',
+            prompt: 'لنفترض `name = "Sara"`. اكتب برنامجًا يطبع طول الاسم (`len`)، ثم الحرف الأول، ثم الحرف الأخير، كل واحد في سطر `print()`.',
+            starterCode: 'name = "Sara"\n',
+            solutionCode: 'name = "Sara"\nprint(len(name))\nprint(name[0])\nprint(name[-1])',
+            quickChips: [
+              'print(len(name))',
+              'print(name[0])',
+              'print(name[-1])',
+            ],
+            checks: [
+              { id: 'sara', label: 'النتيجة 4 و S و a', stdin: [], expectedOutputRegex: '^4\\nS\\na', contains: ['4', 'S', 'a'] },
+            ],
+            hint: 'استخدم ثلاث جمل طباعة: len(name) ثم name[0] ثم name[-1].',
+            hints: [
+              'الهدف: إخراج ٣ سطور بالترتيب — عدد الحروف، ثم الحرف الأول، ثم الحرف الأخير.',
+              'نحسب الطول بدالة len()، ونصل لأول حرف بالفهرس [0] ولآخر حرف بالفهرس السالب [-1].',
+              'أضف ٣ سطور: print(len(name)) ثم print(name[0]) ثم print(name[-1]).',
+            ],
+          },
+        },
+      ],
+    },
+    {
+      id: '3.1-c9',
+      title: 'التحقق السريع',
+      role: 'quickCheck',
+      requireInteraction: true,
+      blocks: [
+        {
+          id: '3.1-q2',
+          type: 'quizQuestion',
+          data: {
+            question: 'ما النتيجة المتوقعة عند تشغيل الكود `text = "Python"; print(len(text))`؟',
+            multiple: false,
+            scored: false,
+            sourceTag: 'كتاب الوزارة ص ٣٨',
+            options: [
+              {
+                id: 'a',
+                text: '5',
+                isCorrect: false,
+                feedback: '5 هو الفهرس الأخير للحرف "n"، أما len() فترجع عدد الحروف الكلي وهو 6.',
+              },
+              {
+                id: 'b',
+                text: '6',
+                isCorrect: true,
+                feedback: 'إجابة صحيحة: كلمة Python مكونة من 6 حروف (P-y-t-h-o-n).',
+              },
+              {
+                id: 'c',
+                text: '7',
+                isCorrect: false,
+                feedback: 'عدّ الحروف من P إلى n بدقة؛ لا توجد مسافات إضافية داخل علامتي التنصيص.',
+              },
+              {
+                id: 'd',
+                text: 'خطأ في البرنامج',
+                isCorrect: false,
+                feedback: 'النص سليم واستدعاء len(text) صحيح نحويًا في Python.',
+              },
+            ],
+            explanation: 'len("Python") تحسب عدد الحروف الفعلي وهو 6، بينما الفهارس تبدأ من 0 إلى 5.',
+          },
+        },
+      ],
+    },
+    {
+      id: '3.1-c10',
       title: 'الخلاصة والمصادر الإضافية',
       role: 'summary',
       blocks: [
@@ -179,7 +376,7 @@ export const LESSON_3_1: LessonPack = {
           data: {
             heading: 'الخلاصة في فقرة',
             calloutStyle: 'summary',
-            body: 'السلسلة النصية (`String`) بتتكتب بين علامتي تنصيص، والفهرسة فيها بتبدأ من `0` من البداية ومن `-1` من النهاية. ومعانا أدوات قوية زي `len()` للطول و `upper()` للتكبير و `in` للبحث عن حرف أو كلمة جوه النص.',
+            body: 'السلسلة النصية (`String`) بتتكتب بين علامتي تنصيص، والفهرسة فيها بتبدأ من `0` من البداية ومن `-1` من النهاية (وأقصى فهرس موجب هو `len(text) - 1`). ومعانا أدوات قوية زي `len()` للطول و `upper()` للتكبير و `in` للبحث عن حرف أو كلمة جوه النص.',
           },
         },
       ],
@@ -257,7 +454,7 @@ export const LESSON_3_1: LessonPack = {
   ],
   sources: [
     { id: 's31-tb', kind: 'textbook', label: 'كتاب الوزارة — ICT الصف الثالث الإعدادي', detail: 'السلاسل النصية Strings والفهرسة', pages: 'ص 31–33' },
-    { id: 's31-nb', kind: 'notebooklm', label: 'مصادر NotebookLM للدرس ٣.١', detail: 'جدول فهرسة "hello" ودوال النصوص' },
+    { id: 's31-nb', kind: 'notebooklm', label: 'مصادر NotebookLM للدرس ٣.١', detail: 'فهرسة "hello" ودوال النصوص' },
   ],
   nextStep: {
     kind: 'lesson',

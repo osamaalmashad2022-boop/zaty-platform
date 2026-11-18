@@ -45,11 +45,22 @@ const INTERACTIVE_BLOCK_TYPES = new Set<LessonBlock['type']>([
   'matchingPairs',
   'orderFlowBuilder',
   'codeLab',
+  'flipCards',
+  'comparisonTabs',
+  'predictOutput',
+  'spotBug',
+  'interactiveSim',
 ]);
 
 function isInteractiveBlock(block: LessonBlock): boolean {
   if (INTERACTIVE_BLOCK_TYPES.has(block.type)) return true;
   if (block.type === 'listBlock' && block.data.mode === 'checkbox') return true;
+  if (
+    block.type === 'heroHook' &&
+    Boolean(block.data.starterChallenge?.options?.length)
+  ) {
+    return true;
+  }
   return false;
 }
 
@@ -155,7 +166,6 @@ export function LessonPlayerClient({
       blockType: LessonBlock['type'],
       payload: BlockAttemptPayload,
     ) => {
-      markBlockAttempted(blockId);
       recordActivityAttempt(lesson.id, lesson.stationId, {
         blockId,
         blockType,
@@ -164,15 +174,13 @@ export function LessonPlayerClient({
         errorKind: payload.errorKind,
       }).catch(() => undefined);
     },
-    [lesson.id, lesson.stationId, markBlockAttempted],
+    [lesson.id, lesson.stationId],
   );
 
-  const handleBlockInteract = useCallback(
-    (blockId: string) => {
-      markBlockAttempted(blockId);
-    },
-    [markBlockAttempted],
-  );
+  const handleBlockInteract = useCallback(() => {
+    // Passive or partial interactions (e.g. running CodeView, flipping 1 of N cards)
+    // intentionally wait for onComplete before unlocking requireInteraction cards.
+  }, []);
 
   const handlePrev = () => {
     hasNavigatedRef.current = true;

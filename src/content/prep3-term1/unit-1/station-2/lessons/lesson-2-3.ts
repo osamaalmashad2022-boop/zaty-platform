@@ -8,12 +8,12 @@ export const LESSON_2_3: LessonPack = {
   title: 'مقدمة تعلم الآلة والتعلم العميق والشبكات العصبية',
   subtitle: 'إزاي البرامج الذكية بتتعلم من الأمثلة وتصنّف البريد المزعج والصور',
   durationMin: 8,
-  contentVersion: 2,
+  contentVersion: 3,
   access: 'free',
   status: 'ready',
   objectives: [
     'تشرح فكرة تعلم الآلة (Machine Learning) والتعلم من البيانات والأمثلة.',
-    'تفهم نموذجًا مبسطًا لتصنيف البريد المزعج (Spam) بلغة Python.',
+    'تفهم نموذجًا تمثيليًا لتصنيف البريد المزعج (Spam) وحدود حساسية الحروف في Python.',
     'تعرّف التعلم العميق (Deep Learning) واعتماده على الشبكات العصبية (Neural Networks).',
   ],
   cards: [
@@ -21,6 +21,7 @@ export const LESSON_2_3: LessonPack = {
       id: '2.3-c1',
       title: 'البداية والهدف',
       role: 'hero',
+      requireInteraction: true,
       blocks: [
         {
           id: '2.3-hero',
@@ -31,30 +32,125 @@ export const LESSON_2_3: LessonPack = {
             stationLabel: 'المحطة ٢ · الدرس ٣ من ٤',
             goal: 'تفرّق بين تعلم الآلة والتعلم العميق وتفهم فكرة تصنيف البيانات في مثال البريد المزعج.',
             hook: 'تخيل إنك بتعلّم طفل صغير يفرّق بين التفاح والبرتقال: مش بتكتبله قانون هندسي، إنت بس بتوريله صور كتير وتقوله ده تفاح وده برتقال، وهو مع الوقت بيتعلم لوحده! ده بالظبط تعلم الآلة (Machine Learning).',
+            starterChallenge: {
+              prompt: 'ميزة فتح الموبايل بالوجه (Face Recognition) بتعتمد على إيه: قواعد `if` ثابتة لكل تفصيلة في الوجه ولا `Deep Learning`؟',
+              options: [
+                {
+                  id: 'sc-a',
+                  text: 'قواعد if ثابتة كتبها المبرمج لقياس المسافة بين العينين',
+                  isCorrect: false,
+                  feedback: 'تغيّر الإضاءة والزاوية والنظارة يجعل كتابة شروط يدوية لكل وجه مستحيلة؛ الموبايل يحتاج تعلمًا من آلاف الصور.',
+                },
+                {
+                  id: 'sc-b',
+                  text: 'التعلم العميق (Deep Learning) والشبكات العصبية',
+                  isCorrect: true,
+                  feedback: 'إجابة دقيقة! تمييز الوجوه والأصوات يعتمد على الشبكات العصبية داخل التعلم العميق لمحاكاة دماغ الإنسان.',
+                },
+                {
+                  id: 'sc-c',
+                  text: 'خوارزمية بحث عن اسم المستخدم فقط',
+                  isCorrect: false,
+                  feedback: 'البحث يطابق نصًا أو رقمًا جاهزًا، أما تحليل ملامح الوجه في الصورة فيتطلب شبكات عصبية.',
+                },
+              ],
+              revealNote: 'تذكّر الهرم الذهبي: الذكاء الاصطناعي (AI) يشمل تعلم الآلة (ML)، وداخله الفرع الأعمق وهو التعلم العميق (DL).',
+            },
           },
         },
       ],
     },
     {
       id: '2.3-c2',
-      title: 'تعلم الآلة (ML) والتعلم العميق (DL)',
+      title: 'تعلم الآلة (ML) مقابل التعلم العميق (DL)',
       role: 'concept',
+      requireInteraction: true,
       blocks: [
         {
-          id: '2.3-ml-dl',
-          type: 'richText',
+          id: '2.3-ml-dl-tabs',
+          type: 'comparisonTabs',
           data: {
             heading: 'من البيانات إلى القرار الذكي',
-            body: '• **تعلم الآلة (Machine Learning - ML):** نوع من الذكاء الاصطناعي يخلي الكمبيوتر يتعلم من البيانات والأمثلة السابقة ويستنتج طريقة الحل بدل ما نكتبله كل خطوة بالتفصيل.\n• **التعلم العميق (Deep Learning - DL):** نوع متطور من تعلم الآلة بيستخدم **الشبكات العصبية (Neural Networks)** لمحاكاة طريقة عمل عقل الإنسان، ومن تطبيقاته التعرف على الوجه في الموبايل، تمييز الصور والأصوات، وفهم النصوص زي ChatGPT.',
+            instruction: 'اضغط على التبويبين لمقارنة تعلم الآلة بالتعلم العميق.',
+            tabs: [
+              {
+                id: 'ml',
+                label: 'تعلم الآلة (ML)',
+                badge: 'من البيانات',
+                tone: 'emerald',
+                body: 'فرع من الذكاء الاصطناعي يخلي الحاسوب يتعلم الأنماط من البيانات والأمثلة السابقة ويستنتج طريقة الحل بدل ما نكتبله كل خطوة بالتفصيل.',
+                bullets: [
+                  'يعتمد على بيانات تدريب مصنفة مسبقًا.',
+                  'يتحسن أداؤه كلما زادت أمثلة التدريب.',
+                  'مثال تمثيلي: تصنيف البريد المزعج (Spam) من العادي.',
+                ],
+              },
+              {
+                id: 'dl',
+                label: 'التعلم العميق (DL)',
+                badge: 'شبكات عصبية',
+                tone: 'neutral',
+                body: 'نوع متطور ومخصص داخل تعلم الآلة يستخدم **الشبكات العصبية (Neural Networks)** ذات الطبقات المتعددة لمحاكاة طريقة عمل عقل الإنسان.',
+                bullets: [
+                  'يعالج بيانات معقدة زي الصور والفيديو والصوت.',
+                  'تطبيقات: التعرف على الوجه في الموبايل وتمييز الأصوات.',
+                  'يفهم النصوص الطبيعية في أنظمة مثل ChatGPT.',
+                ],
+              },
+            ],
           },
         },
       ],
     },
     {
       id: '2.3-c3',
-      title: 'مثال الكتاب + جرّب تصنّف البريد المزعج (Spam)',
-      role: 'tryIt',
+      title: 'توقّع قبل التشغيل: فخ حالة الحروف',
+      role: 'example',
       requireInteraction: true,
+      blocks: [
+        {
+          id: '2.3-predict',
+          type: 'predictOutput',
+          data: {
+            title: 'هل الكود البسيط يكفي لتصنيف كل الرسائل؟',
+            prompt: 'رسالة جديدة وصلت بعنوان `"FREE prize"` بحروف كبيرة. توقّع نتيجة الشرط في الكود التالي:',
+            code: 'test = "FREE prize"\nif "free" in test:\n    print("Spam")\nelse:\n    print("NotSpam")',
+            expectedOutput: 'NotSpam',
+            options: [
+              {
+                id: 'p1',
+                text: 'Spam',
+                isCorrect: false,
+                feedback: 'بايثون يفرّق بين الحروف الكبيرة والصغيرة! `"free"` لا تطابق `"FREE"` في النص.',
+              },
+              {
+                id: 'p2',
+                text: 'NotSpam',
+                isCorrect: true,
+                feedback: 'توقّع ذكي! لأن `"free"` بحروف صغيرة غير موجودة في `"FREE prize"`, يطبع الكود NotSpam رغم إنها رسالة مزعجة!',
+              },
+              {
+                id: 'p3',
+                text: 'FREE prize',
+                isCorrect: false,
+                feedback: 'الكود لا يطبع المتغير test، بل يطبع إحدى الكلمتين Spam أو NotSpam.',
+              },
+              {
+                id: 'p4',
+                text: 'خطأ TypeError',
+                isCorrect: false,
+                feedback: 'المقارنة بـ in بين نصين صحيحة نحويًا وتنتج False فقط.',
+              },
+            ],
+            explanation: 'الشرط الحرفي البسيط يتأثر بحالة الحروف، ولهذا السبب يتعلم الذكاء الاصطناعي الأنماط والمعاني من آلاف الأمثلة بدل الاعتماد على كلمة واحدة ثابتة.',
+          },
+        },
+      ],
+    },
+    {
+      id: '2.3-c4',
+      title: 'مثال الكتاب: تصنيف البريد المزعج (Spam)',
+      role: 'example',
       blocks: [
         {
           id: '2.3-spam-view',
@@ -66,6 +162,100 @@ export const LESSON_2_3: LessonPack = {
             runnable: true,
           },
         },
+      ],
+    },
+    {
+      id: '2.3-c5',
+      title: 'نقطة فحص: تطبيقات التعلم العميق',
+      role: 'concept',
+      requireInteraction: true,
+      blocks: [
+        {
+          id: '2.3-q1',
+          type: 'quizQuestion',
+          data: {
+            question: 'أي من التطبيقات التالية يُستخدم فيها التعلم العميق (Deep Learning) والشبكات العصبية؟',
+            multiple: false,
+            scored: false,
+            sourceTag: 'كتاب الوزارة ص ٢٩',
+            options: [
+              {
+                id: 'a',
+                text: 'طباعة نص بسيط على الشاشة',
+                isCorrect: false,
+                feedback: 'الطباعة أمر مباشر بـ print() ولا تحتاج إلى أي تدريب أو شبكة عصبية.',
+              },
+              {
+                id: 'b',
+                text: 'استقبال اسم المستخدم من لوحة المفاتيح',
+                isCorrect: false,
+                feedback: 'قراءة المدخلات تتم بدالة input() التقليدية ولا تشمل تعلمًا من البيانات.',
+              },
+              {
+                id: 'c',
+                text: 'التعرف على الوجه في الموبايل',
+                isCorrect: true,
+                feedback: 'صح! تحليل الصور وتمييز الوجوه والأصوات من أبرز تطبيقات الشبكات العصبية في التعلم العميق.',
+              },
+              {
+                id: 'd',
+                text: 'حساب مجموع رقمين',
+                isCorrect: false,
+                feedback: 'الجمع عملية حسابية تقليدية ثابتة لا تحتاج لتدريب أو شبكات عصبية.',
+              },
+            ],
+            explanation: 'التعلم العميق يحاكي العقل البشري عبر الشبكات العصبية لتمييز الصور والأصوات والوجوه وفهم النصوص.',
+          },
+        },
+      ],
+    },
+    {
+      id: '2.3-c6',
+      title: 'خلّي بالك! اكتشف الجملة المغلوطة عن AI',
+      role: 'warning',
+      requireInteraction: true,
+      blocks: [
+        {
+          id: '2.3-bug',
+          type: 'spotBug',
+          data: {
+            mode: 'steps',
+            title: 'فخ التفريق بين الكود التمثيلي والذكاء الحقيقي',
+            prompt: 'أمامك ٤ عبارات عن تصنيف الرسائل والذكاء الاصطناعي — واحدة فيها خلط علمي! اضغط على العبارة الخاطئة:',
+            items: [
+              {
+                id: 's1',
+                text: 'الذكاء الاصطناعي (AI) هو المظلة الكبرى التي تضم تعلم الآلة (ML).',
+                wrongFeedback: 'هذا الترتيب العلمي سليم تمامًا: AI يضم ML، و ML يضم DL.',
+              },
+              {
+                id: 's2',
+                text: 'التعلم العميق (DL) فرع متطور من تعلم الآلة يعتمد على الشبكات العصبية.',
+                wrongFeedback: 'عبارة صحيحة ودقيقة؛ الشبكات العصبية هي قلب التعلم العميق.',
+              },
+              {
+                id: 's3',
+                text: 'الكود `if "free" in msg:` يتعلم وحده من البيانات ويُعد نموذج تعلم عميق.',
+              },
+              {
+                id: 's4',
+                text: 'نموذج تعلم الآلة الحقيقي يتدرب على آلاف الأمثلة المصنفة ليستنتج الأنماط.',
+                wrongFeedback: 'فعلاً، التدريب على أمثلة مصنفة هو أساس تعلم الآلة.',
+              },
+            ],
+            bugItemId: 's3',
+            fixedLine: 'الكود `if "free" in msg:` مجرد محاكاة تمثيلية بشرط ثابت، وليس تعلم آلة حقيقي.',
+            fixExplanation: 'جملة if الثابتة لا تتعلم من البيانات ولا تغيّر نفسها؛ هي فقط مثال تعليمي مبسّط يوضح فكرة الفلترة، بينما تعلم الآلة الحقيقي يتدرب على البيانات.',
+          },
+        },
+      ],
+    },
+    {
+      id: '2.3-c7',
+      title: 'تطبيق Python: طوّر فلتر البريد',
+      role: 'tryIt',
+      requireInteraction: true,
+      blocks: [
         {
           id: '2.3-spam-lab',
           type: 'codeLab',
@@ -73,82 +263,89 @@ export const LESSON_2_3: LessonPack = {
             mode: 'freeRun',
             title: 'جرّب مطوّر فلتر البريد',
             prompt: 'عدّل البرنامج علشان ياخد نص الرسالة في متغير `msg` من `input()`، ولو لقى كلمة `"free"` أو `"win"` يطبع `"Spam"`، وغير كده يطبع `"NotSpam"`.',
-            starterCode:
-              'msg = input("Enter email text: ")\n# افحص وجود free أو win في msg\n',
+            starterCode: 'msg = input("Enter email text: ")\n',
             solutionCode:
               'msg = input("Enter email text: ")\nif "free" in msg or "win" in msg:\n    print("Spam")\nelse:\n    print("NotSpam")',
+            quickChips: [
+              'if "free" in msg or "win" in msg:',
+              '    print("Spam")',
+              'else:',
+              '    print("NotSpam")',
+            ],
             checks: [
               { id: 'sp-1', label: 'رسالة win a gift -> Spam', stdin: ['win a gift'], expectedOutputRegex: 'Spam' },
               { id: 'sp-2', label: 'رسالة hello friend -> NotSpam', stdin: ['hello friend'], expectedOutputRegex: 'NotSpam' },
             ],
-            hint: 'استخدم المعامل `in`: if "free" in msg or "win" in msg:',
+            hint: 'استخدم المعامل `in` مرتين مع `or`: if "free" in msg or "win" in msg:.',
+            hints: [
+              'الهدف: فحص وجود أي من الكلمتين ("free" أو "win") داخل النص msg ثم طباعة التصنيف المناسب.',
+              'معامل or يجمع بين شرطي العضوية: "free" in msg و "win" in msg، وبانتفاء الشرطين نذهب إلى else.',
+              'اكتب: if "free" in msg or "win" in msg: وتحتها بمسافة بادئة print("Spam") ثم else: وتحتها print("NotSpam").',
+            ],
           },
         },
       ],
     },
     {
-      id: '2.3-c4',
-      title: 'خلّي بالك!',
-      role: 'warning',
-      blocks: [
-        {
-          id: '2.3-warn',
-          type: 'calloutWarning',
-          data: {
-            variant: 'warning',
-            title: 'خلّي بالك: التعلم العميق جزء متقدم من تعلم الآلة',
-            body: 'الترتيب العلمي الصح: **الذكاء الاصطناعي (AI)** هو المظلة الكبيرة ← جواها **تعلم الآلة (ML)** ← وجواه نوع متقدم بيعتمد على الشبكات العصبية اسمه **التعلم العميق (Deep Learning)**.',
-          },
-        },
-      ],
-    },
-    {
-      id: '2.3-c5',
+      id: '2.3-c8',
       title: 'التحقق السريع',
       role: 'quickCheck',
       requireInteraction: true,
       blocks: [
         {
-          id: '2.3-q1',
-          type: 'quizQuestion',
-          data: {
-            question: 'أي من التطبيقات التالية يُستخدم فيها التعلم العميق (Deep Learning)؟',
-            multiple: false,
-            scored: false,
-            sourceTag: 'كتاب الوزارة ص ٢٩',
-            options: [
-              { id: 'a', text: 'طباعة نص بسيط على الشاشة', isCorrect: false, feedback: 'دي عملية طباعة عادية بـ print().' },
-              { id: 'b', text: 'جمع بيانات من المستخدم', isCorrect: false, feedback: 'دي بـ input().' },
-              { id: 'c', text: 'التعرف على الوجه في الموبايل', isCorrect: true, feedback: 'صح! التعرف على الصور والوجوه من تطبيقات الشبكات العصبية والتعلم العميق.' },
-              { id: 'd', text: 'حساب مجموع رقمين', isCorrect: false, feedback: 'دي عملية حسابية تقليدية.' },
-            ],
-            explanation: 'التعلم العميق يحاكي العقل البشري عبر الشبكات العصبية لتمييز الصور والأصوات والوجوه.',
-          },
-        },
-        {
           id: '2.3-q2',
           type: 'quizQuestion',
           data: {
-            question: 'في مثال تصنيف البريد المزعج (Spam)، ما المبدأ الذي يعتمد عليه التعلم الآلي؟',
+            question: 'ما المبدأ الذي يعتمد عليه تعلم الآلة في تصنيف البريد المزعج (Spam) في التطبيقات الحقيقية؟',
             multiple: false,
             scored: false,
             sourceTag: 'كتاب الوزارة ص ٢٩',
             options: [
-              { id: 'a', text: 'كتابة قواعد ثابتة لكل نوع من البريد', isCorrect: false, feedback: 'دي البرمجة التقليدية.' },
-              { id: 'b', text: 'تزويد البرنامج بأمثلة سابقة للتعلم منها', isCorrect: true, feedback: 'بالظبط! التعلم الآلي يتعلم الأنماط من بيانات التدريب السابقة.' },
-              { id: 'c', text: 'استخدام خوارزمية ترتيب فقط', isCorrect: false, feedback: 'الترتيب لتنظيم الأرقام مش لتعلم التصنيف.' },
-              { id: 'd', text: 'الاعتماد على العمليات الحسابية البسيطة', isCorrect: false, feedback: 'غير كافٍ لتعلم التصنيف من البيانات.' },
+              {
+                id: 'a',
+                text: 'كتابة قواعد ثابتة لكل كلمة محتملة يدويًا',
+                isCorrect: false,
+                feedback: 'كتابة كل قاعدة يدويًا هي البرمجة التقليدية وتعجز أمام الكلمات والحيل المتجددة.',
+              },
+              {
+                id: 'b',
+                text: 'تزويد البرنامج بأمثلة سابقة مصنّفة ليتعلم أنماطها',
+                isCorrect: true,
+                feedback: 'بالظبط! تعلم الآلة يستنتج الأنماط من بيانات التدريب السابقة المصنفة ثم يطبقها على رسائل جديدة.',
+              },
+              {
+                id: 'c',
+                text: 'استخدام خوارزمية ترتيب sort() للرسائل',
+                isCorrect: false,
+                feedback: 'دالة sort() تنظم البيانات تصاعديًا أو أبجديًا ولا تصنّف معنى الرسالة.',
+              },
+              {
+                id: 'd',
+                text: 'حساب طول الرسالة فقط بدالة len()',
+                isCorrect: false,
+                feedback: 'الطول وحده لا يكفي للتمييز بين الرسائل العادية والمزعجة.',
+              },
             ],
-            explanation: 'التعلم الآلي يعتمد على تزويد النموذج ببيانات وأمثلة سابقة مُصنّفة ليتعلم منها.',
+            explanation: 'تعلم الآلة يعتمد على تدريب النموذج ببيانات وأمثلة سابقة مُصنّفة ليتعلم منها كيف يصنف الرسائل الجديدة.',
           },
         },
       ],
     },
     {
-      id: '2.3-c6',
+      id: '2.3-c9',
       title: 'الخلاصة والمصادر الإضافية',
       role: 'summary',
       blocks: [
+        {
+          id: '2.3-sum-img',
+          type: 'imageBlock',
+          data: {
+            src: '/media/infographic-2-3.png',
+            alt: 'إنفوجرافيك القرارات والتفرع الشرطي if و else',
+            caption: 'لوحة تعليمية توضح آلية التفرع واتخاذ القرار وقواعد بايثون الشرطية.',
+            aspectRatio: '16/9',
+          },
+        },
         {
           id: '2.3-sum',
           type: 'richText',

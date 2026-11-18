@@ -4,6 +4,7 @@ import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/re
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { db } from '@/lib/storage/db';
 import { recordLessonCompleted } from '@/lib/storage/progress';
+import * as skulptRunner from '@/lib/python/skulptRunner';
 import type { LessonPack, StationPack, UnitPack } from '@/types/curriculum';
 import { HomeClient } from '../_components/HomeClient';
 import { LessonPlayerClient } from '../_components/LessonPlayerClient';
@@ -299,5 +300,160 @@ describe('Core learner journey screens', () => {
     fireEvent.click(screen.getByRole('button', { name: 'أولى ثانوي' }));
     expect(screen.getByTestId('catalog-course-sec1-term1-ict')).toBeInTheDocument();
     expect(container.textContent).not.toMatch(/(?:ال)?طالب/);
+
+    // Primary hero CTA must appear above course-switcher-bar so learner starts immediately
+    const ctaSlot = screen.getByTestId('home-cta-slot');
+    const switcherBar = screen.getByTestId('course-switcher-bar');
+    expect(
+      ctaSlot.compareDocumentPosition(switcherBar) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+
+  it('waits for full completion on flipCards and hero starterChallenge rather than unlocking on passive tap', async () => {
+    const gatedLesson: LessonPack = {
+      ...SAMPLE_LESSON,
+      id: '1.3',
+      cards: [
+        {
+          id: 'hero-c',
+          title: 'تحدي البداية',
+          requireInteraction: true,
+          blocks: [
+            {
+              id: 'h1',
+              type: 'heroHook',
+              data: {
+                title: 'درس التحدي',
+                durationMin: 6,
+                goal: 'هدف',
+                hook: 'موقف',
+                starterChallenge: {
+                  prompt: 'توقعك السريع؟',
+                  options: [
+                    { id: 'hc1', text: 'خيار صحيح', isCorrect: true, feedback: 'رائع!' },
+                    { id: 'hc2', text: 'خيار خطأ', isCorrect: false, feedback: 'ركز تاني!' },
+                  ],
+                },
+              },
+            },
+          ],
+        },
+        {
+          id: 'flip-c',
+          title: 'اقلب كل البطاقات',
+          requireInteraction: true,
+          blocks: [
+            {
+              id: 'fc-gated',
+              type: 'flipCards',
+              data: {
+                cards: [
+                  { id: 'f1', frontTitle: 'البطاقة الأولى', backBody: 'شرح 1' },
+                  { id: 'f2', frontTitle: 'البطاقة الثانية', backBody: 'شرح 2' },
+                ],
+              },
+            },
+          ],
+        },
+        {
+          id: 'end-c',
+          title: 'الختام',
+          role: 'summary',
+          blocks: [{ id: 'end-r', type: 'richText', data: { body: 'نهاية.' } }],
+        },
+      ],
+    };
+
+    render(
+      <LessonPlayerClient
+        lesson={gatedLesson}
+        stationTitle="المحطة 1: التفكير الحاسوبي"
+      />,
+    );
+
+    const nextBtn = await screen.findByRole('button', { name: /التالي/ });
+    expect(nextBtn).toBeDisabled();
+
+    fireEvent.click(screen.getByRole('button', { name: 'خيار صحيح' }));
+    expect(nextBtn).toBeEnabled();
+
+    fireEvent.click(nextBtn);
+    expect(screen.getByText(/البطاقة 2 من 3/)).toBeInTheDocument();
+
+    const nextBtnCard2 = screen.getByRole('button', { name: /التالي/ });
+    expect(nextBtnCard2).toBeDisabled();
+
+    // Flipping only card 1 of 2 must NOT unlock Next prematurely
+    fireEvent.click(screen.getByRole('button', { name: /البطاقة الأولى/ }));
+    expect(nextBtnCard2).toBeDisabled();
+
+    // Flipping card 2 of 2 completes FlipCardsBlock and unlocks Next
+    fireEvent.click(screen.getByRole('button', { name: /البطاقة الثانية/ }));
+    expect(nextBtnCard2).toBeEnabled();
+  });
+
+  it('does not unlock codeLab requireInteraction card on passive Run, only on Check Solution', async () => {
+    vi.spyOn(skulptRunner, 'runPython').mockResolvedValueOnce({
+      ok: true,
+      stdout: '10\n',
+      durationMs: 5,
+    });
+    vi.spyOn(skulptRunner, 'runCodeLabChecks').mockResolvedValueOnce({
+      allPassed: true,
+      passedCount: 1,
+      totalCount: 1,
+      results: [{ checkId: 'c1', passed: true, stdout: '10\n' }],
+    });
+
+    const codeLesson: LessonPack = {
+      ...SAMPLE_LESSON,
+      id: '1.4',
+      cards: [
+        {
+          id: 'code-c',
+          title: 'جرّب الكود',
+          requireInteraction: true,
+          blocks: [
+            {
+              id: 'cl-gated',
+              type: 'codeLab',
+              data: {
+                mode: 'fillLine',
+                prompt: 'اطبع 10',
+                starterCode: 'print(___)',
+                solutionCode: 'print(10)',
+                checks: [{ id: 'c1', stdin: [], contains: '10' }],
+                hint: 'اكتب 10',
+              },
+            },
+          ],
+        },
+        {
+          id: 'end-c2',
+          title: 'الختام',
+          role: 'summary',
+          blocks: [{ id: 'end-r2', type: 'richText', data: { body: 'نهاية.' } }],
+        },
+      ],
+    };
+
+    render(
+      <LessonPlayerClient
+        lesson={codeLesson}
+        stationTitle="المحطة 1: التفكير الحاسوبي"
+      />,
+    );
+
+    const nextBtn = await screen.findByRole('button', { name: /التالي/ });
+    expect(nextBtn).toBeDisabled();
+
+    // Clicking "شغّل الكود" is passive exploration -> must remain locked
+    fireEvent.click(screen.getByRole('button', { name: /شغّل الكود/ }));
+    await waitFor(() => expect(screen.getByText('10')).toBeInTheDocument());
+    expect(nextBtn).toBeDisabled();
+
+    // Clicking "تحقق من الحل" triggers onComplete -> unlocks Next
+    fireEvent.click(screen.getByRole('button', { name: /تحقق من الحل/ }));
+    await waitFor(() => expect(nextBtn).toBeEnabled());
   });
 });

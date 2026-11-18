@@ -135,9 +135,32 @@ describe('ICT Prep 3 Term 1 curriculum integrity & importer', () => {
       expect(lesson.status).toBe('ready');
       expect(lesson.access).toBe('free');
       expect(lesson.cards[0]?.blocks[0]?.type).toBe('heroHook');
-      expect(lesson.additionalSources.length).toBeGreaterThanOrEqual(4);
+      expect(lesson.additionalSources.length).toBeGreaterThanOrEqual(5);
+      expect(lesson.additionalSources.some((s) => s.type === 'audio')).toBe(true);
       expect(lesson.sources.length).toBeGreaterThanOrEqual(2);
       expect(lesson.objectives.length).toBeGreaterThanOrEqual(2);
+
+      const blocks = lesson.cards.flatMap((c) => c.blocks);
+      expect(blocks.some((b) => b.type === 'mediaPlayer' && b.data.kind === 'video')).toBe(true);
+      expect(blocks.some((b) => b.type === 'mediaPlayer' && b.data.kind === 'audio')).toBe(true);
+      expect(
+        blocks.some((b) => b.type === 'imageBlock') ||
+          Boolean(lesson.cards[0]?.blocks[0]?.type === 'heroHook' && lesson.cards[0].blocks[0].data.image),
+      ).toBe(true);
+      expect(
+        blocks.some((b) => b.type === 'flipCards' || b.type === 'comparisonTabs'),
+      ).toBe(true);
+      expect(
+        blocks.some(
+          (b) => b.type === 'quizQuestion' && b.data.sourceTag?.includes('خارج الكتاب'),
+        ),
+      ).toBe(true);
+    }
+
+    // Verify all declared Station 1 media files actually exist on disk under public/
+    for (const asset of s1.mediaAssets ?? []) {
+      const diskPath = path.resolve(process.cwd(), 'public', asset.replace(/^\//, ''));
+      expect(fs.existsSync(diskPath), `Missing Station 1 media asset on disk: ${diskPath}`).toBe(true);
     }
   });
 

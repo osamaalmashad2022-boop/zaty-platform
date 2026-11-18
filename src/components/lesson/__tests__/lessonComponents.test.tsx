@@ -111,6 +111,52 @@ const ALL_15_BLOCKS: LessonBlock[] = [
       hint: 'اطبع 1',
     },
   },
+  {
+    id: 'b16',
+    type: 'flipCards',
+    data: {
+      heading: 'بطاقات الفهم',
+      cards: [{ id: 'fc1', frontTitle: 'سؤال', backBody: 'إجابة عميقة' }],
+    },
+  },
+  {
+    id: 'b17',
+    type: 'comparisonTabs',
+    data: {
+      heading: 'مقارنة سريعة',
+      tabs: [{ id: 't1', label: 'الصح', body: 'اشرح السبب' }],
+    },
+  },
+  {
+    id: 'b18',
+    type: 'predictOutput',
+    data: {
+      prompt: 'توقّع المخرج',
+      code: 'print(2 + 3)',
+      options: [{ id: 'po1', text: '5', isCorrect: true, feedback: 'صحيح' }],
+      explanation: 'جمع رقمين يساوي 5.',
+    },
+  },
+  {
+    id: 'b19',
+    type: 'spotBug',
+    data: {
+      mode: 'steps',
+      prompt: 'اكتشف الخطأ',
+      items: [{ id: 'sb1', text: 'خطوة خاطئة' }],
+      bugItemId: 'sb1',
+      fixedLine: 'خطوة صحيحة',
+      fixExplanation: 'توضيح الإصلاح',
+    },
+  },
+  {
+    id: 'b20',
+    type: 'interactiveSim',
+    data: {
+      mode: 'linearModel',
+      prompt: 'محاكاة نموذج خطي',
+    },
+  },
 ];
 
 describe('Lesson orchestration components', () => {
@@ -127,7 +173,7 @@ describe('Lesson orchestration components', () => {
     container.remove();
   });
 
-  it('dispatches all 15 block types cleanly through BlockRenderer', () => {
+  it('dispatches all 20 block types cleanly through BlockRenderer', () => {
     renderNode(
       <div>
         {ALL_15_BLOCKS.map((block) => (
@@ -140,6 +186,11 @@ describe('Lesson orchestration components', () => {
     expect(container.textContent).toContain('خلّي بالك');
     expect(container.textContent).toContain('سؤال؟');
     expect(container.textContent).toContain('تحقق من الحل');
+    expect(container.textContent).toContain('بطاقات الفهم');
+    expect(container.textContent).toContain('مقارنة سريعة');
+    expect(container.textContent).toContain('توقّع المخرج');
+    expect(container.textContent).toContain('اكتشف الخطأ');
+    expect(container.textContent).toContain('محاكاة نموذج خطي');
   });
 
   it('renders NotebookLM AdditionalSourcesSheet dynamically across summary, faq, mindmap, glossary, and audio', () => {

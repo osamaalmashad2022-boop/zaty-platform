@@ -6,21 +6,22 @@ export const LESSON_2_2: LessonPack = {
   unitId: 'unit-1',
   order: 2,
   title: 'خوارزميات التكرار والبحث والترتيب',
-  subtitle: 'افتح الأنواع الخمسة كلها في بطاقات منظمة وطابق كل خوارزمية بمثالها',
+  subtitle: 'افتح الأنواع الخمسة كلها في بطاقات منظمة وتجنب فخ reverse مقابل sort',
   durationMin: 8,
-  contentVersion: 2,
+  contentVersion: 3,
   access: 'free',
   status: 'ready',
   objectives: [
     'تستعرض أنواع الخوارزميات التقليدية الخمسة وتفهم دور كل نوع.',
-    'تقرأ وتكتب خوارزميات التكرار والبحث عن عنصر في قائمة بلغة Python.',
-    'تميّز بين خوارزمية البحث (Search) وخوارزمية الترتيب (Sorting) ودالة sort().',
+    'تفرّق بدقة بين دالة الترتيب sort() ودالة عكس القائمة reverse().',
+    'تكتب خوارزميات التكرار والبحث عن عنصر داخل قائمة بلغة Python.',
   ],
   cards: [
     {
       id: '2.2-c1',
       title: 'البداية والهدف',
       role: 'hero',
+      requireInteraction: true,
       blocks: [
         {
           id: '2.2-hero',
@@ -29,8 +30,33 @@ export const LESSON_2_2: LessonPack = {
             title: 'الخوارزميات الخمس في حياتنا والكود',
             durationMin: 8,
             stationLabel: 'المحطة ٢ · الدرس ٢ من ٤',
-            goal: 'تميّز بين الأنواع الخمسة للخوارزميات التقليدية وتكتب كود تكرار وبحث في Python.',
+            goal: 'تميّز بين الأنواع الخمسة للخوارزميات التقليدية وتكتب كود تكرار وبحث وترتيب في Python.',
             hook: 'لما بتدوّر على اسمك في كشف درجات المدرسة (دي خوارزمية بحث Search)، ولما بترتّب الكشف حسب الدرجات من الصغير للكبير (دي خوارزمية ترتيب Sorting)!',
+            image: '/media/robot-puzzle.png',
+            starterChallenge: {
+              prompt: 'لو عندنا القائمة `nums = [8, 3, 10, 1]` وشغّلنا عليها `nums.reverse()`، هل هتطلع مرتبة تصاعديًا `[1, 3, 8, 10]`؟',
+              options: [
+                {
+                  id: 'sc-a',
+                  text: 'أيوه، لأن reverse() بترتب الأرقام من الصغير للكبير',
+                  isCorrect: false,
+                  feedback: 'دالة reverse() مش بتقارن قيم الأرقام أبدًا؛ الترتيب التصاعدي شغل الدالة sort() مش reverse().',
+                },
+                {
+                  id: 'sc-b',
+                  text: 'لأ، هتقلب الترتيب الحالي بس وتبقى [1, 10, 3, 8]',
+                  isCorrect: true,
+                  feedback: 'عين مبرمج! reverse() بتعكس أماكن العناصر زي المراية من غير ما تقارن قيمها.',
+                },
+                {
+                  id: 'sc-c',
+                  text: 'لأ، هتطلع خطأ لأن القائمة مش مرتبة الأول',
+                  isCorrect: false,
+                  feedback: 'reverse() بتشتغل على أي قائمة عادي بدون شروط، لكنها تعكس الترتيب الموجود فقط.',
+                },
+              ],
+              revealNote: 'التمييز بين عكس المواضع (reverse) والترتيب الفعلي (sort) بينقذك من أشهر أخطاء الاختبارات!',
+            },
           },
         },
       ],
@@ -101,8 +127,8 @@ export const LESSON_2_2: LessonPack = {
               { id: 'm5', left: 'ترتيب قائمة أرقام من الأصغر إلى الأكبر', right: 'خوارزمية الترتيب' },
             ],
             feedback: {
-              correct: 'عاش! ربطت الأنواع الخمسة بأمثلتها الرسمية كلها صح.',
-              incorrect: 'راجع الفرق بين التكرار (طباعة مرات متتالية) والبحث (إيجاد 10) والترتيب (أصغر لأكبر).',
+              correct: 'عاش! ربطت الخوارزميات الخمس بأمثلتها الرسمية كلها بشكل دقيق.',
+              incorrect: 'راجع التمييز بين التكرار (إعادة Hello بحلقة)، والبحث (فحص وجود 10)، والترتيب (تنظيم القيم من الأصغر للأكبر).',
             },
           },
         },
@@ -110,6 +136,127 @@ export const LESSON_2_2: LessonPack = {
     },
     {
       id: '2.2-c4',
+      title: 'توقّع قبل التشغيل: خدعة reverse()',
+      role: 'example',
+      requireInteraction: true,
+      blocks: [
+        {
+          id: '2.2-predict',
+          type: 'predictOutput',
+          data: {
+            title: 'ماذا تطبع nums.reverse() بالفعل؟',
+            prompt: 'توقّع مخرجات الكود التالي قبل أن تشغّله وتكتشف النتيجة في بايثون:',
+            code: 'nums = [8, 3, 10, 1]\nnums.reverse()\nprint(nums)',
+            expectedOutput: '[1, 10, 3, 8]',
+            options: [
+              {
+                id: 'p1',
+                text: '[1, 3, 8, 10]',
+                isCorrect: false,
+                feedback: 'دي نتيجة sort() اللي بتقارن القيم؛ reverse() بتقلب الترتيب الحالي فقط.',
+              },
+              {
+                id: 'p2',
+                text: '[1, 10, 3, 8]',
+                isCorrect: true,
+                feedback: 'ممتاز! قلبت العناصر من الآخر للأول بالضبط دون مقارنة قيمها.',
+              },
+              {
+                id: 'p3',
+                text: '[10, 8, 3, 1]',
+                isCorrect: false,
+                feedback: 'الترتيب التنازلي يحتاج sort(reverse=True)، أما reverse() لوحدها فتعكس الموجود كما هو.',
+              },
+              {
+                id: 'p4',
+                text: '[8, 3, 10, 1]',
+                isCorrect: false,
+                feedback: 'reverse() تعدّل القائمة نفسها في مكانها، فلا تبقى بنفس الترتيب الأصلي.',
+              },
+            ],
+            explanation: 'الدالة reverse() تعكس مواقع عناصر القائمة من النهاية للبداية، ولا تقوم بأي ترتيب تصاعدي أو تنازلي.',
+          },
+        },
+      ],
+    },
+    {
+      id: '2.2-c5',
+      title: 'اكتشف الفخ: ترتيب أم عكس؟',
+      role: 'warning',
+      requireInteraction: true,
+      blocks: [
+        {
+          id: '2.2-bug',
+          type: 'spotBug',
+          data: {
+            mode: 'code',
+            title: 'خطأ شائع في ترتيب القوائم',
+            prompt: 'مبرمج عايز يرتّب قائمة الدرجات تصاعديًا من الأصغر للأكبر، لكن النتيجة طلعت ملخبطة! اضغط على السطر اللي فيه الخطأ:',
+            codeLines: [
+              'nums = [8, 3, 10, 1]',
+              '# ترتيب القائمة تصاعديًا',
+              'nums.reverse()',
+              'print(nums)',
+            ],
+            bugLine: 3,
+            lineFeedback: {
+              1: 'تعريف القائمة داخل الأقواس المربعة [ ] سليم تمامًا.',
+              2: 'ده مجرد تعليق توضيحي (#) ولا يؤثر في تنفيذ الكود.',
+              4: 'أمر print(nums) سليم؛ المشكلة في الدالة التي استدعيناها في السطر ٣.',
+            },
+            fixedLine: 'nums.sort()',
+            fixExplanation: 'الدالة reverse() تعكس الترتيب الحالي فقط فتخرج [1, 10, 3, 8]، بينما sort() ترتب العناصر تصاعديًا لتصبح [1, 3, 8, 10].',
+          },
+        },
+      ],
+    },
+    {
+      id: '2.2-c6',
+      title: 'نقطة فحص: دوال القوائم',
+      role: 'concept',
+      requireInteraction: true,
+      blocks: [
+        {
+          id: '2.2-q1',
+          type: 'quizQuestion',
+          data: {
+            question: 'أي دالة في Python تُستخدم لترتيب قائمة من الأرقام تصاعديًا من الأصغر للأكبر؟',
+            multiple: false,
+            scored: false,
+            sourceTag: 'كتاب الوزارة ص ٢٩',
+            options: [
+              {
+                id: 'a',
+                text: 'reverse()',
+                isCorrect: false,
+                feedback: 'reverse() تقلب ترتيب القائمة من النهاية للبداية دون مقارنة الأرقام.',
+              },
+              {
+                id: 'b',
+                text: 'find()',
+                isCorrect: false,
+                feedback: 'find() ليست دالة لترتيب القوائم، بل دالة نصية للبحث عن نص فرعي.',
+              },
+              {
+                id: 'c',
+                text: 'sort()',
+                isCorrect: true,
+                feedback: 'صح! الدالة sort() تقارن عناصر القائمة وترتبها تصاعديًا من الأصغر للأكبر.',
+              },
+              {
+                id: 'd',
+                text: 'search()',
+                isCorrect: false,
+                feedback: 'لا توجد دالة مدمجة في قوائم Python بهذا الاسم؛ البحث يُنفذ بحلقة for أو معامل in.',
+              },
+            ],
+            explanation: 'دالة sort() ترتب عناصر القائمة تصاعديًا من الأصغر للأكبر افتراضيًا.',
+          },
+        },
+      ],
+    },
+    {
+      id: '2.2-c7',
       title: 'تطبيق Python: البحث داخل قائمة وترتيبها',
       role: 'tryIt',
       requireInteraction: true,
@@ -118,84 +265,93 @@ export const LESSON_2_2: LessonPack = {
           id: '2.2-lab',
           type: 'codeLab',
           data: {
-            mode: 'freeRun',
-            title: 'اختبر البحث والترتيب في Python',
-            prompt: 'اكتب كود يبحث عن الرقم `10` في القائمة `numbers = [3, 7, 10, 5]` ولو لقاه يطبع `"Found"`، وبعدها يرتّب القائمة بـ `numbers.sort()` ويطبعها.',
+            mode: 'fillLine',
+            title: 'أكمل شرط البحث ثم رتّب القائمة',
+            prompt: 'استبدل علامة `___` بشرط البحث الصحيح لاكتشاف الرقم `10` مرة واحدة، ثم اختبر الكود مع الترتيب.',
             starterCode:
-              'numbers = [3, 7, 10, 5]\nfor num in numbers:\n    # افحص هل num == 10 واطبع Found\n\nnumbers.sort()\nprint(numbers)',
+              'numbers = [3, 7, 10, 5]\nfor num in numbers:\n    if ___:\n        print("Found")\n\nnumbers.sort()\nprint(numbers)',
             solutionCode:
               'numbers = [3, 7, 10, 5]\nfor num in numbers:\n    if num == 10:\n        print("Found")\n\nnumbers.sort()\nprint(numbers)',
+            quickChips: ['num == 10', 'num = 10', 'num > 10', '10 in numbers'],
             checks: [
-              { id: 'found', label: 'طباعة Found عند وجود 10 ثم القائمة مرتبة', stdin: [], contains: ['Found', '[3, 5, 7, 10]'] },
+              {
+                id: 'found',
+                label: 'طباعة Found مرة واحدة ثم القائمة مرتبة',
+                stdin: [],
+                expectedOutputRegex: '^Found\\n\\[3, 5, 7, 10\\]',
+                contains: ['Found', '[3, 5, 7, 10]'],
+              },
             ],
-            hint: 'جوه الحلقة اكتب if num == 10: وتحتها بمسافة بادئة print("Found").',
+            hint: 'قارن كل عنصر num بالرقم 10 باستخدام معامل المساواة == داخل الشرط.',
+            hints: [
+              'الهدف: نطبع "Found" فقط في الدورة التي يساوي فيها العنصر الحالي num القيمة 10.',
+              'للمقارنة في بايثون نستخدم == (يساوي المزدوجة) وليس = التي تُستخدم لتخزين القيم.',
+              'استبدل ___ بالعبارة num == 10 ليصبح السطر: if num == 10:.',
+            ],
           },
         },
       ],
     },
     {
-      id: '2.2-c5',
-      title: 'خلّي بالك!',
-      role: 'warning',
-      blocks: [
-        {
-          id: '2.2-warn',
-          type: 'calloutWarning',
-          data: {
-            variant: 'warning',
-            title: 'خطأ شائع: وظيفة sort() في Python',
-            body: 'الدالة `sort()` في Python بتستخدم لترتيب القائمة (تصاعديًا من الأصغر للأكبر افتراضيًا)، مش لعكس القائمة بدون ترتيب — اللي بيعكس الترتيب هو `reverse()`.',
-          },
-        },
-      ],
-    },
-    {
-      id: '2.2-c6',
+      id: '2.2-c8',
       title: 'التحقق السريع',
       role: 'quickCheck',
       requireInteraction: true,
       blocks: [
         {
-          id: '2.2-q1',
-          type: 'quizQuestion',
-          data: {
-            question: 'أي دالة في Python تُستخدم لترتيب قائمة من الأرقام؟',
-            multiple: false,
-            scored: false,
-            sourceTag: 'كتاب الوزارة ص ٢٩',
-            options: [
-              { id: 'a', text: 'reverse()', isCorrect: false, feedback: 'reverse() بتعكس الترتيب الحالي بس.' },
-              { id: 'b', text: 'find()', isCorrect: false, feedback: 'مش دالة ترتيب قائمة.' },
-              { id: 'c', text: 'sort()', isCorrect: true, feedback: 'صح! sort() بترتب عناصر القائمة.' },
-              { id: 'd', text: 'search()', isCorrect: false, feedback: 'ما فيش دالة بالاسم ده لترتيب القائمة.' },
-            ],
-            explanation: 'دالة sort() ترتب عناصر القائمة تصاعديًا من الأصغر للأكبر.',
-          },
-        },
-        {
           id: '2.2-q2',
           type: 'quizQuestion',
           data: {
-            question: 'ما النتيجة المتوقعة للكود `for i in range(3): print("Hello")`؟',
+            question: 'ما النتيجة المتوقعة عند تشغيل الكود `for i in range(3): print("Hello")`؟',
             multiple: false,
             scored: false,
             sourceTag: 'كتاب الوزارة ص ٢٨',
             options: [
-              { id: 'a', text: 'طباعة Hello مرة واحدة', isCorrect: false, feedback: 'range(3) بتلف 3 مرات.' },
-              { id: 'b', text: 'طباعة Hello ثلاث مرات', isCorrect: true, feedback: 'ممتاز! 0، 1، 2 يعني 3 دورات.' },
-              { id: 'c', text: 'طباعة Hello خمس مرات', isCorrect: false, feedback: 'دي لو range(5).' },
-              { id: 'd', text: 'حدوث خطأ في البرنامج', isCorrect: false, feedback: 'الكود سليم نحويًا.' },
+              {
+                id: 'a',
+                text: 'طباعة Hello مرة واحدة',
+                isCorrect: false,
+                feedback: 'range(3) تولّد ٣ قيم هي 0 و 1 و 2، لذلك تنفّذ الحلقة ٣ مرات.',
+              },
+              {
+                id: 'b',
+                text: 'طباعة Hello ثلاث مرات',
+                isCorrect: true,
+                feedback: 'ممتاز! الأرقام 0، 1، 2 تعطي ٣ دورات فتُطبع Hello ثلاث مرات متتالية.',
+              },
+              {
+                id: 'c',
+                text: 'طباعة Hello أربع مرات',
+                isCorrect: false,
+                feedback: 'range(3) تتوقف قبل الرقم 3، أي تعد من 0 إلى 2 فقط (٣ دورات).',
+              },
+              {
+                id: 'd',
+                text: 'حدوث خطأ في البرنامج',
+                isCorrect: false,
+                feedback: 'صياغة الحلقة سليمة تمامًا سواء كتبنا الأمر على نفس السطر أو في سطر تالٍ بمسافة بادئة.',
+              },
             ],
-            explanation: 'range(3) تولد 0 و1 و2، فتُطبع Hello ثلاث مرات.',
+            explanation: 'range(3) تولد الأعداد 0 و1 و2 (٣ عناصر)، فتُطبع Hello ثلاث مرات.',
           },
         },
       ],
     },
     {
-      id: '2.2-c7',
+      id: '2.2-c9',
       title: 'الخلاصة والمصادر الإضافية',
       role: 'summary',
       blocks: [
+        {
+          id: '2.2-sum-img',
+          type: 'imageBlock',
+          data: {
+            src: '/media/infographic-2-2.png',
+            alt: 'إنفوجرافيك أنواع الخوارزميات التقليدية الأربعة',
+            caption: 'لوحة تعليمية تلخص الخوارزميات التسلسلية والتكرارية والبحث والترتيب.',
+            aspectRatio: '16/9',
+          },
+        },
         {
           id: '2.2-sum',
           type: 'richText',
@@ -209,7 +365,7 @@ export const LESSON_2_2: LessonPack = {
     },
   ],
   summary:
-    'استعرضنا أنواع الخوارزميات التقليدية الخمسة (التسلسلية، الشرطية، التكرارية، البحث، الترتيب) وطبقنا البحث والترتيب في Python.',
+    'استعرضنا أنواع الخوارزميات التقليدية الخمسة (التسلسلية، الشرطية، التكرارية، البحث، الترتيب) وميّزنا بين sort() و reverse().',
   additionalSources: [
     {
       id: 'nb-2-2-summary',

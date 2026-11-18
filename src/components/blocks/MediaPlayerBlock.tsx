@@ -47,6 +47,9 @@ export function MediaPlayerBlock({ data, className = '' }: MediaPlayerBlockProps
   const [offlineUncached, setOfflineUncached] = useState(false);
   const [showTranscript, setShowTranscript] = useState(false);
   const [vttFallbackText, setVttFallbackText] = useState<string | null>(null);
+  const [detectedPortrait, setDetectedPortrait] = useState(data.aspect === 'portrait');
+
+  const isPortraitVideo = data.aspect === 'portrait' || detectedPortrait;
 
   const resolvedSrc = resolveMediaSrc(data.src);
   const resolvedVtt = data.vttSrc ? resolveMediaSrc(data.vttSrc) : undefined;
@@ -186,7 +189,7 @@ export function MediaPlayerBlock({ data, className = '' }: MediaPlayerBlockProps
       {data.kind === 'video' ? (
         <div className="space-y-3">
           {!fallbackActive && (
-            <div className="overflow-hidden rounded-xl bg-[#0F2929] border border-[#1E4745]">
+            <div className="overflow-hidden rounded-xl bg-[#0F2929] border border-[#1E4745] flex justify-center">
               <video
                 ref={(el) => {
                   mediaRef.current = el;
@@ -204,9 +207,20 @@ export function MediaPlayerBlock({ data, className = '' }: MediaPlayerBlockProps
                   if (Number.isFinite(e.currentTarget.duration)) {
                     setDuration(e.currentTarget.duration);
                   }
+                  if (
+                    e.currentTarget.videoHeight > 0 &&
+                    e.currentTarget.videoWidth > 0 &&
+                    e.currentTarget.videoHeight > e.currentTarget.videoWidth
+                  ) {
+                    setDetectedPortrait(true);
+                  }
                 }}
                 onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
-                className="aspect-video w-full"
+                className={
+                  isPortraitVideo
+                    ? 'aspect-[9/16] w-full max-w-[340px] max-h-[540px] bg-black'
+                    : 'aspect-video w-full'
+                }
               >
                 {resolvedVtt && (
                   <track
@@ -214,7 +228,7 @@ export function MediaPlayerBlock({ data, className = '' }: MediaPlayerBlockProps
                     src={resolvedVtt}
                     srcLang="ar"
                     label="العربية"
-                    default
+                    default={!data.burnedInCaptions}
                   />
                 )}
               </video>

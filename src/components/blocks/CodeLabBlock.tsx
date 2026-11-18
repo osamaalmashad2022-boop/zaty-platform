@@ -8,6 +8,7 @@ import {
   Lightbulb,
   Play,
   RotateCcw,
+  Sparkles,
   Square,
   XCircle,
 } from 'lucide-react';
@@ -40,6 +41,13 @@ const MOBILE_PYTHON_SNIPPETS = [
   { label: '#', insert: '# ' },
 ];
 
+const FILL_MARKER_REGEX = /___|TODO|#\s*(?:اكتب|أكمل|اكمل|اطبع|استدع|حدد)/;
+const ARABIC_DIGITS = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+
+function toArabicDigits(value: number): string {
+  return String(value).replace(/\d/g, (d) => ARABIC_DIGITS[Number(d)] ?? d);
+}
+
 export function CodeLabBlock({
   data,
   onAttempt,
@@ -54,7 +62,8 @@ export function CodeLabBlock({
   const [hasConsoleActivity, setHasConsoleActivity] = useState(false);
   const [runError, setRunError] = useState<PythonErrorInfo | null>(null);
   const [evalResult, setEvalResult] = useState<CodeLabEvaluationResult | null>(null);
-  const [showHint, setShowHint] = useState(false);
+  const [hintsExpanded, setHintsExpanded] = useState(false);
+  const [revealedHintCount, setRevealedHintCount] = useState(0);
   const [showSolution, setShowSolution] = useState(false);
   const [attemptCount, setAttemptCount] = useState(0);
   const [pendingInput, setPendingInput] = useState<PendingPythonInput | null>(null);
@@ -68,6 +77,8 @@ export function CodeLabBlock({
     prompt: data.prompt,
     starterCode: data.starterCode,
     checks: data.checks.map((c) => c.id),
+    hints: data.hints ?? [],
+    quickChips: data.quickChips ?? [],
   });
 
   useEffect(() => {
@@ -76,7 +87,8 @@ export function CodeLabBlock({
     setHasConsoleActivity(false);
     setRunError(null);
     setEvalResult(null);
-    setShowHint(false);
+    setHintsExpanded(false);
+    setRevealedHintCount(0);
     setShowSolution(false);
     setAttemptCount(0);
     setPendingInput(null);
@@ -91,6 +103,58 @@ export function CodeLabBlock({
   }, []);
 
   const lineCount = Math.max(4, code.replace(/\r\n/g, '\n').split('\n').length);
+
+  const effectiveHints =
+    data.hints && data.hints.length > 0 ? data.hints : data.hint ? [data.hint] : [];
+  const hasMultiHints = effectiveHints.length > 1;
+
+  const handleHintClick = () => {
+    if (effectiveHints.length === 0) return;
+
+    if (!hasMultiHints) {
+      const nextExpanded = !hintsExpanded;
+      setHintsExpanded(nextExpanded);
+      if (nextExpanded && revealedHintCount === 0) {
+        setRevealedHintCount(1);
+      }
+      return;
+    }
+
+    if (!hintsExpanded) {
+      setHintsExpanded(true);
+      if (revealedHintCount === 0) {
+        setRevealedHintCount(1);
+      }
+      return;
+    }
+
+    if (revealedHintCount < effectiveHints.length) {
+      setRevealedHintCount((prev) => Math.min(effectiveHints.length, prev + 1));
+      return;
+    }
+
+    setHintsExpanded(false);
+  };
+
+  const hintButtonLabel = (() => {
+    if (!hasMultiHints) {
+      return hintsExpanded ? 'إخفاء التلميح' : 'تلميح';
+    }
+    const totalAr = toArabicDigits(effectiveHints.length);
+    if (!hintsExpanded) {
+      if (revealedHintCount === 0) {
+        return `تلميح ١ من ${totalAr}`;
+      }
+      if (revealedHintCount < effectiveHints.length) {
+        return `تلميح ${toArabicDigits(revealedHintCount + 1)} من ${totalAr}`;
+      }
+      return `عرض التلميحات (${totalAr})`;
+    }
+    if (revealedHintCount < effectiveHints.length) {
+      return `تلميح ${toArabicDigits(revealedHintCount + 1)} من ${totalAr}`;
+    }
+    return 'إخفاء التلميحات';
+  })();
 
   const insertSnippet = (snippet: string) => {
     const el = textareaRef.current;
@@ -109,6 +173,46 @@ export function CodeLabBlock({
     requestAnimationFrame(() => {
       el.focus();
       el.setSelectionRange(nextCursor, nextCursor);
+    });
+  };
+
+  const insertQuickChip = (chip: string) => {
+    const el = textareaRef.current;
+    const isFocused =
+      typeof document !== 'undefined' && el !== null && document.activeElement === el;
+
+    if (el && isFocused) {
+      const start = el.selectionStart ?? code.length;
+      const end = el.selectionEnd ?? code.length;
+      if (start !== end) {
+        insertSnippet(chip);
+        return;
+      }
+      if (code.slice(start, start + 3) === '___') {
+        setCode(code.slice(0, start) + chip + code.slice(start + 3));
+        return;
+      }
+    }
+
+    // Replace the next ___ placeholder directly (even if textarea remains focused on iOS Safari)
+    // and skip el.focus() so mobile soft keyboard does not pop up between sequential chip taps.
+    if (code.includes('___')) {
+      setCode((prev) => {
+        const idx = prev.indexOf('___');
+        if (idx < 0) return prev;
+        return prev.slice(0, idx) + chip + prev.slice(idx + 3);
+      });
+      return;
+    }
+
+    if (el && isFocused) {
+      insertSnippet(chip);
+      return;
+    }
+
+    setCode((prev) => {
+      if (!prev) return chip;
+      return prev.endsWith('\n') ? `${prev}${chip}` : `${prev}\n${chip}`;
     });
   };
 
@@ -221,7 +325,12 @@ export function CodeLabBlock({
     setEvalResult(null);
   };
 
-  const hasFillMarker = /___|TODO|أكمل/.test(data.starterCode);
+  const hasFillMarker = FILL_MARKER_REGEX.test(data.starterCode);
+  const fillLineNumbers = data.starterCode
+    .replace(/\r\n/g, '\n')
+    .split('\n')
+    .map((line, idx) => (FILL_MARKER_REGEX.test(line) ? idx + 1 : null))
+    .filter((n): n is number => n !== null);
 
   return (
     <section
@@ -239,14 +348,16 @@ export function CodeLabBlock({
           </span>
         </span>
 
-        <button
-          type="button"
-          onClick={() => setShowHint((prev) => !prev)}
-          className="inline-flex min-h-[48px] items-center gap-1.5 rounded-lg border border-[#E2ECE9] bg-[#F6FAF9] px-3.5 text-xs sm:text-sm font-bold text-[#163A3A] hover:border-[#006E5A]"
-        >
-          <Lightbulb className="h-4 w-4 text-[#006E5A]" aria-hidden="true" />
-          <span>{showHint ? 'إخفاء التلميح' : 'تلميح'}</span>
-        </button>
+        {effectiveHints.length > 0 && (
+          <button
+            type="button"
+            onClick={handleHintClick}
+            className="inline-flex min-h-[48px] items-center gap-1.5 rounded-lg border border-[#E2ECE9] bg-[#F6FAF9] px-3.5 text-xs sm:text-sm font-bold text-[#163A3A] hover:border-[#006E5A]"
+          >
+            <Lightbulb className="h-4 w-4 text-[#006E5A]" aria-hidden="true" />
+            <span>{hintButtonLabel}</span>
+          </button>
+        )}
       </div>
 
       {data.title && (
@@ -256,16 +367,77 @@ export function CodeLabBlock({
       <FormattedText text={data.prompt} />
 
       {data.mode === 'fillLine' && hasFillMarker && (
-        <p className="rounded-lg border border-[#006E5A]/25 bg-[#E5F1EE]/70 px-3.5 py-2.5 text-sm font-medium text-[#163A3A]">
-          ابحث عن علامة <code dir="ltr" className="font-mono font-bold">___</code> داخل الكود
-          واستبدلها بالإجابة الصحيحة.
-        </p>
+        <div className="rounded-lg border border-[#006E5A]/30 bg-[#E5F1EE]/75 px-3.5 py-2.5 text-sm font-medium text-[#163A3A] space-y-1">
+          <p>
+            ابحث عن علامة{' '}
+            <code
+              dir="ltr"
+              className="mx-0.5 inline-block rounded border border-[#F59E0B]/60 bg-[#FEF3C7] px-1.5 py-0.5 font-mono font-bold text-[#92400E]"
+            >
+              ___
+            </code>{' '}
+            أو تعليق الإكمال داخل الكود واستبدله بالإجابة الصحيحة.
+          </p>
+          {fillLineNumbers.length > 0 && (
+            <p className="text-xs font-bold text-[#006E5A]">
+              موضع الإكمال في الكود:{' '}
+              {fillLineNumbers.map((n) => `سطر ${n}`).join(' ، ')}
+            </p>
+          )}
+        </div>
       )}
 
-      {showHint && (
-        <div className="rounded-xl border border-[#006E5A]/35 bg-[#E5F1EE] p-4 text-sm sm:text-base text-[#163A3A]">
-          <p className="font-bold text-[#006E5A] mb-1">تلميح سريع:</p>
-          <FormattedText text={data.hint} />
+      {hintsExpanded && revealedHintCount > 0 && (
+        <div className="rounded-xl border border-[#006E5A]/35 bg-[#E5F1EE] p-4 space-y-2.5 text-sm sm:text-base text-[#163A3A]">
+          <p className="font-bold text-[#006E5A]">
+            {hasMultiHints
+              ? `التلميحات المتدرجة (${toArabicDigits(revealedHintCount)} من ${toArabicDigits(effectiveHints.length)}):`
+              : 'تلميح سريع:'}
+          </p>
+          {hasMultiHints ? (
+            <ol className="space-y-2">
+              {effectiveHints.slice(0, revealedHintCount).map((hintText, idx) => (
+                <li
+                  key={idx}
+                  className="rounded-lg border border-[#006E5A]/20 bg-white/85 px-3.5 py-2.5"
+                >
+                  <span className="mb-1 block text-xs font-bold text-[#006E5A]">
+                    المستوى {toArabicDigits(idx + 1)}
+                  </span>
+                  <FormattedText text={hintText} />
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <FormattedText text={effectiveHints[0]} />
+          )}
+        </div>
+      )}
+
+      {/* Optional Mobile Quick Chips above editor */}
+      {data.quickChips && data.quickChips.length > 0 && (
+        <div className="rounded-xl border border-[#E2ECE9] bg-[#F6FAF9] p-3 space-y-2">
+          <div className="flex items-center gap-1.5 text-xs font-bold text-[#006E5A]">
+            <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
+            <span>اضغط لإدراج كود جاهز بدون كتابة يدوية:</span>
+          </div>
+          <div
+            dir="ltr"
+            className="flex flex-wrap gap-2"
+            role="group"
+            aria-label="رقائق الإدخال السريع للكود"
+          >
+            {data.quickChips.map((chip) => (
+              <button
+                key={chip}
+                type="button"
+                onClick={() => insertQuickChip(chip)}
+                className="min-h-[48px] rounded-lg border-2 border-[#006E5A]/35 bg-white px-3.5 py-2 font-mono text-xs sm:text-sm font-bold text-[#163A3A] hover:border-[#006E5A] hover:bg-[#E5F1EE]"
+              >
+                {chip}
+              </button>
+            ))}
+          </div>
         </div>
       )}
 

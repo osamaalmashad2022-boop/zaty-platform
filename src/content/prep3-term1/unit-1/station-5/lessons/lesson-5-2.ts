@@ -8,7 +8,7 @@ export const LESSON_5_2: LessonPack = {
   title: 'التمييز بين الأخطاء (ValueError مقابل ZeroDivisionError)',
   subtitle: 'اعرض رسالة مخصصة لنوع الخطأ بالظبط باستخدام أكثر من except',
   durationMin: 8,
-  contentVersion: 2,
+  contentVersion: 3,
   access: 'free',
   status: 'ready',
   objectives: [
@@ -21,6 +21,7 @@ export const LESSON_5_2: LessonPack = {
       id: '5.2-c1',
       title: 'البداية والهدف',
       role: 'hero',
+      requireInteraction: true,
       blocks: [
         {
           id: '5.2-hero',
@@ -31,42 +32,244 @@ export const LESSON_5_2: LessonPack = {
             stationLabel: 'المحطة ٥ · الدرس ٢ من ٣',
             goal: 'تفرّق بين ValueError و ZeroDivisionError وتعالج كل خطأ برسالة واضحة ومخصصة.',
             hook: 'تخيل عندك برنامج بيقسم `10 / num`. المستخدم ممكن يغلط بطريقتين: إما يكتب كلمة `"abc"`، أو يكتب `0`! رسالة «غلط وخلاص» محيّرة، لكن الأحسن تقول له بالظبط غلط في إيه!',
+            starterChallenge: {
+              prompt:
+                'في الكود `10 / int(input())` لو المستخدم كتب `' + "0" + '` — هيضرب `ValueError` ولا `ZeroDivisionError`؟',
+              options: [
+                {
+                  id: 'sc-val',
+                  text: 'ValueError',
+                  isCorrect: false,
+                  feedback:
+                    'النص `"0"` يتحول بنجاح داخل `int("0")` إلى الرقم `0` بدون أي `ValueError`؛ المشكلة تقع في خطوة القسمة بعدها.',
+                },
+                {
+                  id: 'sc-zero',
+                  text: 'ZeroDivisionError',
+                  isCorrect: true,
+                  feedback:
+                    'تشخيص ممتاز! `int("0")` بتنجح وتطلع `0`، وبعدين لحظة حساب `10 / 0` يظهر `ZeroDivisionError`.',
+                },
+                {
+                  id: 'sc-ok',
+                  text: 'مش هيحصل خطأ وهيطبع 0',
+                  isCorrect: false,
+                  feedback:
+                    'القسمة على صفر غير مسموحة رياضيًا وبرمجيًا، وبتوقف البرنامج باستثناء `ZeroDivisionError`.',
+                },
+              ],
+              revealNote:
+                'لازم تميّز اللحظة اللي فشل فيها تحويل النص (`ValueError`) عن اللحظة اللي فشلت فيها القسمة على صفر (`ZeroDivisionError`).',
+            },
           },
         },
       ],
     },
     {
       id: '5.2-c2',
-      title: 'مثال ٣ من الكتاب: متعدد الاستثناءات',
-      role: 'example',
+      title: 'صنّف المدخلات: أي خطأ يظهر في 10 / int(x)؟',
+      role: 'concept',
+      requireInteraction: true,
       blocks: [
         {
-          id: '5.2-table',
-          type: 'tableBlock',
+          id: '5.2-sort',
+          type: 'sortingBuckets',
           data: {
-            heading: 'الفرق بين أهم استثناءين في المنهج (ص ٥٥–٥٦)',
-            headers: ['نوع الاستثناء', 'متى يحدث؟', 'مثال سبب الخطأ'],
-            rows: [
-              ['ValueError', 'عند فشل تحويل نص غير رقمي إلى عدد', 'int("abc") أو int("خمسة")'],
-              ['ZeroDivisionError', 'عند محاولة القسمة على صفر', '10 / 0'],
+            prompt: 'وزّع كل مدخل نصي على النتيجة التي يُنتجها عند تنفيذ `10 / int(x)`:',
+            buckets: [
+              {
+                id: 'val',
+                label: 'يرفع ValueError',
+                description: 'تفشل دالة int() في تحويل المدخل لعدد صحيح',
+              },
+              {
+                id: 'zero',
+                label: 'يرفع ZeroDivisionError',
+                description: 'ينجح int()، لكن القسمة على 0 مستحيلة',
+              },
+              {
+                id: 'ok',
+                label: 'ينجح بدون خطأ',
+                description: 'يتحول لعدد صحيح وتتم القسمة بسلام',
+              },
             ],
-          },
-        },
-        {
-          id: '5.2-code',
-          type: 'codeView',
-          data: {
-            title: 'مثال ٣ من الكتاب (ص ٥٦)',
-            code: 'try:\n    num = int(input("Enter a number: "))\n    result = 10 / num\n    print(result)\nexcept ValueError:\n    print("Please enter numbers only!")\nexcept ZeroDivisionError:\n    print("You cannot divide by zero!")',
-            caption: 'كتلة try واحدة، ومعاها أكثر من except مخصصة لكل نوع خطأ.',
-            runnable: true,
+            items: [
+              { id: 'i1', text: '`"abc"`', bucketId: 'val' },
+              { id: 'i2', text: '`"0"`', bucketId: 'zero' },
+              { id: 'i3', text: '`"12.5"`', bucketId: 'val' },
+              { id: 'i4', text: '`"5"`', bucketId: 'ok' },
+            ],
+            feedback: {
+              correct:
+                'تصنيف خبير! `int()` ترفض الحروف مثل `"abc"` والنقطة العشرية مثل `"12.5"` (`ValueError`)، بينما `"0"` يرفع `ZeroDivisionError` و`"5"` يمر بنجاح.',
+              incorrect:
+                'انتبه لفخ `"12.5"`: دالة `int()` تقبل الأعداد الصحيحة فقط وترفض النقطة العشرية فتسبب `ValueError` مثل `"abc"`، أما `"0"` فيسبب `ZeroDivisionError`.',
+            },
           },
         },
       ],
     },
     {
       id: '5.2-c3',
-      title: 'جرّب بنفسك: حماية دالة القسمة',
+      title: 'توقّع قبل التشغيل · تتبّع السطر الذي ينهار',
+      role: 'example',
+      requireInteraction: true,
+      blocks: [
+        {
+          id: '5.2-predict',
+          type: 'predictOutput',
+          data: {
+            title: 'أين يحدث الخطأ بالضبط؟ (PRIMM)',
+            prompt: 'اقرأ السطرين وتوقّع نتيجة التشغيل قبل الضغط:',
+            code: 'num = int("0")\nprint(10 / num)',
+            runnable: true,
+            expectedOutput: 'ZeroDivisionError',
+            options: [
+              {
+                id: 'o1',
+                text: 'يطبع 0',
+                isCorrect: false,
+                feedback:
+                  '`0 / 10` تساوي `0`، لكن القسمة على صفر في المقام (`10 / 0`) غير معرفة وترفع خطأ.',
+              },
+              {
+                id: 'o2',
+                text: 'يرفع ValueError عند int("0")',
+                isCorrect: false,
+                feedback:
+                  'السطر الأول `int("0")` ينجح تمامًا لأن `"0"` نص يمثل عددًا صحيحًا سليمًا.',
+              },
+              {
+                id: 'o3',
+                text: 'يرفع ZeroDivisionError عند 10 / num',
+                isCorrect: true,
+                feedback:
+                  'تحليل دقيق! مر السطر الأول بسلام (`num = 0`)، ثم انهار السطر الثاني عند القسمة على صفر.',
+              },
+              {
+                id: 'o4',
+                text: 'يطبع 10',
+                isCorrect: false,
+                feedback:
+                  'القسمة على صفر لا تُبقي البسط كما هو، بل توقف البرنامج برسالة `ZeroDivisionError`.',
+              },
+            ],
+            explanation:
+              'تنفصل الخطوتان زمنيًا: `int("0")` سليمة وتنتج `0`، والخطأ يقع فقط لحظة تنفيذ `10 / 0`.',
+          },
+        },
+      ],
+    },
+    {
+      id: '5.2-c4',
+      title: 'مثال الكتاب + سؤال التحقق في منتصف الدرس',
+      role: 'example',
+      requireInteraction: true,
+      blocks: [
+        {
+          id: '5.2-code',
+          type: 'codeView',
+          data: {
+            title: 'مثال ٣ من الكتاب: متعدد الاستثناءات (ص ٥٦)',
+            code: 'try:\n    num = int(input("Enter a number: "))\n    result = 10 / num\n    print(result)\nexcept ValueError:\n    print("Please enter numbers only!")\nexcept ZeroDivisionError:\n    print("You cannot divide by zero!")',
+            caption: 'كتلة try واحدة، ومعاها أكثر من except مخصصة لكل نوع خطأ.',
+            runnable: true,
+          },
+        },
+        {
+          id: '5.2-q1',
+          type: 'quizQuestion',
+          data: {
+            question: 'في المثال السابق، أي كتلة `except` تحمينا تحديدًا لو كتب المستخدم `0`؟',
+            multiple: false,
+            scored: false,
+            sourceTag: 'كتاب الوزارة ص ٥٩ · تحقق وسط الدرس',
+            options: [
+              {
+                id: 'a',
+                text: 'except ValueError:',
+                isCorrect: false,
+                feedback:
+                  '`ValueError` تعالج النصوص غير الرقمية مثل `"abc"`، أما `0` فعدد صحيح تنجح معه `int()`.',
+              },
+              {
+                id: 'b',
+                text: 'except TypeError:',
+                isCorrect: false,
+                feedback:
+                  '`TypeError` يظهر عند خلط أنواع غير متوافقة مثل جمع نص مع رقم، وليس عند القسمة على صفر.',
+              },
+              {
+                id: 'c',
+                text: 'except ZeroDivisionError:',
+                isCorrect: true,
+                feedback:
+                  'مضبوط! القسمة على صفر في Python ترفع `ZeroDivisionError` فتلتقطها الكتلة الثانية وتطبع الرسالة المخصصة.',
+              },
+              {
+                id: 'd',
+                text: 'except IndexError:',
+                isCorrect: false,
+                feedback:
+                  '`IndexError` يخص تجاوز فهرس القوائم والنصوص، ولا علاقة له بالقسمة الرياضية.',
+              },
+            ],
+            explanation:
+              'عند إدخال `0` ينجح التحويل بـ `int("0")`, ثم تلتقط `except ZeroDivisionError:` خطأ القسمة `10 / 0`.',
+          },
+        },
+      ],
+    },
+    {
+      id: '5.2-c5',
+      title: 'خلّي بالك! فخ except العامة قبل المخصصة',
+      role: 'warning',
+      requireInteraction: true,
+      blocks: [
+        {
+          id: '5.2-warn',
+          type: 'calloutWarning',
+          data: {
+            variant: 'warning',
+            title: 'تنبّه لترتيب except وللقيمة "123"',
+            body: '• `int("123")` **مش بتعمل** `ValueError` لأن `"123"` نص رقمي سليم يتحول إلى `123`!\n• ودايمًا `except` المخصصة لازم تيجي **قبل** `except:` العامة.',
+          },
+        },
+        {
+          id: '5.2-bug',
+          type: 'spotBug',
+          data: {
+            mode: 'code',
+            title: 'صيد الخطأ: ترتيب except المقلوب',
+            prompt:
+              'المبرمج حط `except:` العامة فوق فبلعت كل الأخطاء ومنعت `except ZeroDivisionError:` تشتغل (وكمان بتعمل `SyntaxError`)! اضغط على السطر اللي في المكان الغلط:',
+            codeLines: [
+              'try:',
+              '    print(10 / int(input("Num: ")))',
+              'except:',
+              '    print("General error!")',
+              'except ZeroDivisionError:',
+              '    print("Cannot divide by zero!")',
+            ],
+            lineFeedback: {
+              1: 'بداية كتلة `try:` سليمة.',
+              2: 'سطر التحويل والقسمة داخل `try` مكتوب صح.',
+              4: 'دي رسالة التنبيه التابعة لـ `except:` العامة؛ اضغط على سطر `except:` نفسه اللي اتكتب بدري.',
+              5: 'تحديد `except ZeroDivisionError:` ممتاز، لكن وجود `except:` العامة فوقه هو اللي كسر الترتيب!',
+              6: 'رسالة القسمة على صفر واضحة وسليمة.',
+            },
+            bugLine: 3,
+            fixedLine:
+              'except ValueError:\n    print("Numbers only!")\nexcept ZeroDivisionError:\n    print("Cannot divide by zero!")\nexcept:\n    print("General error!")',
+            fixExplanation:
+              'وضع `except:` العامة أولًا يبتلع جميع الاستثناءات (ويسبب `SyntaxError` في Python 3)؛ القاعدة هي كتابة `except` المخصصة أولًا ثم `except:` العامة في النهاية.',
+          },
+        },
+      ],
+    },
+    {
+      id: '5.2-c6',
+      title: 'جرّب بنفسك: حماية قاسم الـ 100',
       role: 'tryIt',
       requireInteraction: true,
       blocks: [
@@ -77,7 +280,7 @@ export const LESSON_5_2: LessonPack = {
             mode: 'freeRun',
             title: 'برمج قاسم الـ 100 المقاوم للأخطاء',
             prompt:
-              'اكتب برنامجًا يقرأ رقمًا صحيحًا `num` ويطبع ناتج `100 / num`؛ لو دخل نص يطبع `"Numbers only!"` (`ValueError`)، ولو دخل `0` يطبع `"No zero!"` (`ZeroDivisionError`).',
+              'أكمل البرنامج ليقرأ `num` ويطبع `100 / num`؛ لو دخل نص غير رقمي يطبع `"Numbers only!"` (`ValueError`)، ولو دخل `0` يطبع `"No zero!"` (`ZeroDivisionError`).',
             starterCode:
               'try:\n    num = int(input("Enter: "))\n    print(100 / num)\n# اكتب except ValueError و except ZeroDivisionError هنا\n',
             solutionCode:
@@ -87,71 +290,74 @@ export const LESSON_5_2: LessonPack = {
               { id: 'div-val', label: 'كلمة abc -> Numbers only!', stdin: ['abc'], expectedOutputRegex: 'Numbers only' },
               { id: 'div-zero', label: 'الرقم 0 -> No zero!', stdin: ['0'], expectedOutputRegex: 'No zero' },
             ],
+            quickChips: [
+              'except ValueError:',
+              '    print("Numbers only!")',
+              'except ZeroDivisionError:',
+              '    print("No zero!")',
+            ],
             hint: 'أضف except ValueError: print("Numbers only!") ثم except ZeroDivisionError: print("No zero!").',
+            hints: [
+              'الهدف: معالجة خطأين مختلفين برسالتين مخصصتين تحت نفس كتلة try.',
+              'استخدم except ValueError: للنص غير الرقمي، و except ZeroDivisionError: للصفر.',
+              'اكتب except ValueError: وتحتها     print("Numbers only!") ثم except ZeroDivisionError: وتحتها     print("No zero!").',
+            ],
           },
         },
       ],
     },
     {
-      id: '5.2-c4',
-      title: 'خلّي بالك!',
-      role: 'warning',
-      blocks: [
-        {
-          id: '5.2-warn',
-          type: 'calloutWarning',
-          data: {
-            variant: 'warning',
-            title: 'تنبّه لترتيب except وللقيمة "123"',
-            body: '• `int("123")` **مش بتعمل** `ValueError` لأن `"123"` نص رقمي سليم يتحول إلى `123`!\n• ودايمًا `except ValueError:` (المخصصة) لازم تيجي **قبل** `except:` العامة.',
-          },
-        },
-      ],
-    },
-    {
-      id: '5.2-c5',
-      title: 'التحقق السريع',
+      id: '5.2-c7',
+      title: 'التحقق السريع · نقل الفهم',
       role: 'quickCheck',
       requireInteraction: true,
       blocks: [
         {
-          id: '5.2-q1',
-          type: 'quizQuestion',
-          data: {
-            question: 'أي من الأخطاء التالية يحدث عند القسمة على صفر؟',
-            multiple: false,
-            scored: false,
-            sourceTag: 'كتاب الوزارة ص ٥٩',
-            options: [
-              { id: 'a', text: 'ValueError', isCorrect: false, feedback: 'ده لإدخال نص غير رقمي في int().' },
-              { id: 'b', text: 'TypeError', isCorrect: false, feedback: 'ده لعدم توافق الأنواع.' },
-              { id: 'c', text: 'ZeroDivisionError', isCorrect: true, feedback: 'إجابة صحيحة!' },
-              { id: 'd', text: 'IndexError', isCorrect: false, feedback: 'ده لتجاوز فهرس القائمة.' },
-            ],
-            explanation: 'القسمة على صفر في Python ترفع استثناء ZeroDivisionError.',
-          },
-        },
-        {
           id: '5.2-q2',
           type: 'quizQuestion',
           data: {
-            question: 'متى يحدث خطأ `ValueError` في برنامج يقرأ مدخلات المستخدم؟',
+            question: 'أي مدخل نصي من التالي **لا** يرفع `ValueError` عند تمريره إلى `int()`، رغم أن الناس قد تظن العكس؟',
             multiple: false,
             scored: false,
-            sourceTag: 'كتاب الوزارة ص ٥٩',
+            sourceTag: 'كتاب الوزارة ص ٥٩ · فخ شائع',
             options: [
-              { id: 'a', text: 'عند إدخال الرقم 0 في عملية قسمة', isCorrect: false, feedback: 'ده بيسبب ZeroDivisionError.' },
-              { id: 'b', text: 'عند محاولة تحويل نص غير رقمي مثل "hello" باستخدام int()', isCorrect: true, feedback: 'صح! int() لا تقبل الحروف غير الرقمية وترفع ValueError.' },
-              { id: 'c', text: 'عند استخدام دالة print() للطباعة', isCorrect: false, feedback: 'print() لا ترفع ValueError.' },
-              { id: 'd', text: 'عند تحويل "123" إلى int("123")', isCorrect: false, feedback: '"123" نص رقمي سليم ويتحول بنجاح.' },
+              {
+                id: 'a',
+                text: '"hello"',
+                isCorrect: false,
+                feedback:
+                  'الحروف مثل `"hello"` لا يمكن تحويلها لرقم صحيح فترفع `ValueError` فورًا.',
+              },
+              {
+                id: 'b',
+                text: '"12.5"',
+                isCorrect: false,
+                feedback:
+                  'النقطة العشرية في `"12.5"` لا تقبلها `int()` مباشرة (تحتاج `float()`) فترفع `ValueError`.',
+              },
+              {
+                id: 'c',
+                text: '"123"',
+                isCorrect: true,
+                feedback:
+                  'صح! `"123"` نص مكوّن من أرقام صحيحة فقط، فتنجح `int("123")` وتُعيد العدد `123` دون أي خطأ.',
+              },
+              {
+                id: 'd',
+                text: '"" (نص فارغ)',
+                isCorrect: false,
+                feedback:
+                  'النص الفارغ لا يحتوي أي رقم ليتحول، لذا يرفع `ValueError` عند تمريره إلى `int()`.',
+              },
             ],
-            explanation: 'ValueError يحدث عندما يكون نوع البيانات نصًا لكنه لا يمثل رقمًا صالحًا للتحويل.',
+            explanation:
+              '`ValueError` يقع عند تمرير نص لا يمثل عددًا صحيحًا صالحًا، أما `"123"` أو `"0"` فهما نصوص رقمية صحيحة تقبلها `int()`.',
           },
         },
       ],
     },
     {
-      id: '5.2-c6',
+      id: '5.2-c8',
       title: 'الخلاصة والمصادر الإضافية',
       role: 'summary',
       blocks: [
@@ -161,7 +367,7 @@ export const LESSON_5_2: LessonPack = {
           data: {
             heading: 'الخلاصة في فقرة',
             calloutStyle: 'summary',
-            body: 'تحديد نوع الاستثناء (`ValueError` للنصوص غير الرقمية، و`ZeroDivisionError` للقسمة على صفر) بيخلينا نعرض رسالة دقيقة ومفيدة للمستخدم. في الدرس الأخير من الوحدة الأولى هنتعلم حلقة إعادة المحاولة `while True + break`!',
+            body: 'تحديد نوع الاستثناء (`ValueError` للنصوص غير الرقمية، و`ZeroDivisionError` للقسمة على صفر) مع ترتيب المخصصة قبل `except:` العامة بيخلينا نعرض رسالة دقيقة ومفيدة للمستخدم. في الدرس الأخير من الوحدة الأولى هنتعلم حلقة إعادة المحاولة `while True + break`!',
           },
         },
       ],

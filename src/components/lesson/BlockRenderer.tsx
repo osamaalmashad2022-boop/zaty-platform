@@ -6,16 +6,21 @@ import { AccordionBlock } from '../blocks/AccordionBlock';
 import { CalloutWarningBlock } from '../blocks/CalloutWarningBlock';
 import { CodeLabBlock } from '../blocks/CodeLabBlock';
 import { CodeViewBlock } from '../blocks/CodeViewBlock';
+import { ComparisonTabsBlock } from '../blocks/ComparisonTabsBlock';
+import { FlipCardsBlock } from '../blocks/FlipCardsBlock';
 import { HeroHookBlock } from '../blocks/HeroHookBlock';
 import { ImageBlock } from '../blocks/ImageBlock';
+import { InteractiveSimBlock } from '../blocks/InteractiveSimBlock';
 import { ListBlock } from '../blocks/ListBlock';
 import { MatchingPairsBlock } from '../blocks/MatchingPairsBlock';
 import { MediaPlayerBlock } from '../blocks/MediaPlayerBlock';
 import { OrderFlowBuilderBlock } from '../blocks/OrderFlowBuilderBlock';
+import { PredictOutputBlock } from '../blocks/PredictOutputBlock';
 import { ProcessStepperBlock } from '../blocks/ProcessStepperBlock';
 import { QuizQuestionBlock } from '../blocks/QuizQuestionBlock';
 import { RichTextBlock } from '../blocks/RichTextBlock';
 import { SortingBucketsBlock } from '../blocks/SortingBucketsBlock';
+import { SpotBugBlock } from '../blocks/SpotBugBlock';
 import { TableBlock } from '../blocks/TableBlock';
 import type { BlockAttemptPayload } from '../blocks/types';
 
@@ -52,7 +57,16 @@ export function BlockRenderer({
 
   switch (block.type) {
     case 'heroHook':
-      return <HeroHookBlock data={block.data} className={className} />;
+      return (
+        <HeroHookBlock
+          blockId={block.id}
+          data={block.data}
+          onComplete={handleComplete}
+          onAttempt={handleAttempt}
+          onInteract={handleInteract}
+          className={className}
+        />
+      );
     case 'richText':
       return <RichTextBlock data={block.data} className={className} />;
     case 'listBlock':
@@ -86,6 +100,28 @@ export function BlockRenderer({
       return (
         <AccordionBlock
           data={block.data}
+          onInteract={handleInteract}
+          className={className}
+        />
+      );
+    case 'flipCards':
+      return (
+        <FlipCardsBlock
+          blockId={block.id}
+          data={block.data}
+          onComplete={handleComplete}
+          onAttempt={handleAttempt}
+          onInteract={handleInteract}
+          className={className}
+        />
+      );
+    case 'comparisonTabs':
+      return (
+        <ComparisonTabsBlock
+          blockId={block.id}
+          data={block.data}
+          onComplete={handleComplete}
+          onAttempt={handleAttempt}
           onInteract={handleInteract}
           className={className}
         />
@@ -139,6 +175,39 @@ export function BlockRenderer({
     case 'codeLab':
       return (
         <CodeLabBlock
+          blockId={block.id}
+          data={block.data}
+          onComplete={handleComplete}
+          onAttempt={handleAttempt}
+          onInteract={handleInteract}
+          className={className}
+        />
+      );
+    case 'predictOutput':
+      return (
+        <PredictOutputBlock
+          blockId={block.id}
+          data={block.data}
+          onComplete={handleComplete}
+          onAttempt={handleAttempt}
+          onInteract={handleInteract}
+          className={className}
+        />
+      );
+    case 'spotBug':
+      return (
+        <SpotBugBlock
+          blockId={block.id}
+          data={block.data}
+          onComplete={handleComplete}
+          onAttempt={handleAttempt}
+          onInteract={handleInteract}
+          className={className}
+        />
+      );
+    case 'interactiveSim':
+      return (
+        <InteractiveSimBlock
           blockId={block.id}
           data={block.data}
           onComplete={handleComplete}

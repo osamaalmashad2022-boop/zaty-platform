@@ -7,8 +7,8 @@ export const LESSON_6_3: LessonPack = {
   order: 3,
   title: 'بناء دالة التنبؤ predict_grade في Python',
   subtitle: 'حوّل النموذج الخطي إلى كود Python يتوقع الدرجة حسب عدد ساعات المذاكرة',
-  durationMin: 9,
-  contentVersion: 2,
+  durationMin: 10,
+  contentVersion: 3,
   access: 'free',
   status: 'ready',
   objectives: [
@@ -21,31 +21,114 @@ export const LESSON_6_3: LessonPack = {
       id: '6.3-c1',
       title: 'البداية والهدف',
       role: 'hero',
+      requireInteraction: true,
       blocks: [
         {
           id: '6.3-hero',
           type: 'heroHook',
           data: {
             title: 'تشغيل نموذج التنبؤ في Python',
-            durationMin: 9,
+            durationMin: 10,
             stationLabel: 'المحطة ٦ · الدرس ٣ من ٣',
+            image: '/media/robot-puzzle.png',
             goal: 'تكتب دالة predict_grade(hours) بلغة Python وتحسب الدرجة المتوقعة عمليًا.',
-            hook: 'فاكر الدوال ذات المعاملات من الوحدة الأولى؟ دلوقتي هنربطها بالمعادلة الرياضية `y = w * x + b` علشان نبني أول نموذج تنبؤ شغال على Python بنفسك!',
+            hook: 'دلوقتي هنربط الدوال من الوحدة الأولى بمعادلة النموذج الخطي `y = w * x + b` علشان نبني أول متنبئ درجات شغال في Python!',
+            starterChallenge: {
+              prompt:
+                'لو دالة `predict_grade` فيها `print(y)` بدل `return y`، إيه يحصل عند تنفيذ `grade = predict_grade(3); print(grade + 5)`؟',
+              options: [
+                {
+                  id: 'sc-ok',
+                  text: 'هيطبع 30 عادي لأن print و return بيعملوا نفس الوظيفة',
+                  isCorrect: false,
+                  feedback:
+                    'print بتعرض الرقم على الشاشة بس وبترجع None، فمش هتقدر تجمع 5 على النتيجة بعد الاستدعاء.',
+                },
+                {
+                  id: 'sc-err',
+                  text: 'هيحصل TypeError لأن الدالة بدون return بترجع None',
+                  isCorrect: true,
+                  feedback:
+                    'عين مبرمج! بدون return y بترجع الدالة None، وجمع None + 5 بيوقف البرنامج بخطأ TypeError.',
+                },
+                {
+                  id: 'sc-skip',
+                  text: 'هيطبع 25 ويتجاهل سطر + 5 تلقائيًا',
+                  isCorrect: false,
+                  feedback:
+                    'بايثون هينفذ grade + 5 وهيتوقف لأن grade شايلة None مش 25.',
+                },
+              ],
+              revealNote:
+                'علشان تستخدم نتيجة التنبؤ جوه متغير أو عملية حسابية تانية، لازم الدالة تنتهي بـ `return y`!',
+            },
           },
         },
       ],
     },
     {
       id: '6.3-c2',
-      title: 'المرحلة ١ · مثال ٢ من الكتاب محلول خطوة بخطوة',
+      title: 'المرحلة ١ · توقّع مخرجات predict_grade قبل التشغيل',
       role: 'example',
+      requireInteraction: true,
+      blocks: [
+        {
+          id: '6.3-predict',
+          type: 'predictOutput',
+          data: {
+            title: 'توقّع مخرجات مثال ٢ (w = 5, b = 10, hours = 3)',
+            prompt:
+              'تتبّع الكود كأنك المفسّر واختر القيمة التي سيطبعها قبل ما تشغّله:',
+            code: 'def predict_grade(x):\n    w = 5\n    b = 10\n    y = w * x + b\n    return y\n\nhours = 3\ngrade = predict_grade(hours)\nprint("Predicted grade:", grade)',
+            runnable: true,
+            expectedOutput: 'Predicted grade: 25',
+            options: [
+              {
+                id: 'po-15',
+                text: 'Predicted grade: 15',
+                isCorrect: false,
+                feedback:
+                  'ضربت w * x = 5 * 3 = 15 بس نسيت تجمع الانحياز b = 10.',
+              },
+              {
+                id: 'po-25',
+                text: 'Predicted grade: 25',
+                isCorrect: true,
+                feedback:
+                  'حساب دقيق! الدالة حسبت 5 * 3 + 10 = 25 وأرجعتها عبر return y للمتغير grade.',
+              },
+              {
+                id: 'po-35',
+                text: 'Predicted grade: 35',
+                isCorrect: false,
+                feedback:
+                  'الوزن هنا w = 5 والانحياز b = 10 (وليس العكس)، فالناتج 5 * 3 + 10 = 25.',
+              },
+              {
+                id: 'po-none',
+                text: 'Predicted grade: None',
+                isCorrect: false,
+                feedback:
+                  'الدالة تحتوي return y في نهايتها، لذا ترجع القيمة 25 ولا ترجع None.',
+              },
+            ],
+            explanation:
+              'عند استدعاء predict_grade(3) يتم تعويض x = 3، فتُحسب y = 5 * 3 + 10 = 25 وتُخزن في grade.',
+          },
+        },
+      ],
+    },
+    {
+      id: '6.3-c3',
+      title: 'تتبع مثال الكتاب خطوة بخطوة (ص ٦٩–٧٠)',
+      role: 'concept',
       blocks: [
         {
           id: '6.3-code',
           type: 'codeView',
           data: {
             title: 'مثال ٢ من الكتاب (ص ٦٩–٧٠)',
-            code: 'def predict_grade(x):\n    w = 5\n    b = 10\n    y = w * x + b\n    return y\n\nhours = 3\ngrade = predict_grade(hours)\nprint("Study hours:", hours)\nprint("Predicted grade:", grade)  # 25',
+            code: 'def predict_grade(x):\n    w = 5\n    b = 10\n    y = w * x + b\n    return y\n\nhours = 3\ngrade = predict_grade(hours)\nprint("Study hours:", hours)\nprint("Predicted grade:", grade)',
             caption: 'لما hours = 3 الدالة تحسب 5 * 3 + 10 وترجع 25 عبر return y.',
             runnable: true,
           },
@@ -56,17 +139,113 @@ export const LESSON_6_3: LessonPack = {
           data: {
             heading: 'تتبع تنفيذ البرنامج (ص ٧٠)',
             steps: [
-              { id: 't1', title: '١. تعريف الدالة', detail: 'أنشأنا دالة اسمها `predict_grade(x)` تستقبل عدد ساعات المذاكرة `x`.' },
-              { id: 't2', title: '٢. تحديد المعاملات', detail: 'حددنا `w = 5` (٥ درجات لكل ساعة) و `b = 10` (١٠ درجات بدون مذاكرة).' },
-              { id: 't3', title: '٣. تطبيق المعادلة وإرجاع الناتج', detail: 'حسبنا `y = w * x + b` وأرجعنا النتيجة باستخدام `return y`.' },
-              { id: 't4', title: '٤. اختبار النموذج وعرض النتيجة', detail: 'مرّرنا `hours = 3` فحسبت الدالة `5 * 3 + 10 = 25` وحفظتها في `grade` ثم طبعتها.' },
+              {
+                id: 't1',
+                title: '١. تعريف الدالة',
+                detail: 'أنشأنا دالة `predict_grade(x)` تستقبل عدد ساعات المذاكرة `x`.',
+              },
+              {
+                id: 't2',
+                title: '٢. تحديد المعاملات',
+                detail: 'حددنا `w = 5` (٥ درجات لكل ساعة) و `b = 10` (١٠ درجات بدون مذاكرة).',
+              },
+              {
+                id: 't3',
+                title: '٣. المعادلة والإرجاع',
+                detail: 'حسبنا `y = w * x + b` وأرجعنا النتيجة باستخدام `return y`.',
+              },
+              {
+                id: 't4',
+                title: '٤. الاختبار والعرض',
+                detail: 'مرّرنا `hours = 3` فحسبت الدالة `25` وحفظتها في `grade` ثم طبعتها.',
+              },
             ],
           },
         },
       ],
     },
     {
-      id: '6.3-c3',
+      id: '6.3-c4',
+      title: 'صيد الخطأ: ليه الدالة ما رجعتش الدرجة؟',
+      role: 'example',
+      requireInteraction: true,
+      blocks: [
+        {
+          id: '6.3-spotbug',
+          type: 'spotBug',
+          data: {
+            mode: 'code',
+            title: 'اكتشف السطر المسبّب لخطأ None داخل الدالة',
+            prompt:
+              'الكود ده بيحاول يجمع 5 درجات بونص على ناتج predict_grade، لكنه بيضرب خطأ! اضغط على السطر الغلط:',
+            codeLines: [
+              'def predict_grade(hours):',
+              '    w = 5',
+              '    b = 10',
+              '    y = w * hours + b',
+              '    print(y)',
+              'final = predict_grade(3) + 5',
+            ],
+            lineFeedback: {
+              1: 'تعريف الدالة والمعامل hours سليم 100%.',
+              2: 'تحديد الوزن w = 5 سليم.',
+              3: 'تحديد الانحياز b = 10 سليم.',
+              4: 'معادلة النموذج الخطي w * hours + b محسوبة بشكل صحيح.',
+              6: 'سطر الاستدعاء سليم؛ المشكلة في الدالة نفسها اللي ما رجعتش قيمة y!',
+            },
+            bugLine: 5,
+            fixedLine: '    return y',
+            fixExplanation:
+              'أمر print(y) بيعرض النتيجة فقط وبيرجّع None؛ استبدله بـ return y علشان ترجّع الدالة 25 وتنجمع مع 5 فتبقى 30.',
+          },
+        },
+      ],
+    },
+    {
+      id: '6.3-c5',
+      title: 'محاكاة التحقق: كم ساعة لتحقيق 90 درجة؟',
+      role: 'example',
+      requireInteraction: true,
+      blocks: [
+        {
+          id: '6.3-sim',
+          type: 'interactiveSim',
+          data: {
+            mode: 'linearModel',
+            title: 'تحدي جدول الكتاب: w = 10, b = 40',
+            prompt:
+              'قبل ما تكتب المتنبئ التفاعلي في Python، جرّب شريط الساعات بمعاملات جدول الكتاب (`w = 10, b = 40`) واكتشف كم ساعة نحتاج للوصول لـ **90 درجة**!',
+            xLabel: 'ساعات المذاكرة (hours)',
+            yLabel: 'الدرجة المتوقعة (y)',
+            wLabel: 'الوزن (w)',
+            bLabel: 'الانحياز (b)',
+            initialX: 2,
+            initialW: 10,
+            initialB: 40,
+            minX: 0,
+            maxX: 8,
+            stepX: 1,
+            minW: 5,
+            maxW: 15,
+            stepW: 5,
+            minB: 20,
+            maxB: 50,
+            stepB: 10,
+            maxY: 120,
+            unitSuffix: 'درجة',
+            targetChallenge: {
+              prompt: 'مع w = 10 و b = 40: حرّك الساعات (hours) للوصول لـ 90 درجة بالظبط!',
+              targetY: 90,
+              tolerance: 0,
+              successFeedback:
+                'بالظبط! عند 5 ساعات: 10 * 5 + 40 = 90. افتكر النتيجة دي عشان تتأكد من كودك في المعمل الجاي!',
+            },
+          },
+        },
+      ],
+    },
+    {
+      id: '6.3-c6',
       title: 'المرحلة ٢ · أكمل دالة predict_grade(hours)',
       role: 'tryIt',
       requireInteraction: true,
@@ -78,23 +257,29 @@ export const LESSON_6_3: LessonPack = {
             mode: 'fillLine',
             title: 'أكمل معادلة y = 5 * hours + 40 داخل predict_grade',
             prompt:
-              'هنا الدرجة المبدئية `b = 40` وكل ساعة مذاكرة بتزود `w = 5` درجات. أكمل سطر حساب `y = w * hours + b` داخل الدالة، وشغّل الاختبار للتأكد من الناتج عند 0 و 4 ساعات.',
+              'هنا الدرجة المبدئية `b = 40` وكل ساعة مذاكرة بتزود `w = 5` درجات. استبدل `___` بصيغة النموذج الخطي باستخدام المعامل `hours` ثم اختبر الحل.',
             starterCode:
-              'def predict_grade(hours):\n    w = 5\n    b = 40\n    # اكتب معادلة حساب y هنا\n    return y\n\nprint(predict_grade(0))\nprint(predict_grade(4))',
+              'def predict_grade(hours):\n    w = 5\n    b = 40\n    y = ___\n    return y\n\nprint(predict_grade(0))\nprint(predict_grade(4))',
             solutionCode:
               'def predict_grade(hours):\n    w = 5\n    b = 40\n    y = w * hours + b\n    return y\n\nprint(predict_grade(0))\nprint(predict_grade(4))',
             checks: [
               { id: 'pred-0', label: 'predict_grade(0) تطبع 40', stdin: [], expectedOutputRegex: '(^|\\D)40(\\D|$)' },
               { id: 'pred-4', label: 'predict_grade(4) تطبع 60', stdin: [], expectedOutputRegex: '(^|\\D)60(\\D|$)' },
             ],
-            hint: 'اكتب y = w * hours + b بمسافة بادئة (4 مسافات) جوه الدالة.',
+            quickChips: ['w * hours + b', 'w + hours * b', 'b * hours + w'],
+            hint: 'عوض مكان ___ بالصيغة w * hours + b.',
+            hints: [
+              'الهدف في السطر ٤ إننا نحسب الدرجة المتوقعة y قبل ما الدالة ترجعها بـ return y.',
+              'في النموذج الخطي، الوزن w بيتضرب في المدخل (اسم المعامل هنا hours)، وبعدين بنجمع الانحياز b.',
+              'استبدل ___ بالصيغة w * hours + b علشان يبقى السطر y = w * hours + b.',
+            ],
           },
         },
       ],
     },
     {
-      id: '6.3-c4',
-      title: 'المرحلة ٣ · جرّب لوحدك: متنبئ درجات تفاعلي من جدول الكتاب',
+      id: '6.3-c7',
+      title: 'المرحلة ٣ · جرّب لوحدك: متنبئ درجات تفاعلي بـ input()',
       role: 'tryIt',
       requireInteraction: true,
       blocks: [
@@ -105,9 +290,9 @@ export const LESSON_6_3: LessonPack = {
             mode: 'freeRun',
             title: 'تحدي المبرمج: متنبئ جدول الكتاب (y = 10 * hours + 40)',
             prompt:
-              'اكتب برنامج Python يعرّف دالة `predict_grade(hours)` بمعاملات جدول الكتاب (`w = 10` و `b = 40`) وتُرجع `y = w * hours + b`، ثم يقرأ عدد الساعات من المستخدم باستخدام `int(input(...))` ويطبع الدرجة المتوقعة.',
+              'أكمل جسم دالة `predict_grade(hours)` بمعاملات جدول الكتاب (`w = 10` و `b = 40`) لتحسب وترجع الناتج `y = w * hours + b`، وتختبر أنها تعطي `40` لـ `0` ساعات و `90` لـ `5` ساعات.',
             starterCode:
-              'def predict_grade(hours):\n    # حدد w = 10 و b = 40 وأرجع y = w * hours + b\n\nhours = int(input("Enter study hours: "))\nprint(predict_grade(hours))',
+              'def predict_grade(hours):\n    w = 10\n    b = 40\n    ___\n\nhours = int(input("Enter study hours: "))\nprint(predict_grade(hours))',
             solutionCode:
               'def predict_grade(hours):\n    w = 10\n    b = 40\n    y = w * hours + b\n    return y\n\nhours = int(input("Enter study hours: "))\nprint(predict_grade(hours))',
             checks: [
@@ -115,13 +300,19 @@ export const LESSON_6_3: LessonPack = {
               { id: 'h-3', label: '3 ساعات -> 70', stdin: ['3'], expectedOutputRegex: '(^|\\D)70(\\D|$)' },
               { id: 'h-5', label: '5 ساعات -> 90', stdin: ['5'], expectedOutputRegex: '(^|\\D)90(\\D|$)' },
             ],
-            hint: 'جوه def predict_grade(hours): اكتب w = 10 ثم b = 40 ثم y = w * hours + b ثم return y.',
+            quickChips: ['return w * hours + b', 'print(w * hours + b)', 'y = w * hours + b', 'return y'],
+            hint: 'مكان ___ أرجِع w * hours + b بـ return (وليس print).',
+            hints: [
+              'الهدف إن الدالة predict_grade(hours) تحسب الدرجة المتوقعة بمعاملات w = 10 و b = 40 وترجعها لسطر print في الأسفل.',
+              'افتكر فخ print: لو طبعت جوه الدالة من غير return هترجع None؛ لازم تستخدم return لإرجاع قيمة المعادلة.',
+              'مكان ___ اكتب return w * hours + b (أو اكتب y = w * hours + b وفي السطر التالي return y بمسافة بادئة ٤ مسافات).',
+            ],
           },
         },
       ],
     },
     {
-      id: '6.3-c5',
+      id: '6.3-c8',
       title: 'خلّي بالك!',
       role: 'warning',
       blocks: [
@@ -131,55 +322,64 @@ export const LESSON_6_3: LessonPack = {
           data: {
             variant: 'warning',
             title: 'أخطاء شائعة عند كتابة predict_grade',
-            body: '• لا تنسَ **`return y`** عشان الدالة ترجّع الدرجة المتوقعة؛ لو طبعت بس جواها مش هتقدر تخزّن الناتج في متغير `grade`.\n• تأكد إنك استخدمت نفس اسم المعامل المكتوب بين القوسين (`x` أو `hours`) جوه المعادلة.\n• عند قراءة الساعات من `input()` لازم تحوّلها بـ `int()` أو `float()` قبل الضرب.',
+            body: '• لا تنسَ **`return y`** عشان الدالة ترجّع الدرجة المتوقعة؛ لو طبعت بس جواها مش هتقدر تخزّن الناتج في متغير `grade`.\n• استخدم نفس اسم المعامل المكتوب بين القوسين (`x` أو `hours`) جوه المعادلة.\n• عند قراءة الساعات من `input()` حوّلها بـ `int()` أو `float()` قبل الضرب.',
           },
         },
       ],
     },
     {
-      id: '6.3-c6',
+      id: '6.3-c9',
       title: 'التحقق السريع',
       role: 'quickCheck',
       requireInteraction: true,
       blocks: [
         {
-          id: '6.3-q1',
-          type: 'quizQuestion',
-          data: {
-            question: 'في كود الكتاب (`w = 5, b = 10`)، ما النتيجة المطبوعة عند تنفيذ `print(predict_grade(3))`؟',
-            multiple: false,
-            scored: false,
-            sourceTag: 'كتاب الوزارة ص ٧٤ (س١٥)',
-            options: [
-              { id: 'a', text: '15', isCorrect: false, feedback: 'نسيت تجمع الانحياز b = 10.' },
-              { id: 'b', text: '25', isCorrect: true, feedback: 'صح! 5 × 3 + 10 = 25.' },
-              { id: 'c', text: '35', isCorrect: false, feedback: 'راجع الحساب: 5*3 = 15، + 10 = 25.' },
-              { id: 'd', text: '40', isCorrect: false, feedback: 'غير صحيح.' },
-            ],
-            explanation: 'بالتعويض في المعادلة: y = 5 * 3 + 10 = 25.',
-          },
-        },
-        {
           id: '6.3-q2',
           type: 'quizQuestion',
           data: {
-            question: 'في دالة `predict_grade(hours)` بمعاملات `w = 5` و `b = 40`، ما القيمة التي ترجعها الدالة عند `hours = 0`؟',
+            question:
+              'في دالة `predict_grade(hours)` بمعاملات `w = 5` و `b = 40`، ما القيمة التي ترجعها الدالة عند تنفيذ `predict_grade(0)`؟',
             multiple: false,
             scored: false,
             sourceTag: 'كتاب الوزارة ص ٦٩',
             options: [
-              { id: 'a', text: '0', isCorrect: false, feedback: 'الضرب في 0 يساوي 0 لكن ما تنساش تجمع b = 40.' },
-              { id: 'b', text: '5', isCorrect: false, feedback: '5 هو الوزن w.' },
-              { id: 'c', text: '40', isCorrect: true, feedback: 'إجابة صحيحة! 5 × 0 + 40 = 40 (قيمة الانحياز b).' },
-              { id: 'd', text: '45', isCorrect: false, feedback: '45 لما تكون hours = 1.' },
+              {
+                id: 'a',
+                text: '0',
+                isCorrect: false,
+                feedback:
+                  'الضرب 5 * 0 = 0 فعلًا، لكن المعادلة بتجمع الانحياز b = 40 فالدالة بترجع 40.',
+              },
+              {
+                id: 'b',
+                text: '5',
+                isCorrect: false,
+                feedback:
+                  '5 ده قيمة الوزن w اللي بتضرب في الساعات، مش ناتج الدالة عند 0 ساعة.',
+              },
+              {
+                id: 'c',
+                text: '40',
+                isCorrect: true,
+                feedback:
+                  'إجابة صحيحة! 5 * 0 + 40 = 40، و return y ترجع قيمة الانحياز b.',
+              },
+              {
+                id: 'd',
+                text: '45',
+                isCorrect: false,
+                feedback:
+                  '45 دي النتيجة لما hours = 1 (5 * 1 + 40)، لكن هنا مررنا 0 ساعة.',
+              },
             ],
-            explanation: 'عند x = 0 يلغى حد (w * x) وتبقى قيمة الانحياز الثابتة b = 40.',
+            explanation:
+              'عند x = 0 يلغى حد (w * x) وتبقى قيمة الانحياز الثابتة b = 40 التي ترجعها الدالة.',
           },
         },
       ],
     },
     {
-      id: '6.3-c7',
+      id: '6.3-c10',
       title: 'ختام المحطة السادسة والمصادر الإضافية',
       role: 'summary',
       blocks: [
@@ -189,7 +389,7 @@ export const LESSON_6_3: LessonPack = {
           data: {
             heading: 'الخلاصة في فقرة',
             calloutStyle: 'summary',
-            body: 'ترجمنا النموذج الخطي `y = w * x + b` لدالة Python حقيقية `predict_grade` بـ `def` و `return y`، وجرّبناها على أكتر من قيم لـ `w` و `b` وربطناها بـ `input()`. دلوقتي إنت جاهز لاختبار المحطة السادسة (٤٠ سؤالًا رسميًا من الكتاب)!',
+            body: 'ترجمنا النموذج الخطي `y = w * x + b` لدالة Python حقيقية `predict_grade` بـ `def` و `return y`، واكتشفنا فخ `print` بدل `return`، وجرّبنا الدالة على أكتر من قيم لـ `w` و `b` وربطناها بـ `input()`. دلوقتي إنت جاهز لاختبار المحطة السادسة (٤٠ سؤالًا رسميًا من الكتاب)!',
           },
         },
       ],
@@ -217,12 +417,14 @@ export const LESSON_6_3: LessonPack = {
         {
           id: 'faq-6-3-1',
           question: 'هل يفرق اسم المعامل لو سميته x أو hours في الدالة؟',
-          answer: 'لا يفرق عند التنفيذ طالما استخدمت نفس الاسم في السطر بتاع المعادلة (w * x + b أو w * hours + b)، لكن اختيار اسم معبر زي hours بيوضح معنى الكود.',
+          answer:
+            'لا يفرق عند التنفيذ طالما استخدمت نفس الاسم في السطر بتاع المعادلة (w * x + b أو w * hours + b)، لكن اختيار اسم معبر زي hours بيوضح معنى الكود.',
         },
         {
           id: 'faq-6-3-2',
           question: 'ليه الكتاب كتب مرة w = 10, b = 40 ومرة w = 5, b = 10؟',
-          answer: 'كل جدول بيانات وله معاملاته الخاصة! في المثال النظري الأول كانت الساعات 1,2,3 مقابل 50,60,70 (w=10, b=40)، وفي مثال الكود اختار نموذجًا بسيطًا آخر (w=5, b=10).',
+          answer:
+            'كل جدول بيانات وله معاملاته الخاصة! في المثال النظري الأول كانت الساعات 1,2,3 مقابل 50,60,70 (w=10, b=40)، وفي مثال الكود اختار نموذجًا بسيطًا آخر (w=5, b=10).',
         },
       ],
     },
@@ -246,14 +448,35 @@ export const LESSON_6_3: LessonPack = {
       type: 'glossary',
       title: 'أهم المصطلحات',
       terms: [
-        { id: 'g63-1', termAr: 'دالة التنبؤ', termEn: 'predict_grade(hours)', definition: 'دالة Python تستقبل عدد ساعات المذاكرة وتعيد الدرجة المتوقعة باستخدام النموذج الخطي.' },
-        { id: 'g63-2', termAr: 'قيمة الاختبار', termEn: 'Test Input', definition: 'قيمة نمررها للدالة مثل hours = 3 للتحقق من مخرجات النموذج.' },
+        {
+          id: 'g63-1',
+          termAr: 'دالة التنبؤ',
+          termEn: 'predict_grade(hours)',
+          definition: 'دالة Python تستقبل عدد ساعات المذاكرة وتعيد الدرجة المتوقعة باستخدام النموذج الخطي.',
+        },
+        {
+          id: 'g63-2',
+          termAr: 'قيمة الاختبار',
+          termEn: 'Test Input',
+          definition: 'قيمة نمررها للدالة مثل hours = 3 للتحقق من مخرجات النموذج.',
+        },
       ],
     },
   ],
   sources: [
-    { id: 's63-tb', kind: 'textbook', label: 'كتاب الوزارة — ICT الصف الثالث الإعدادي', detail: 'مثال ٢: برمجة النموذج الخطي في Python', pages: 'ص 69–70 و 74' },
-    { id: 's63-nb', kind: 'notebooklm', label: 'مصادر NotebookLM للدرس ٦.٣', detail: 'تتبع predict_grade وتدريبات Skulpt العملية' },
+    {
+      id: 's63-tb',
+      kind: 'textbook',
+      label: 'كتاب الوزارة — ICT الصف الثالث الإعدادي',
+      detail: 'مثال ٢: برمجة النموذج الخطي في Python',
+      pages: 'ص 69–70 و 74',
+    },
+    {
+      id: 's63-nb',
+      kind: 'notebooklm',
+      label: 'مصادر NotebookLM للدرس ٦.٣',
+      detail: 'PRIMM predict_grade وتدريبات Skulpt العملية المتدرجة',
+    },
   ],
   nextStep: {
     kind: 'stationQuiz',

@@ -4,6 +4,8 @@ import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import * as skulptRunner from '@/lib/python/skulptRunner';
 import { CodeLabBlock } from '../CodeLabBlock';
+import { ComparisonTabsBlock } from '../ComparisonTabsBlock';
+import { FlipCardsBlock } from '../FlipCardsBlock';
 import { MatchingPairsBlock } from '../MatchingPairsBlock';
 import { OrderFlowBuilderBlock } from '../OrderFlowBuilderBlock';
 import { QuizQuestionBlock } from '../QuizQuestionBlock';
@@ -288,5 +290,83 @@ describe('Interactive blocks and Skulpt CodeLab', () => {
       attemptNumber: 1,
       errorKind: 'ZeroDivisionError',
     });
+  });
+
+  it('flips Mindsmith-style FlipCardsBlock items and marks complete when all cards are flipped', () => {
+    const onComplete = vi.fn();
+    renderNode(
+      <FlipCardsBlock
+        blockId="fc1"
+        onComplete={onComplete}
+        data={{
+          heading: 'افهم الفرق بالقلب',
+          cards: [
+            {
+              id: 'c1',
+              frontLabel: 'الركن ١',
+              frontTitle: 'التحليل',
+              backBody: 'تقسيم المشكلة الكبيرة لأجزاء صغيرة.',
+              backExample: 'تقسيم تحضير الفطار.',
+            },
+            {
+              id: 'c2',
+              frontLabel: 'الركن ٢',
+              frontTitle: 'التجريد',
+              backBody: 'التركيز على المهم فقط مثل خريطة المترو.',
+            },
+          ],
+        }}
+      />
+    );
+
+    expect(container.textContent).toContain('قلّبت 0 من 2');
+    act(() => {
+      findButton(/التحليل/).click();
+    });
+    expect(container.textContent).toContain('تقسيم المشكلة الكبيرة لأجزاء صغيرة.');
+    expect(container.textContent).toContain('قلّبت 1 من 2');
+    expect(onComplete).not.toHaveBeenCalled();
+
+    act(() => {
+      findButton(/التجريد/).click();
+    });
+    expect(container.textContent).toContain('قلّبت 2 من 2');
+    expect(onComplete).toHaveBeenCalledWith(true);
+  });
+
+  it('switches ComparisonTabsBlock tabs and completes once all tabs are visited', () => {
+    const onComplete = vi.fn();
+    renderNode(
+      <ComparisonTabsBlock
+        blockId="ct1"
+        onComplete={onComplete}
+        data={{
+          heading: 'اعمل ده vs تجنّبه',
+          tabs: [
+            {
+              id: 'do',
+              label: 'اعمل ده ✓',
+              tone: 'emerald',
+              body: 'حوّل input بـ int().',
+            },
+            {
+              id: 'avoid',
+              label: 'تجنّبه ✕',
+              tone: 'coral',
+              body: 'لا تجمع نص مع رقم.',
+            },
+          ],
+        }}
+      />
+    );
+
+    expect(container.textContent).toContain('استكشفت 1 من 2');
+    expect(container.textContent).toContain('حوّل input بـ int().');
+    act(() => {
+      findButton(/تجنّبه/).click();
+    });
+    expect(container.textContent).toContain('استكشفت 2 من 2');
+    expect(container.textContent).toContain('لا تجمع نص مع رقم.');
+    expect(onComplete).toHaveBeenCalledWith(true);
   });
 });

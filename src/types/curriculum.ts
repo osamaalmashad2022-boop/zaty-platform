@@ -4,7 +4,7 @@
  */
 
 // ---------------------------------------------------------------------------
-// 1. Block Types (All 15 reusable blocks)
+// 1. Block Types (All 20 reusable blocks)
 // ---------------------------------------------------------------------------
 
 export type BlockType =
@@ -17,12 +17,30 @@ export type BlockType =
   | 'processStepper'
   | 'tableBlock'
   | 'accordionBlock'
+  | 'flipCards'
+  | 'comparisonTabs'
   | 'calloutWarning'
   | 'quizQuestion'
   | 'sortingBuckets'
   | 'matchingPairs'
   | 'orderFlowBuilder'
-  | 'codeLab';
+  | 'codeLab'
+  | 'predictOutput'
+  | 'spotBug'
+  | 'interactiveSim';
+
+export interface HeroStarterChallengeOption {
+  id: string;
+  text: string;
+  isCorrect: boolean;
+  feedback: string;
+}
+
+export interface HeroStarterChallenge {
+  prompt: string;
+  options: HeroStarterChallengeOption[];
+  revealNote?: string;
+}
 
 export interface HeroHookData {
   title: string;
@@ -31,6 +49,7 @@ export interface HeroHookData {
   hook: string;
   image?: string;
   stationLabel?: string;
+  starterChallenge?: HeroStarterChallenge;
 }
 
 export interface RichTextData {
@@ -66,6 +85,10 @@ export interface MediaPlayerData {
   poster?: string;
   transcript?: string;
   durationSec: number;
+  /** Video orientation hint to prevent portrait/landscape layout shift before metadata loads */
+  aspect?: 'landscape' | 'portrait';
+  /** True when the video already renders burned-in captions (keeps WebVTT track optional, not forced default) */
+  burnedInCaptions?: boolean;
 }
 
 export interface CodeViewData {
@@ -108,6 +131,39 @@ export interface AccordionBlockData {
   heading?: string;
   openMode: 'single' | 'multiple';
   items: AccordionItem[];
+}
+
+export interface FlipCardItem {
+  id: string;
+  frontLabel?: string;
+  frontTitle: string;
+  frontHint?: string;
+  backTitle?: string;
+  backBody: string;
+  backExample?: string;
+  code?: string;
+}
+
+export interface FlipCardsData {
+  heading?: string;
+  instruction?: string;
+  cards: FlipCardItem[];
+}
+
+export interface ComparisonTabItem {
+  id: string;
+  label: string;
+  badge?: string;
+  tone?: 'emerald' | 'coral' | 'neutral';
+  body: string;
+  bullets?: string[];
+  code?: string;
+}
+
+export interface ComparisonTabsData {
+  heading?: string;
+  instruction?: string;
+  tabs: ComparisonTabItem[];
 }
 
 export interface CalloutWarningData {
@@ -207,7 +263,132 @@ export interface CodeLabData {
   solutionCode: string;
   checks: CodeLabCheck[];
   hint: string;
+  /** Optional progressive multi-level hints (Level 1 strategic -> Level 2 conceptual -> Level 3 procedural) */
+  hints?: string[];
+  /** Optional tappable code/line tokens above the editor for mobile-friendly entry */
+  quickChips?: string[];
 }
+
+export interface PredictOutputOption {
+  id: string;
+  text: string;
+  isCorrect: boolean;
+  feedback: string;
+}
+
+export interface PredictOutputData {
+  title?: string;
+  prompt: string;
+  code?: string;
+  scenario?: string;
+  stdin?: string[];
+  runnable?: boolean;
+  expectedOutput?: string;
+  options: PredictOutputOption[];
+  explanation: string;
+}
+
+export interface SpotBugStepItem {
+  id: string;
+  text: string;
+  wrongFeedback?: string;
+}
+
+export interface SpotBugData {
+  mode: 'code' | 'steps';
+  title?: string;
+  prompt: string;
+  code?: string;
+  codeLines?: string[];
+  lineFeedback?: Record<number, string>;
+  bugLine?: number;
+  items?: SpotBugStepItem[];
+  bugItemId?: string;
+  fixedLine: string;
+  fixExplanation: string;
+  cleanLineFeedback?: string;
+}
+
+export interface InteractiveLinearModelData {
+  mode: 'linearModel';
+  title?: string;
+  prompt: string;
+  xLabel?: string;
+  yLabel?: string;
+  wLabel?: string;
+  bLabel?: string;
+  initialX?: number;
+  initialW?: number;
+  initialB?: number;
+  minX?: number;
+  maxX?: number;
+  stepX?: number;
+  minW?: number;
+  maxW?: number;
+  stepW?: number;
+  minB?: number;
+  maxB?: number;
+  stepB?: number;
+  maxY?: number;
+  unitSuffix?: string;
+  targetChallenge?: {
+    prompt: string;
+    targetY: number;
+    tolerance?: number;
+    lockX?: number;
+    successFeedback: string;
+  };
+}
+
+export type TrapDetectorScene = 'gamePopup' | 'aiChat' | 'newsPost' | 'privacyAlert';
+
+export interface TrapDetectorItem {
+  id: string;
+  label: string;
+  detail?: string;
+  isTrap: boolean;
+  clueAr: string;
+  trapTag?: string;
+}
+
+export interface InteractiveTrapDetectorData {
+  mode: 'trapDetector';
+  scene?: TrapDetectorScene;
+  title?: string;
+  prompt: string;
+  cardTitle: string;
+  cardSubtitle?: string;
+  cardBody?: string;
+  items: TrapDetectorItem[];
+  completionNote?: string;
+}
+
+export interface GansArenaRound {
+  id: string;
+  roundNumber: number;
+  generatorOutput: string;
+  visualHint?: string;
+  realismScore: number;
+  fooledDiscriminator: boolean;
+  flawCue?: string;
+  feedbackCorrect: string;
+  feedbackWrong: string;
+}
+
+export interface InteractiveGansArenaData {
+  mode: 'gansArena';
+  title?: string;
+  prompt: string;
+  generatorLabel?: string;
+  discriminatorLabel?: string;
+  rounds: GansArenaRound[];
+  completionNote?: string;
+}
+
+export type InteractiveSimData =
+  | InteractiveLinearModelData
+  | InteractiveTrapDetectorData
+  | InteractiveGansArenaData;
 
 export interface HeroHookBlock {
   id: string;
@@ -263,6 +444,18 @@ export interface AccordionBlock {
   data: AccordionBlockData;
 }
 
+export interface FlipCardsBlock {
+  id: string;
+  type: 'flipCards';
+  data: FlipCardsData;
+}
+
+export interface ComparisonTabsBlock {
+  id: string;
+  type: 'comparisonTabs';
+  data: ComparisonTabsData;
+}
+
 export interface CalloutWarningBlock {
   id: string;
   type: 'calloutWarning';
@@ -299,6 +492,24 @@ export interface CodeLabBlock {
   data: CodeLabData;
 }
 
+export interface PredictOutputBlock {
+  id: string;
+  type: 'predictOutput';
+  data: PredictOutputData;
+}
+
+export interface SpotBugBlock {
+  id: string;
+  type: 'spotBug';
+  data: SpotBugData;
+}
+
+export interface InteractiveSimBlock {
+  id: string;
+  type: 'interactiveSim';
+  data: InteractiveSimData;
+}
+
 export type LessonBlock =
   | HeroHookBlock
   | RichTextBlock
@@ -309,12 +520,17 @@ export type LessonBlock =
   | ProcessStepperBlock
   | TableBlock
   | AccordionBlock
+  | FlipCardsBlock
+  | ComparisonTabsBlock
   | CalloutWarningBlock
   | QuizQuestionBlock
   | SortingBucketsBlock
   | MatchingPairsBlock
   | OrderFlowBuilderBlock
-  | CodeLabBlock;
+  | CodeLabBlock
+  | PredictOutputBlock
+  | SpotBugBlock
+  | InteractiveSimBlock;
 
 // ---------------------------------------------------------------------------
 // 2. Lesson, NotebookLM Additional Sources, Station, Unit, Quiz & Flashcards

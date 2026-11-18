@@ -23,4 +23,11 @@ export const STATION_4_PACK: StationPack = {
   lessons: [LESSON_4_1, LESSON_4_2, LESSON_4_3],
   quizBank: STATION_4_QUIZ_BANK,
   flashcards: STATION_4_FLASHCARDS,
+  mediaAssets: [
+    '/media/robot-puzzle.png',
+    '/media/robot-path.png',
+    '/media/video-4-2.mp4',
+    '/media/video-4-2-thumb.png',
+    '/media/caption-4-2.vtt',
+  ],
 };

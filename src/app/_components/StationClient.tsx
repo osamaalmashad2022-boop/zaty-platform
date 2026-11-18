@@ -44,6 +44,19 @@ function collectStationMediaUrls(station: StationPack): string[] {
           if (block.data.poster) urls.add(resolveMediaUrl(block.data.poster));
         } else if (block.type === 'imageBlock' && block.data.src) {
           urls.add(resolveMediaUrl(block.data.src));
+        } else if (block.type === 'heroHook' && block.data.image) {
+          urls.add(resolveMediaUrl(block.data.image));
+        } else if (block.type === 'processStepper') {
+          for (const step of block.data.steps) {
+            if (
+              step.visual &&
+              (step.visual.startsWith('/') ||
+                step.visual.startsWith('http') ||
+                /\.(png|jpe?g|webp|svg)$/i.test(step.visual))
+            ) {
+              urls.add(resolveMediaUrl(step.visual));
+            }
+          }
         }
       }
     }
