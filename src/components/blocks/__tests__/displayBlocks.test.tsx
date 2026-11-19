@@ -321,7 +321,7 @@ describe('Display and media blocks', () => {
 
     // Completes positively and gracefully regardless of option choice
     expect(onComplete).toHaveBeenCalledWith(true);
-    expect(onAttempt).toHaveBeenCalledWith({ isCorrect: false, attemptNumber: 1 });
+    expect(onAttempt).toHaveBeenCalledWith({ isCorrect: false, attemptNumber: 1, isUngraded: true });
     expect(onInteract).toHaveBeenCalled();
     expect(container.textContent).toContain('محاولة وتوقع استكشافي ممتاز يا صديقي!');
     expect(container.textContent).toContain('عاش! تم إكمال التحدي الاستكشافي بنجاح');

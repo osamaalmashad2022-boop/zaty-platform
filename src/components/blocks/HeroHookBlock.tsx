@@ -62,6 +62,7 @@ export function HeroHookBlock({
     onAttempt?.({
       isCorrect: option.isCorrect,
       attemptNumber: nextAttempt,
+      isUngraded: true,
     });
     // Low-stakes curiosity & prediction exploration: completes gracefully and positively regardless of choice
     onComplete?.(true);
