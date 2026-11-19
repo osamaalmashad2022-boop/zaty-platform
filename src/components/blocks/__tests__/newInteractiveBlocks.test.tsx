@@ -59,7 +59,7 @@ describe('New anti-boredom interactive blocks and upgrades', () => {
     fireEvent.click(screen.getByRole('button', { name: '53' }));
     expect(screen.getByText(/ممتاز! دمج النصوص بيلزقهم جنب بعض\./)).toBeInTheDocument();
     expect(screen.getByText(/علشان تجمع كأرقام لازم تحوّل بـ int\(\)\./)).toBeInTheDocument();
-    expect(onAttempt).toHaveBeenCalledWith({ isCorrect: true, attemptNumber: 1 });
+    expect(onAttempt).toHaveBeenCalledWith({ isCorrect: true, attemptNumber: 1, isUngraded: true });
     expect(onComplete).toHaveBeenCalledWith(true);
   });
 
