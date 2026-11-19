@@ -28,5 +28,7 @@ export const STATION_10_PACK: StationPack = {
     '/media/caption-10-1.vtt',
     '/media/podcast-10-2.mp3',
     '/media/caption-10-2.vtt',
+    '/media/video-10-3.mp4',
+    '/media/caption-10-3.vtt',
   ],
 };
