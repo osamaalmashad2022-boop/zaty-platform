@@ -67,6 +67,22 @@ export const LESSON_11_3: LessonPack = {
       requireInteraction: true,
       blocks: [
         {
+          id: '11.3-video',
+          type: 'mediaPlayer',
+          data: {
+            kind: 'video',
+            title: 'فيديو وايت بورد (١٤٨ ثانية): سياق with open التلقائي وحماية موارد النظام',
+            src: '/media/video-11-3.mp4',
+            vttSrc: '/media/caption-11-3.vtt',
+            durationSec: 148,
+            transcript:
+              'ليه كل المبرمجين المحترفين بيعشقوا جملة with open يا صاحبي؟!\n' +
+              'لأنك لو نسيت تقفل الملف بـ close() أو الكود عطل، الملف هيفضل محبوس وموارده معلقة في النظام.\n' +
+              'مع سياق with، بايثون بتفتح الملف وتضمن إغلاقه تلقائياً 100% فور انتهاء الكتلة البرمجية.\n' +
+              'كود أنضف، وأكتر أماناً، وبيحمي بياناتك من أي تسريب أو تلف مفاجئ!',
+          },
+        },
+        {
           id: '11.3-stepper',
           type: 'processStepper',
           data: {

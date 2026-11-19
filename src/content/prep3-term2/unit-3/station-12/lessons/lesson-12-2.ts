@@ -67,6 +67,22 @@ export const LESSON_12_2: LessonPack = {
       requireInteraction: true,
       blocks: [
         {
+          id: '12.2-podcast',
+          type: 'mediaPlayer',
+          data: {
+            kind: 'audio',
+            title: 'بودكاست حواري (١٠٨ ثوانٍ): دالة البناء __init__ ولغز معامل self',
+            src: '/media/podcast-12-2.mp3',
+            vttSrc: '/media/caption-12-2.vtt',
+            durationSec: 108,
+            transcript:
+              'سألت نفسك قبل كده إيه حكاية دالة __init__ ومعامل self الغريب في كلاسات بايثون يا صاحبي؟!\n' +
+              'دالة __init__ هي دالة البناء؛ أول ما بتنشئ كائن جديد بتشتغل تلقائياً عشان تديه خصائصه وهويته الأولية.\n' +
+              'أما self فهو الضمير اللي الكائن بيشاور بيه على نفسه عشان بياناته متختلطش بالكائنات التانية.\n' +
+              'لما تكتب self.name كأنك بتقول لبايثون: احفظي الاسم في درج الكائن ده تحديداً!',
+          },
+        },
+        {
           id: '12.2-accordion',
           type: 'accordionBlock',
           data: {

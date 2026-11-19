@@ -67,6 +67,22 @@ export const LESSON_12_3: LessonPack = {
       requireInteraction: true,
       blocks: [
         {
+          id: '12.3-video',
+          type: 'mediaPlayer',
+          data: {
+            kind: 'video',
+            title: 'فيديو وايت بورد (٢٣١ ثانية): وظائف الكائنات والكبسولة الواقية في بايثون',
+            src: '/media/video-12-3.mp4',
+            vttSrc: '/media/caption-12-3.vtt',
+            durationSec: 231,
+            transcript:
+              'الكائن في بايثون مش مجرد كيس بيانات يا صاحبي، ده كمان عنده عضلات وأفعال بيقدر يعملها!\n' +
+              'الأفعال دي بنسميها أساليب أو Methods؛ دوال داخل الكلاس بتتحكم في بيانات الكائن وتعدلها بـ self.\n' +
+              'ومفهوم الكبسولة Encapsulation بيحمي البيانات جوه الكائن ويمنع التعديل العشوائي من برة.\n' +
+              'بكده بتضمن إن برنامجك يفضل قوي ومستقر ومستحيل يبوظ بأخطاء غير مقصودة!',
+          },
+        },
+        {
           id: '12.3-stepper',
           type: 'processStepper',
           data: {

@@ -67,6 +67,22 @@ export const LESSON_11_2: LessonPack = {
       requireInteraction: true,
       blocks: [
         {
+          id: '11.2-podcast',
+          type: 'mediaPlayer',
+          data: {
+            kind: 'audio',
+            title: 'بودكاست حواري (٩١ ثانية): الفرق الحاسم بين وضع الكتابة w والإلحاق a',
+            src: '/media/podcast-11-2.mp3',
+            vttSrc: '/media/caption-11-2.vtt',
+            durationSec: 91,
+            transcript:
+              'يا صاحبي، فيه خطأ مرعب في بايثون ممكن يمسح شغلك كله في رمشة عين لو مخدتش بالك!\n' +
+              'وضع الكتابة \'w\' بيمسح كل القديم تماماً ويبدأ من الصفر، بينما وضع الإلحاق \'a\' بيضيف في نهاية الملف بأمان.\n' +
+              'لو عايز تحافظ على بياناتك وتضيف سطر جديد، استخدم دايماً وضع الإلحاق \'a\' Append.\n' +
+              'وحاجة تانية: دالة write() مبتنزلش سطر جديد لوحدها، لازم تكتب رمز السطر الجديد \\n بإيدك!',
+          },
+        },
+        {
           id: '11.2-compare-tabs',
           type: 'comparisonTabs',
           data: {
