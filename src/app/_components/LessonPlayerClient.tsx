@@ -168,6 +168,10 @@ export function LessonPlayerClient({
       blockType: LessonBlock['type'],
       payload: BlockAttemptPayload,
     ) => {
+      // Starter challenge in heroHook blocks is strictly low-stakes exploration/curiosity;
+      // never record it toward friction events or weak spots per UI promise to the learner.
+      if (blockType === 'heroHook' || payload.isUngraded) return;
+
       recordActivityAttempt(lesson.id, lesson.stationId, {
         blockId,
         blockType,
