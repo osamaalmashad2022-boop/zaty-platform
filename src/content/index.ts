@@ -135,11 +135,14 @@ export function getExamQuizPool(
   return items;
 }
 
-export function getFlashcardsByStation(stationId?: string): FlashcardItem[] {
+export function getFlashcardsByStation(
+  stationId?: string,
+  termId?: string,
+): FlashcardItem[] {
   if (stationId) {
     return getStationById(stationId)?.flashcards ?? [];
   }
-  return getAllStations().flatMap((s) => s.flashcards);
+  return getAllStations(termId).flatMap((s) => s.flashcards);
 }
 
 export function getStationMediaAssets(stationId: string): string[] {

@@ -13,6 +13,11 @@ import {
   getLearnerStats,
   recordFlashcardReviewed,
 } from '@/lib/storage/progress';
+import {
+  DEFAULT_COURSE_ID,
+  getCourseManifest,
+  getStoredActiveCourseId,
+} from '@/content/catalog';
 import type {
   FlashcardItem,
   FlashcardReviewState,
@@ -21,7 +26,12 @@ import type {
 
 export interface ReviewClientProps {
   flashcards: FlashcardItem[];
-  stations: Array<Pick<StationPack, 'id' | 'number' | 'title'>>;
+  stations: Array<
+    Pick<StationPack, 'id' | 'number' | 'title'> & {
+      termId?: string;
+      packId?: string;
+    }
+  >;
 }
 
 function buildPriorityQueue(
@@ -47,11 +57,56 @@ function buildPriorityQueue(
 }
 
 export function ReviewClient({ flashcards, stations }: ReviewClientProps) {
+  const [activeCourseId, setActiveCourseId] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      return getStoredActiveCourseId();
+    }
+    return DEFAULT_COURSE_ID;
+  });
+
+  const activeCourse = useMemo(
+    () => getCourseManifest(activeCourseId),
+    [activeCourseId],
+  );
+  const targetPack = activeCourse.packId || activeCourseId;
+
+  const scopedStations = useMemo(() => {
+    const hasTermMeta = stations.some(
+      (s) =>
+        (s as { termId?: string; packId?: string }).termId ||
+        (s as { termId?: string; packId?: string }).packId,
+    );
+    if (!hasTermMeta) return stations;
+    const filtered = stations.filter(
+      (s) =>
+        (s as { termId?: string }).termId === targetPack ||
+        (s as { packId?: string }).packId === targetPack ||
+        (targetPack === 'prep3-term1' && s.number <= 9) ||
+        (targetPack.includes('term2') && s.number >= 10),
+    );
+    return filtered.length > 0 ? filtered : stations;
+  }, [stations, targetPack]);
+
+  const scopedStationIds = useMemo(
+    () => new Set(scopedStations.map((s) => s.id)),
+    [scopedStations],
+  );
+
+  const scopedFlashcards = useMemo(() => {
+    const hasTermMeta = stations.some(
+      (s) =>
+        (s as { termId?: string; packId?: string }).termId ||
+        (s as { termId?: string; packId?: string }).packId,
+    );
+    if (!hasTermMeta) return flashcards;
+    return flashcards.filter((f) => scopedStationIds.has(f.stationId));
+  }, [flashcards, scopedStationIds, stations]);
+
   const [selectedStation, setSelectedStation] = useState<string>('all');
   const [flashcardStates, setFlashcardStates] = useState<
     Record<string, FlashcardReviewState>
   >(() => deriveLearnerStats([], []).flashcardStates);
-  const [queue, setQueue] = useState<FlashcardItem[]>(() => flashcards);
+  const [queue, setQueue] = useState<FlashcardItem[]>(() => scopedFlashcards);
   const [index, setIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [roundResults, setRoundResults] = useState<
@@ -60,14 +115,20 @@ export function ReviewClient({ flashcards, stations }: ReviewClientProps) {
   const hasInteractedRef = useRef(false);
 
   const filteredPool = useMemo(() => {
-    if (selectedStation === 'all') return flashcards;
-    return flashcards.filter((f) => f.stationId === selectedStation);
-  }, [flashcards, selectedStation]);
+    if (selectedStation === 'all') return scopedFlashcards;
+    return scopedFlashcards.filter((f) => f.stationId === selectedStation);
+  }, [scopedFlashcards, selectedStation]);
 
   // Initial load from IndexedDB (does not clobber user progress if they already started tapping)
   useEffect(() => {
     let cancelled = false;
-    getLearnerStats()
+    const stored = getStoredActiveCourseId();
+    const effectiveCourse = stored || DEFAULT_COURSE_ID;
+    if (stored && stored !== activeCourseId) {
+      setActiveCourseId(stored);
+    }
+
+    getLearnerStats(undefined, { courseId: effectiveCourse })
       .then((stats) => {
         if (cancelled) return;
         setFlashcardStates((prev) => ({ ...stats.flashcardStates, ...prev }));
@@ -78,18 +139,33 @@ export function ReviewClient({ flashcards, stations }: ReviewClientProps) {
         }
       })
       .catch(() => undefined);
+
+    const handleCourseChanged = (e: Event) => {
+      const customEvent = e as CustomEvent<string>;
+      const newCourseId = customEvent.detail || getStoredActiveCourseId();
+      setActiveCourseId(newCourseId);
+      getLearnerStats(undefined, { courseId: newCourseId })
+        .then((stats) => {
+          if (cancelled) return;
+          setFlashcardStates((prev) => ({ ...stats.flashcardStates, ...prev }));
+        })
+        .catch(() => undefined);
+    };
+    window.addEventListener('sl-course-changed', handleCourseChanged);
+
     return () => {
       cancelled = true;
+      window.removeEventListener('sl-course-changed', handleCourseChanged);
     };
-  }, [filteredPool]);
+  }, [filteredPool, activeCourseId]);
 
   const handleStationSelect = (stationId: string) => {
     hasInteractedRef.current = true;
     setSelectedStation(stationId);
     const pool =
       stationId === 'all'
-        ? flashcards
-        : flashcards.filter((f) => f.stationId === stationId);
+        ? scopedFlashcards
+        : scopedFlashcards.filter((f) => f.stationId === stationId);
     setQueue(buildPriorityQueue(pool, flashcardStates));
     setIndex(0);
     setFlipped(false);
@@ -126,6 +202,9 @@ export function ReviewClient({ flashcards, stations }: ReviewClientProps) {
           stationId: currentCard.stationId,
           result,
         },
+        undefined,
+        undefined,
+        activeCourseId,
       );
     } catch {
       // Non-fatal if IndexedDB unavailable
@@ -158,7 +237,9 @@ export function ReviewClient({ flashcards, stations }: ReviewClientProps) {
           <div className="space-y-1">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E5F1EE] px-3 py-1 text-xs font-bold text-[#006E5A]">
               <Layers className="w-3.5 h-3.5" />
-              <span>بطاقات المراجعة الذكية</span>
+              <span>
+                بطاقات المراجعة الذكية · {activeCourse.gradeLabel} ({activeCourse.termLabel})
+              </span>
             </span>
             <h1 className="text-2xl font-bold text-[#163A3A]">
               المراجعة بالبطاقات (Flashcards)
@@ -186,11 +267,11 @@ export function ReviewClient({ flashcards, stations }: ReviewClientProps) {
                 : 'bg-[#F6FAF9] text-[#163A3A] border-[#E2ECE9] hover:border-[#006E5A]'
             }`}
           >
-            كل المحطات ({flashcards.length})
+            كل المحطات ({scopedFlashcards.length})
           </button>
 
-          {stations.map((st) => {
-            const count = flashcards.filter((f) => f.stationId === st.id).length;
+          {scopedStations.map((st) => {
+            const count = scopedFlashcards.filter((f) => f.stationId === st.id).length;
             if (count === 0) return null;
             return (
               <button

@@ -34,6 +34,11 @@ import {
   requestPersistentStorage,
 } from '@/lib/storage/progress';
 import {
+  DEFAULT_COURSE_ID,
+  getCourseManifest,
+  getStoredActiveCourseId,
+} from '@/content/catalog';
+import {
   deleteUserAccount,
   fetchCurrentUser,
   loginWithEmail,
@@ -51,6 +56,8 @@ export interface ProgressStationInfo {
   unitId: string;
   number: number;
   title: string;
+  termId?: string;
+  packId?: string;
   lessons: Array<{ id: string; title: string }>;
 }
 
@@ -134,13 +141,51 @@ export function ProgressClient({ stations }: ProgressClientProps) {
   const [activationFeedback, setActivationFeedback] =
     useState<StatusBanner | null>(null);
 
+  // Active course tracking
+  const [activeCourseId, setActiveCourseId] = useState<string>(DEFAULT_COURSE_ID);
+
+  const activeCourse = useMemo(
+    () => getCourseManifest(activeCourseId),
+    [activeCourseId],
+  );
+
+  const activeStations = useMemo(() => {
+    const targetPack = activeCourse.packId || activeCourseId;
+    const hasTermMeta = stations.some((s) => s.termId || s.packId);
+    if (!hasTermMeta) return stations;
+    const filtered = stations.filter(
+      (s) =>
+        s.termId === targetPack ||
+        s.packId === targetPack ||
+        (targetPack === 'prep3-term1' && s.number <= 9) ||
+        (targetPack.includes('term2') && s.number >= 10),
+    );
+    return filtered.length > 0 ? filtered : stations;
+  }, [stations, activeCourse, activeCourseId]);
+
   useEffect(() => {
     let cancelled = false;
-    getLearnerStats()
+    const stored = getStoredActiveCourseId();
+    const effectiveCourse = stored || DEFAULT_COURSE_ID;
+    if (stored) {
+      setActiveCourseId(stored);
+    }
+
+    getLearnerStats(undefined, { courseId: effectiveCourse })
       .then((s) => {
         if (!cancelled) setStats(s);
       })
       .catch(() => undefined);
+
+    const handleCourseChanged = (e: Event) => {
+      const customEvent = e as CustomEvent<string>;
+      const newCourseId = customEvent.detail || getStoredActiveCourseId();
+      setActiveCourseId(newCourseId);
+      getLearnerStats(undefined, { courseId: newCourseId })
+        .then((s) => !cancelled && setStats(s))
+        .catch(() => undefined);
+    };
+    window.addEventListener('sl-course-changed', handleCourseChanged);
 
     fetchCurrentUser()
       .then((user) => {
@@ -168,12 +213,13 @@ export function ProgressClient({ stations }: ProgressClientProps) {
     return () => {
       cancelled = true;
       window.removeEventListener('beforeinstallprompt', handleInstallPrompt);
+      window.removeEventListener('sl-course-changed', handleCourseChanged);
     };
   }, []);
 
   const totalTermLessons = useMemo(
-    () => stations.reduce((sum, s) => sum + s.lessons.length, 0) || 29,
-    [stations],
+    () => activeStations.reduce((sum, s) => sum + s.lessons.length, 0) || 29,
+    [activeStations],
   );
 
   const lessonTitleMap = useMemo(() => {
@@ -938,12 +984,17 @@ export function ProgressClient({ stations }: ProgressClientProps) {
 
       {/* Per-Station Bars */}
       <section className="orchid-card p-5 sm:p-6 space-y-4">
-        <h2 className="text-lg sm:text-xl font-bold text-[#163A3A]">
-          التقدم في كل محطة
-        </h2>
+        <div className="flex items-center justify-between gap-2 flex-wrap">
+          <h2 className="text-lg sm:text-xl font-bold text-[#163A3A]">
+            التقدم في كل محطة
+          </h2>
+          <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-[#E5F1EE] text-[#006E5A]">
+            {activeCourse.gradeLabel} · {activeCourse.termLabel}
+          </span>
+        </div>
 
         <div className="space-y-3">
-          {stations.map((st) => {
+          {activeStations.map((st) => {
             const sum = stats.stationProgress[st.id];
             const total = st.lessons.length || sum?.totalLessons || 0;
             const done = sum?.completedLessons ?? 0;
