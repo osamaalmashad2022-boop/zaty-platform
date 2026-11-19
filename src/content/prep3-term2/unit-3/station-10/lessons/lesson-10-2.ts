@@ -67,6 +67,22 @@ export const LESSON_10_2: LessonPack = {
       requireInteraction: true,
       blocks: [
         {
+          id: '10.2-podcast',
+          type: 'mediaPlayer',
+          data: {
+            kind: 'audio',
+            title: 'بودكاست سريع (٩٠ ثانية): التعامل الآمن مع القاموس ودالة get() وتفادي KeyError',
+            src: '/media/podcast-10-2.mp3',
+            vttSrc: '/media/caption-10-2.vtt',
+            durationSec: 90,
+            transcript:
+              'عارف يا صاحبي إيه اللي يفرّق المبرمج المبتدئ عن المحترف في التعامل مع القواميس؟ رد فعله لما المفتاح ميكونش موجود!\n' +
+              'المبتدئ بيستخدم الأقواس المربعة user[\'phone\']، ولو المفتاح مش متسجل، البرنامج بيفرقع فوراً في وش المستخدم بخطأ KeyError!\n' +
+              'لكن المحترف بيستخدم الدرع السحري: دالة get() مع قيمة بديلة: user.get(\'phone\', \'غير مسجل\')!\n' +
+              'ولو عايز تفحص المفتاح بنفسك الأول، معامل in البسيط هيقولك True لو موجود، بدون أي مفاجآت أو انهيار!',
+          },
+        },
+        {
           id: '10.2-compare-tabs',
           type: 'comparisonTabs',
           data: {
