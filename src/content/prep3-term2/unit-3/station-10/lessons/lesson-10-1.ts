@@ -67,6 +67,22 @@ export const LESSON_10_1: LessonPack = {
       requireInteraction: true,
       blocks: [
         {
+          id: '10.1-video',
+          type: 'mediaPlayer',
+          data: {
+            kind: 'video',
+            title: 'فيديو وايت بورد (١٠٠ ثانية): قواميس بايثون ومفهوم Key-Value وتفادي KeyError',
+            src: '/media/video-10-1.mp4',
+            vttSrc: '/media/caption-10-1.vtt',
+            durationSec: 101,
+            transcript:
+              'تخيل عندك درج مقسم ببطاقات مكتوب عليها الاسم والدرجة والمدينة.. ده القاموس في بايثون يا صاحبي!\n' +
+              'بدل الفهارس الرقمية المربكة 0 و 1، القاموس بيربط المفتاح بقيمته داخل أقواس معقوفة: \'name\': \'Sara\'.\n' +
+              'لو طلبت مفتاح مش موجود بالأقواس المربعة هينهار بـ KeyError! عشان كده بنستخدم دالة get() السحرية.\n' +
+              'دالة get() بترجع قيمة افتراضية بهدوء وبتحمي كودك من أي عطل أو انهيار!',
+          },
+        },
+        {
           id: '10.1-def',
           type: 'richText',
           data: {
