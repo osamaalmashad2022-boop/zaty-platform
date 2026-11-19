@@ -67,6 +67,22 @@ export const LESSON_15_1: LessonPack = {
       requireInteraction: true,
       blocks: [
         {
+          id: '15.1-video',
+          type: 'mediaPlayer',
+          data: {
+            kind: 'video',
+            title: 'فيديو وايت بورد (١٤٦ ثانية): إنترنت الأشياء والحساسات والمشغلات والمدن الذكية IoT',
+            src: '/media/video-15-1.mp4',
+            vttSrc: '/media/caption-15-1.vtt',
+            durationSec: 146,
+            transcript:
+              'تخيل إن تكييف بيتك يعرف إنك في الطريق فيشغل نفسه، وإن أعمدة الإنارة تطفي لما الصبح يطلع!\n' +
+              'ده إنترنت الأشياء IoT يا صاحبي! شبكة أجهزة ذكية متصلة بالنت.\n' +
+              'فيها حساسات Sensors كعينين وآذان بتقيس البيئة، ومشغلات Actuators كعضلات بتنفذ الحركة.\n' +
+              'ونموذجها الحي في مصر هي العاصمة الإدارية الجديدة اللي بتدار بالكامل كمدينة ذكية متكاملة!',
+          },
+        },
+        {
           id: '15.1-stepper',
           type: 'processStepper',
           data: {

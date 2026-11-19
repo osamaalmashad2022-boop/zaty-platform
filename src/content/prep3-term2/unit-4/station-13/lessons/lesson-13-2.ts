@@ -67,6 +67,22 @@ export const LESSON_13_2: LessonPack = {
       requireInteraction: true,
       blocks: [
         {
+          id: '13.2-podcast',
+          type: 'mediaPlayer',
+          data: {
+            kind: 'audio',
+            title: 'بودكاست حواري (١٢٢ ثانية): تنظيف النصوص وإزالة الكلمات الشائعة Stop Words',
+            src: '/media/podcast-13-2.mp3',
+            vttSrc: '/media/caption-13-2.vtt',
+            durationSec: 122,
+            transcript:
+              'يا صاحبي، النصوص اللي بنكتبها بتبقى مليانة حشو وتفاصيل ملهاش لازمة للذكاء الاصطناعي!\n' +
+              'خط إنتاج الـ NLP بيعمل حاجتين: التقطيع Tokenization وتوحيد الحروف وإزالة علامات الترقيم.\n' +
+              'والتانية هي التخلص من الـ Stop Words؛ زي حروف الجر "في" و"على" و"من" لأنها مبتعبرش عن موضوع النص.\n' +
+              'بكده بنسيب بس الكلمات الجوهرية اللي بتعبر عن المعنى الحقيقي، ونوفر وقت وطاقة المعالجة!',
+          },
+        },
+        {
           id: '13.2-stepper',
           type: 'processStepper',
           data: {

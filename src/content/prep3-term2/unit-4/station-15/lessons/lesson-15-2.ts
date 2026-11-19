@@ -67,6 +67,22 @@ export const LESSON_15_2: LessonPack = {
       requireInteraction: true,
       blocks: [
         {
+          id: '15.2-podcast',
+          type: 'mediaPlayer',
+          data: {
+            kind: 'audio',
+            title: 'بودكاست حواري (١٢٠ ثانية): الحوسبة السحابية والتخزين السحابي الآمن Cloud Computing',
+            src: '/media/podcast-15-2.mp3',
+            vttSrc: '/media/caption-15-2.vtt',
+            durationSec: 120,
+            transcript:
+              'يا صاحبي، لو هارد ديسك لابتوبك اتحرق فجأة، كل شغلك وذكرياتك هتضيع للأبد لو مخزنهم محلياً!\n' +
+              'هنا بتيجي نعمة الحوسبة السحابية Cloud Computing! حفظ البيانات على سيرفرات عملاقة مؤمنة وموزعة.\n' +
+              'مش بس أمان من التلف، دي كمان مرونة تخليك تفتح ملفاتك من أي جهاز في العالم.\n' +
+              'وتشاركها مع صحابك وتشتغلوا مع بعض في نفس اللحظة بمنتهى السهولة والأمان!',
+          },
+        },
+        {
           id: '15.2-compare-tabs',
           type: 'comparisonTabs',
           data: {
