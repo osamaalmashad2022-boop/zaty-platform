@@ -488,4 +488,125 @@ describe('Assessment, Flashcards, Exam, and Progress views', () => {
     );
     expect(screen.getByText('0 XP')).toBeInTheDocument();
   });
+
+  it('scopes ExamClient, ReviewClient, and ProgressClient to active course and term', async () => {
+    // 1. ExamClient scoping test
+    const mixedStations = [
+      {
+        id: 'station-1',
+        number: 1,
+        title: 'محطة ترم 1',
+        termId: 'prep3-term1',
+        packId: 'prep3-term1',
+        lessons: [{ id: '1.1', title: 'درس 1' }],
+      },
+      {
+        id: 'station-10',
+        number: 10,
+        title: 'محطة ترم 2',
+        termId: 'prep3-term2',
+        packId: 'prep3-term2',
+        lessons: [{ id: '10.1', title: 'درس 10' }],
+      },
+    ];
+
+    const mixedQuizPool: QuizItem[] = [
+      {
+        id: 'q-term1',
+        stationId: 'station-1',
+        microLessonId: '1.1',
+        kind: 'mcq',
+        question: 'سؤال ترم 1',
+        options: [{ id: 'a', text: 'صح', isCorrect: true, feedback: 'صحيح' }],
+        explanation: 'تفسير ترم 1',
+        sourceTag: 'كتاب 1',
+      },
+      {
+        id: 'q-term2',
+        stationId: 'station-10',
+        microLessonId: '10.1',
+        kind: 'mcq',
+        question: 'سؤال ترم 2',
+        options: [{ id: 'b', text: 'صح', isCorrect: true, feedback: 'صحيح' }],
+        explanation: 'تفسير ترم 2',
+        sourceTag: 'كتاب 2',
+      },
+    ];
+
+    // Default course is prep3-term1
+    const { unmount: unmountExam } = render(
+      <ExamClient stations={mixedStations} quizPool={mixedQuizPool} />,
+    );
+
+    // Only Term 1 station should appear in setup
+    expect(screen.getByText(/المحطة 1: محطة ترم 1/)).toBeInTheDocument();
+    expect(screen.queryByText(/المحطة 10: محطة ترم 2/)).not.toBeInTheDocument();
+    unmountExam();
+
+    // 2. ReviewClient scoping test
+    const mixedFlashcards: FlashcardItem[] = [
+      {
+        id: 'fc-term1',
+        stationId: 'station-1',
+        microLessonId: '1.1',
+        termEn: 'Input',
+        termAr: 'مدخلات',
+        definition: 'تعريف ترم 1',
+      },
+      {
+        id: 'fc-term2',
+        stationId: 'station-10',
+        microLessonId: '10.1',
+        termEn: 'Class',
+        termAr: 'فئة',
+        definition: 'تعريف ترم 2',
+      },
+    ];
+
+    const { unmount: unmountReview } = render(
+      <ReviewClient
+        flashcards={mixedFlashcards}
+        stations={[
+          { id: 'station-1', number: 1, title: 'محطة 1', termId: 'prep3-term1' },
+          { id: 'station-10', number: 10, title: 'محطة 10', termId: 'prep3-term2' },
+        ]}
+      />,
+    );
+
+    // Only Term 1 flashcard in pool
+    expect(screen.getByText('كل المحطات (1)')).toBeInTheDocument();
+    expect(screen.getByText(/المحطة 1 \(1\)/)).toBeInTheDocument();
+    expect(screen.queryByText(/المحطة 10/)).not.toBeInTheDocument();
+    unmountReview();
+
+    // 3. ProgressClient scoping test
+    render(
+      <ProgressClient
+        stations={[
+          {
+            id: 'station-1',
+            unitId: 'unit-1',
+            number: 1,
+            title: 'محطة 1',
+            termId: 'prep3-term1',
+            packId: 'prep3-term1',
+            lessons: [{ id: '1.1', title: 'درس 1' }],
+          },
+          {
+            id: 'station-10',
+            unitId: 'unit-3',
+            number: 10,
+            title: 'محطة 10',
+            termId: 'prep3-term2',
+            packId: 'prep3-term2',
+            lessons: [{ id: '10.1', title: 'درس 10' }],
+          },
+        ]}
+      />,
+    );
+
+    // Only Term 1 station should appear in per-station list
+    expect(screen.getByText(/المحطة 1: محطة 1/)).toBeInTheDocument();
+    expect(screen.queryByText(/المحطة 10: محطة 10/)).not.toBeInTheDocument();
+  });
 });

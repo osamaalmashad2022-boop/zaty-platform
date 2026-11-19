@@ -53,6 +53,37 @@ export const PREP3_TERM1_TOPOLOGY: CurriculumTopology = {
   ],
 };
 
+export const PREP3_TERM2_TOPOLOGY: CurriculumTopology = {
+  stationLessons: {
+    'station-10': ['10.1', '10.2', '10.3'],
+    'station-11': ['11.1', '11.2', '11.3'],
+    'station-12': ['12.1', '12.2', '12.3'],
+    'station-13': ['13.1', '13.2', '13.3'],
+    'station-14': ['14.1', '14.2', '14.3'],
+    'station-15': ['15.1', '15.2', '15.3'],
+  },
+  unit1Stations: ['station-10', 'station-11', 'station-12'],
+  allStations: [
+    'station-10',
+    'station-11',
+    'station-12',
+    'station-13',
+    'station-14',
+    'station-15',
+  ],
+};
+
+export function getTopologyForCourse(courseId?: string): CurriculumTopology {
+  if (
+    courseId === 'prep3-term2' ||
+    courseId === 'prep3-term2-ict' ||
+    courseId === 'term-2'
+  ) {
+    return PREP3_TERM2_TOPOLOGY;
+  }
+  return PREP3_TERM1_TOPOLOGY;
+}
+
 export interface BadgeDefinition {
   id: BadgeId;
   title: string;
@@ -201,9 +232,10 @@ export function deriveLearnerStats(
     courseId?: string;
   },
 ): LearnerStats {
-  const topology = options?.topology ?? PREP3_TERM1_TOPOLOGY;
-  const todayCairoDate = options?.todayCairoDate ?? getCairoDate();
   const targetCourseId = options?.courseId;
+  const topology =
+    options?.topology ?? getTopologyForCourse(targetCourseId);
+  const todayCairoDate = options?.todayCairoDate ?? getCairoDate();
 
   const filteredEvents = targetCourseId
     ? events.filter((e) => (e.courseId ?? DEFAULT_COURSE_ID) === targetCourseId)
@@ -527,7 +559,12 @@ export async function recordLearningEvent(
   const createdAt = input.createdAt ?? Date.now();
   const cairoDate = input.cairoDate ?? getCairoDate(createdAt);
   const eventId = input.eventId ?? createEventId(input.type);
-  const courseId = input.courseId?.trim() || DEFAULT_COURSE_ID;
+  const courseId =
+    input.courseId?.trim() ||
+    (typeof window !== 'undefined'
+      ? window.localStorage?.getItem('zaty_active_course_id') || undefined
+      : undefined) ||
+    DEFAULT_COURSE_ID;
 
   const existing = await db.learningEvents.where('eventId').equals(eventId).first();
   if (existing) {
@@ -615,6 +652,7 @@ export async function recordQuizSubmitted(
   payload: QuizSubmittedPayload,
   dbOverride?: IctDatabase,
   createdAt?: number,
+  courseId?: string,
 ): Promise<LearningEvent> {
   return recordLearningEvent(
     {
@@ -623,6 +661,7 @@ export async function recordQuizSubmitted(
       stationId,
       payload,
       createdAt,
+      courseId,
     },
     dbOverride,
   );
@@ -634,6 +673,7 @@ export async function recordFlashcardReviewed(
   payload: FlashcardReviewedPayload,
   dbOverride?: IctDatabase,
   createdAt?: number,
+  courseId?: string,
 ): Promise<LearningEvent> {
   return recordLearningEvent(
     {
@@ -642,6 +682,7 @@ export async function recordFlashcardReviewed(
       stationId,
       payload,
       createdAt,
+      courseId,
     },
     dbOverride,
   );
@@ -711,15 +752,28 @@ export async function getLearnerStats(
     courseId?: string;
   },
 ): Promise<LearnerStats> {
+  const effectiveCourseId =
+    options?.courseId ??
+    (typeof window !== 'undefined'
+      ? window.localStorage?.getItem('zaty_active_course_id') || undefined
+      : undefined);
+  const effectiveOptions = {
+    ...options,
+    courseId: effectiveCourseId,
+    topology:
+      options?.topology ??
+      (effectiveCourseId ? getTopologyForCourse(effectiveCourseId) : undefined),
+  };
+
   if (!dbOverride && !isIndexedDbAvailable()) {
-    return deriveLearnerStats([], [], options);
+    return deriveLearnerStats([], [], effectiveOptions);
   }
   const db = resolveDb(dbOverride);
   const [events, friction] = await Promise.all([
     db.learningEvents.toArray(),
     db.frictionEvents.toArray(),
   ]);
-  return deriveLearnerStats(events, friction, options);
+  return deriveLearnerStats(events, friction, effectiveOptions);
 }
 
 export async function clearAllProgress(dbOverride?: IctDatabase): Promise<void> {

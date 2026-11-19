@@ -551,4 +551,99 @@ describe('Core learner journey screens', () => {
     );
     expect(screen.getByRole('button', { name: /تحقق من الحل/ })).toBeEnabled();
   });
+
+  it('switches between courses dynamically and displays the corresponding term units', async () => {
+    const term1Units: UnitPack[] = [
+      {
+        id: 'unit-1',
+        number: 1,
+        title: 'الترم الأول - الوحدة 1',
+        description: 'وحدة الترم الأول',
+        textbookPages: '1–20',
+        stations: [
+          {
+            id: 'station-1',
+            unitId: 'unit-1',
+            number: 1,
+            title: 'محطة الترم الأول',
+            description: 'محطة 1',
+            textbookPages: '1–10',
+            access: 'free',
+            status: 'ready',
+            objectives: ['هدف 1'],
+            lessons: [SAMPLE_LESSON],
+            quizBank: [],
+            flashcards: [],
+            mediaAssets: [],
+          },
+        ],
+      },
+    ];
+
+    const term2Units: UnitPack[] = [
+      {
+        id: 'unit-3',
+        number: 3,
+        title: 'الترم الثاني - الوحدة 3',
+        description: 'وحدة الترم الثاني',
+        textbookPages: '1–30',
+        stations: [
+          {
+            id: 'station-10',
+            unitId: 'unit-3',
+            number: 10,
+            title: 'محطة الترم الثاني',
+            description: 'محطة 10',
+            textbookPages: '1–15',
+            access: 'free',
+            status: 'ready',
+            objectives: ['هدف 10'],
+            lessons: [
+              {
+                ...SAMPLE_LESSON,
+                id: '10.1',
+                stationId: 'station-10',
+                unitId: 'unit-3',
+                title: 'درس الترم الثاني',
+              },
+            ],
+            quizBank: [],
+            flashcards: [],
+            mediaAssets: [],
+          },
+        ],
+      },
+    ];
+
+    const unitsByCourse = {
+      'prep3-term1': term1Units,
+      'prep3-term2': term2Units,
+      'prep3-term2-ict': term2Units,
+    };
+
+    render(
+      <HomeClient units={term1Units} unitsByCourse={unitsByCourse} />,
+    );
+
+    // Initial state: Term 1 units are visible
+    expect(screen.getByText('الترم الأول - الوحدة 1')).toBeInTheDocument();
+    expect(screen.queryByText('الترم الثاني - الوحدة 3')).not.toBeInTheDocument();
+
+    // Open catalog panel
+    fireEvent.click(screen.getByRole('button', { name: /تغيير الصف أو المادة/ }));
+    const term2Card = await screen.findByTestId('catalog-course-prep3-term2-ict');
+    expect(term2Card).toBeInTheDocument();
+
+    // Select Term 2
+    const selectBtn = term2Card.querySelector('button');
+    expect(selectBtn).toBeInTheDocument();
+    fireEvent.click(selectBtn!);
+
+    // Should now show Term 2 units and header
+    await waitFor(() => {
+      expect(screen.getByText('الترم الثاني - الوحدة 3')).toBeInTheDocument();
+    });
+    expect(screen.queryByText('الترم الأول - الوحدة 1')).not.toBeInTheDocument();
+    expect(screen.getByText(/المسار المرئي للترم الثاني/)).toBeInTheDocument();
+  });
 });

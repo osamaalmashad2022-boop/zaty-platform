@@ -20,6 +20,7 @@ import {
   getStationById,
   getStationQuizItems,
   TERM_1_PACK,
+  TERM_2_PACK,
 } from '../index';
 import {
   convertExportToDraft,
@@ -95,10 +96,10 @@ describe('ICT Prep 3 Term 1 curriculum integrity & importer', () => {
 
   it('contains exactly 2 units, 9 stations, 29 micro-lessons, and 295 official quiz items', () => {
     expect(TERM_1_PACK.id).toBe('prep3-term1');
-    const units = getAllUnits();
-    const stations = getAllStations();
-    const lessons = getAllLessons();
-    const allQuiz = getExamQuizPool();
+    const units = getAllUnits('prep3-term1');
+    const stations = getAllStations('prep3-term1');
+    const lessons = getAllLessons('prep3-term1');
+    const allQuiz = getExamQuizPool(undefined, undefined, 'prep3-term1');
 
     expect(units).toHaveLength(2);
     expect(stations).toHaveLength(9);
@@ -165,8 +166,8 @@ describe('ICT Prep 3 Term 1 curriculum integrity & importer', () => {
   });
 
   it('marks all 9 stations and all 29 micro-lessons (1.1..9.3) as ready with 4 rich NotebookLM additionalSources and 10-part template cards', () => {
-    const stations = getAllStations();
-    const lessons = getAllLessons();
+    const stations = getAllStations('prep3-term1');
+    const lessons = getAllLessons('prep3-term1');
     expect(stations).toHaveLength(9);
     expect(lessons).toHaveLength(29);
 
@@ -309,5 +310,55 @@ describe('ICT Prep 3 Term 1 curriculum integrity & importer', () => {
       true,
     );
     expect(getCoursesByFilter('sec-1', 'term-1')[0]?.id).toBe('sec1-term1-ict');
+  });
+
+  it('contains Prep 3 Term 2 with 2 units, 6 stations (10-15), 18 micro-lessons (10.1-15.3), and 100% multimedia coverage', () => {
+    expect(TERM_2_PACK.id).toBe('prep3-term2');
+    const units = getAllUnits('prep3-term2');
+    const stations = getAllStations('prep3-term2');
+    const lessons = getAllLessons('prep3-term2');
+    const allQuiz = getExamQuizPool(undefined, undefined, 'prep3-term2');
+
+    expect(units).toHaveLength(2);
+    expect(stations).toHaveLength(6);
+    expect(lessons).toHaveLength(18);
+    expect(allQuiz).toHaveLength(85);
+
+    for (const station of stations) {
+      expect(station.status).toBe('ready');
+      expect(station.lessons).toHaveLength(3);
+      expect(station.flashcards.length).toBeGreaterThanOrEqual(10);
+      expect(station.quizBank.length).toBeGreaterThanOrEqual(10);
+      expect(station.mediaAssets?.length).toBeGreaterThanOrEqual(6);
+
+      // Verify all declared media assets exist on disk under public/
+      for (const asset of station.mediaAssets ?? []) {
+        const diskPath = path.resolve(process.cwd(), 'public', asset.replace(/^\//, ''));
+        expect(fs.existsSync(diskPath), `Missing media asset on disk: ${diskPath}`).toBe(true);
+      }
+    }
+
+    for (const lesson of lessons) {
+      expect(lesson.status).toBe('ready');
+      expect(getLessonById(lesson.id)?.id).toBe(lesson.id);
+      expect(lesson.cards[0]?.blocks[0]?.type).toBe('heroHook');
+      expect(lesson.cards.length).toBeGreaterThanOrEqual(3);
+      expect(lesson.objectives.length).toBeGreaterThanOrEqual(2);
+      expect(lesson.sources.length).toBeGreaterThanOrEqual(1);
+    }
+  });
+
+  it('resolves all 15 stations and all 47 lessons globally through getLessonById and getStationById', () => {
+    const allStations = getAllStations();
+    const allLessons = getAllLessons();
+    expect(allStations).toHaveLength(15);
+    expect(allLessons).toHaveLength(47);
+
+    for (const st of allStations) {
+      expect(getStationById(st.id)?.id).toBe(st.id);
+    }
+    for (const ls of allLessons) {
+      expect(getLessonById(ls.id)?.id).toBe(ls.id);
+    }
   });
 });

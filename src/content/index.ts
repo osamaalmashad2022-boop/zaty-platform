@@ -50,24 +50,27 @@ export function getTermPack(termId = 'prep3-term1'): TermPack {
   );
 }
 
-export function getAllUnits(): UnitPack[] {
-  return TERM_1_PACK.units;
+export function getAllUnits(termId?: string): UnitPack[] {
+  if (termId) {
+    return getTermPack(termId).units;
+  }
+  return CATALOG_TERMS.flatMap((t) => t.units);
 }
 
 export function getUnitById(unitId: string): UnitPack | undefined {
   return getAllUnits().find((u) => u.id === unitId);
 }
 
-export function getAllStations(): StationPack[] {
-  return getAllUnits().flatMap((u) => u.stations);
+export function getAllStations(termId?: string): StationPack[] {
+  return getAllUnits(termId).flatMap((u) => u.stations);
 }
 
 export function getStationById(stationId: string): StationPack | undefined {
   return getAllStations().find((s) => s.id === stationId);
 }
 
-export function getAllLessons(): LessonPack[] {
-  return getAllStations().flatMap((s) => s.lessons);
+export function getAllLessons(termId?: string): LessonPack[] {
+  return getAllStations(termId).flatMap((s) => s.lessons);
 }
 
 export function getLessonById(lessonId: string): LessonPack | undefined {
@@ -84,7 +87,10 @@ export function getStationLessons(stationId: string): LessonPack[] {
 export function getNextLesson(lessonId: string): LessonPack | undefined {
   const current = getLessonById(lessonId);
   if (!current) return undefined;
-  const lessons = getAllLessons();
+  const currentTerm = CATALOG_TERMS.find((t) =>
+    t.units.some((u) => u.stations.some((s) => s.id === current.stationId)),
+  );
+  const lessons = currentTerm ? getAllLessons(currentTerm.id) : getAllLessons();
   const idx = lessons.findIndex((l) => l.id === current.id);
   if (idx < 0 || idx >= lessons.length - 1) return undefined;
   return lessons[idx + 1];
@@ -93,7 +99,10 @@ export function getNextLesson(lessonId: string): LessonPack | undefined {
 export function getPreviousLesson(lessonId: string): LessonPack | undefined {
   const current = getLessonById(lessonId);
   if (!current) return undefined;
-  const lessons = getAllLessons();
+  const currentTerm = CATALOG_TERMS.find((t) =>
+    t.units.some((u) => u.stations.some((s) => s.id === current.stationId)),
+  );
+  const lessons = currentTerm ? getAllLessons(currentTerm.id) : getAllLessons();
   const idx = lessons.findIndex((l) => l.id === current.id);
   if (idx <= 0) return undefined;
   return lessons[idx - 1];
@@ -110,10 +119,15 @@ export function getLessonQuizItems(lessonId: string): QuizItem[] {
     .filter((q) => q.microLessonId === lessonId || q.microLessonId === normalized);
 }
 
-export function getExamQuizPool(stationIds?: string[], limit?: number): QuizItem[] {
-  const stations = stationIds && stationIds.length > 0
-    ? getAllStations().filter((s) => stationIds.includes(s.id))
-    : getAllStations();
+export function getExamQuizPool(
+  stationIds?: string[],
+  limit?: number,
+  termId?: string,
+): QuizItem[] {
+  const stations =
+    stationIds && stationIds.length > 0
+      ? getAllStations().filter((s) => stationIds.includes(s.id))
+      : getAllStations(termId);
   const items = stations.flatMap((s) => s.quizBank);
   if (typeof limit === 'number' && limit > 0) {
     return items.slice(0, limit);
@@ -121,11 +135,14 @@ export function getExamQuizPool(stationIds?: string[], limit?: number): QuizItem
   return items;
 }
 
-export function getFlashcardsByStation(stationId?: string): FlashcardItem[] {
+export function getFlashcardsByStation(
+  stationId?: string,
+  termId?: string,
+): FlashcardItem[] {
   if (stationId) {
     return getStationById(stationId)?.flashcards ?? [];
   }
-  return getAllStations().flatMap((s) => s.flashcards);
+  return getAllStations(termId).flatMap((s) => s.flashcards);
 }
 
 export function getStationMediaAssets(stationId: string): string[] {

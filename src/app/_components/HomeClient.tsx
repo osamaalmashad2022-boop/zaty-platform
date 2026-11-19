@@ -47,6 +47,7 @@ import type {
 
 export interface HomeClientProps {
   units: UnitPack[];
+  unitsByCourse?: Record<string, UnitPack[]>;
 }
 
 function findResumeTarget(
@@ -124,7 +125,7 @@ function getContentStageLabel(status: StationPack['status']): string | null {
   return 'بانتظار الحزمة';
 }
 
-export function HomeClient({ units }: HomeClientProps) {
+export function HomeClient({ units, unitsByCourse }: HomeClientProps) {
   const [stats, setStats] = useState<LearnerStats>(() =>
     deriveLearnerStats([], []),
   );
@@ -140,6 +141,19 @@ export function HomeClient({ units }: HomeClientProps) {
     () => getCourseManifest(activeCourseId),
     [activeCourseId],
   );
+
+  const currentUnits = useMemo(() => {
+    if (unitsByCourse) {
+      const packId = activeCourse.packId || activeCourseId;
+      return (
+        unitsByCourse[packId] ||
+        unitsByCourse[activeCourseId] ||
+        unitsByCourse['prep3-term1'] ||
+        units
+      );
+    }
+    return units;
+  }, [unitsByCourse, activeCourse, activeCourseId, units]);
 
   const filteredCatalogCourses = useMemo(
     () =>
@@ -183,22 +197,36 @@ export function HomeClient({ units }: HomeClientProps) {
     refreshAuth();
     window.addEventListener('sl-auth-changed', refreshAuth);
 
+    const handleCourseChanged = (e: Event) => {
+      const customEvent = e as CustomEvent<string>;
+      const newCourseId = customEvent.detail || getStoredActiveCourseId();
+      setActiveCourseId(newCourseId);
+      getLearnerStats(undefined, { courseId: newCourseId })
+        .then((s) => !cancelled && setStats(s))
+        .catch(() => undefined);
+    };
+    window.addEventListener('sl-course-changed', handleCourseChanged);
+
     return () => {
       cancelled = true;
       window.removeEventListener('sl-auth-changed', refreshAuth);
+      window.removeEventListener('sl-course-changed', handleCourseChanged);
     };
   }, []);
 
-  const resume = useMemo(() => findResumeTarget(units, stats), [units, stats]);
+  const resume = useMemo(
+    () => findResumeTarget(currentUnits, stats),
+    [currentUnits, stats],
+  );
 
   const totalFlashcardsCount = useMemo(
     () =>
-      units.reduce(
+      currentUnits.reduce(
         (sum, u) =>
           sum + u.stations.reduce((sSum, st) => sSum + st.flashcards.length, 0),
         0,
       ),
-    [units],
+    [currentUnits],
   );
 
   const reviewAgainCount = useMemo(
@@ -211,12 +239,12 @@ export function HomeClient({ units }: HomeClientProps) {
 
   const totalTermLessons = useMemo(
     () =>
-      units.reduce(
+      currentUnits.reduce(
         (sum, u) =>
           sum + u.stations.reduce((sSum, st) => sSum + st.lessons.length, 0),
         0,
       ),
-    [units],
+    [currentUnits],
   );
 
   const dailyGoalMet = stats.todayLessonsCount >= 1;
@@ -225,6 +253,14 @@ export function HomeClient({ units }: HomeClientProps) {
     const persisted = setStoredActiveCourseId(courseId);
     setActiveCourseId(persisted);
     setCatalogOpen(false);
+    getLearnerStats(undefined, { courseId: persisted })
+      .then((nextStats) => setStats(nextStats))
+      .catch(() => undefined);
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(
+        new CustomEvent('sl-course-changed', { detail: persisted }),
+      );
+    }
   };
 
   return (
@@ -469,19 +505,21 @@ export function HomeClient({ units }: HomeClientProps) {
         </Link>
       </section>
 
-      {/* Visual Learning Path: 2 Units / 9 Stations */}
+      {/* Visual Learning Path */}
       <section aria-label="خريطة المسار التعليمي" className="space-y-6">
         <div
           data-testid="home-path-header"
           className="flex items-center justify-between gap-2 min-h-[32px]"
         >
           <h2 className="text-xl font-bold text-[#163A3A]">
-            المسار المرئي للترم الأول (وحدتان · ٩ محطات)
+            {activeCourse.termId === 'term-2'
+              ? 'المسار المرئي للترم الثاني (وحدتان · ٦ محطات)'
+              : 'المسار المرئي للترم الأول (وحدتان · ٩ محطات)'}
           </h2>
         </div>
 
         <div className="space-y-6">
-          {units.map((unit) => {
+          {currentUnits.map((unit) => {
             const unitLessons = unit.stations.flatMap((s) => s.lessons);
             const unitCompleted = unitLessons.filter((l) =>
               stats.completedLessonIds.includes(l.id),

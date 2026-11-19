@@ -148,11 +148,11 @@ export const COURSE_CATALOG: CourseManifest[] = [
     title: 'الكمبيوتر وتكنولوجيا المعلومات — ٣ إعدادي (الترم الثاني)',
     description:
       'استكمال تطبيقات Python وهياكل البيانات والمشروعات الرقمية والذكاء الاصطناعي التطبيقي.',
-    status: 'coming_soon',
+    status: 'available',
     access: 'free',
     stationsCount: 6,
     lessonsCount: 18,
-    quizCount: 180,
+    quizCount: 85,
     hasCodeLab: true,
     packId: 'prep3-term2',
   },

@@ -14,6 +14,11 @@ import {
   TrendingUp,
 } from 'lucide-react';
 import { getLearnerStats, recordQuizSubmitted } from '@/lib/storage/progress';
+import {
+  DEFAULT_COURSE_ID,
+  getCourseManifest,
+  getStoredActiveCourseId,
+} from '@/content/catalog';
 import type { LearnerStats, LessonPack, QuizItem, StationPack } from '@/types/curriculum';
 import { isQuizItemCorrect } from './StationQuizClient';
 
@@ -76,12 +81,51 @@ function formatClock(totalSeconds: number): string {
 }
 
 export function ExamClient({ stations, quizPool }: ExamClientProps) {
+  const [activeCourseId, setActiveCourseId] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      return getStoredActiveCourseId();
+    }
+    return DEFAULT_COURSE_ID;
+  });
+
+  const activeCourse = useMemo(
+    () => getCourseManifest(activeCourseId),
+    [activeCourseId],
+  );
+  const targetPack = activeCourse.packId || activeCourseId;
+
+  const scopedStations = useMemo(() => {
+    const hasTermMeta = stations.some(
+      (s) =>
+        (s as { termId?: string; packId?: string }).termId ||
+        (s as { termId?: string; packId?: string }).packId,
+    );
+    if (!hasTermMeta) return stations;
+    const filtered = stations.filter(
+      (s) =>
+        (s as { termId?: string }).termId === targetPack ||
+        (s as { packId?: string }).packId === targetPack ||
+        (targetPack === 'prep3-term1' && s.number <= 9) ||
+        (targetPack.includes('term2') && s.number >= 10),
+    );
+    return filtered.length > 0 ? filtered : stations;
+  }, [stations, targetPack]);
+
+  const scopedStationIds = useMemo(
+    () => new Set(scopedStations.map((s) => s.id)),
+    [scopedStations],
+  );
+
+  const scopedQuizPool = useMemo(() => {
+    return quizPool.filter((q) => scopedStationIds.has(q.stationId));
+  }, [quizPool, scopedStationIds]);
+
   const availableStationIds = useMemo(
     () =>
-      stations
-        .filter((s) => quizPool.some((q) => q.stationId === s.id))
+      scopedStations
+        .filter((s) => scopedQuizPool.some((q) => q.stationId === s.id))
         .map((s) => s.id),
-    [stations, quizPool],
+    [scopedStations, scopedQuizPool],
   );
 
   const [selectedStations, setSelectedStations] = useState<string[]>(
@@ -117,11 +161,17 @@ export function ExamClient({ stations, quizPool }: ExamClientProps) {
 
   useEffect(() => {
     let cancelled = false;
-    getLearnerStats()
+    const stored = getStoredActiveCourseId();
+    const effectiveCourse = stored || DEFAULT_COURSE_ID;
+    if (stored && stored !== activeCourseId) {
+      setActiveCourseId(stored);
+    }
+
+    getLearnerStats(undefined, { courseId: effectiveCourse })
       .then((loaded) => {
         if (cancelled) return;
         setStats(loaded);
-        const completedStations = stations
+        const completedStations = scopedStations
           .filter((s) => {
             const sum = loaded.stationProgress[s.id];
             return (
@@ -135,14 +185,27 @@ export function ExamClient({ stations, quizPool }: ExamClientProps) {
           .map((s) => s.id);
         if (completedStations.length > 0) {
           setSelectedStations(completedStations);
+        } else {
+          setSelectedStations(availableStationIds);
         }
       })
       .catch(() => undefined);
 
+    const handleCourseChanged = (e: Event) => {
+      const customEvent = e as CustomEvent<string>;
+      const newCourseId = customEvent.detail || getStoredActiveCourseId();
+      setActiveCourseId(newCourseId);
+      getLearnerStats(undefined, { courseId: newCourseId })
+        .then((s) => !cancelled && setStats(s))
+        .catch(() => undefined);
+    };
+    window.addEventListener('sl-course-changed', handleCourseChanged);
+
     return () => {
       cancelled = true;
+      window.removeEventListener('sl-course-changed', handleCourseChanged);
     };
-  }, [stations, availableStationIds]);
+  }, [scopedStations, availableStationIds, activeCourseId]);
 
   const submitExam = useCallback(async () => {
     if (phase !== 'active' || submitting) return;
@@ -174,15 +237,22 @@ export function ExamClient({ stations, quizPool }: ExamClientProps) {
     const percentage = total > 0 ? Math.round((score / total) * 100) : 0;
 
     try {
-      await recordQuizSubmitted('exam', undefined, {
-        mode: 'exam',
-        score,
-        total,
-        percentage,
-        wrongQuestionIds,
-        wrongMicroLessonIds: Array.from(wrongMicroLessonSet),
-        stationBreakdown,
-      });
+      await recordQuizSubmitted(
+        'exam',
+        undefined,
+        {
+          mode: 'exam',
+          score,
+          total,
+          percentage,
+          wrongQuestionIds,
+          wrongMicroLessonIds: Array.from(wrongMicroLessonSet),
+          stationBreakdown,
+        },
+        undefined,
+        undefined,
+        activeCourseId,
+      );
     } catch {
       // Continue cleanly to report
     } finally {
@@ -225,7 +295,7 @@ export function ExamClient({ stations, quizPool }: ExamClientProps) {
   const handleStartExam = () => {
     if (selectedStations.length === 0) return;
     const picked = buildBalancedExamItems(
-      quizPool,
+      scopedQuizPool,
       selectedStations,
       questionLimit,
     );
@@ -318,7 +388,9 @@ export function ExamClient({ stations, quizPool }: ExamClientProps) {
           <div className="space-y-1.5">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E5F1EE] px-3 py-1 text-xs font-bold text-[#006E5A]">
               <ClipboardCheck className="w-3.5 h-3.5" />
-              <span>وضع الامتحان المختلط</span>
+              <span>
+                وضع الامتحان المختلط · {activeCourse.gradeLabel} ({activeCourse.termLabel})
+              </span>
             </span>
             <h1 className="text-2xl font-bold text-[#163A3A]">
               جهّز امتحانك التجريبي
@@ -346,8 +418,8 @@ export function ExamClient({ stations, quizPool }: ExamClientProps) {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-              {stations.map((st) => {
-                const qCount = quizPool.filter(
+              {scopedStations.map((st) => {
+                const qCount = scopedQuizPool.filter(
                   (q) => q.stationId === st.id,
                 ).length;
                 if (qCount === 0) return null;
