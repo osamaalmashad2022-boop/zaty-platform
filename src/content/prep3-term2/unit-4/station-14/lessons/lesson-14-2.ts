@@ -67,6 +67,22 @@ export const LESSON_14_2: LessonPack = {
       requireInteraction: true,
       blocks: [
         {
+          id: '14.2-podcast',
+          type: 'mediaPlayer',
+          data: {
+            kind: 'audio',
+            title: 'بودكاست حواري (٧٦ ثانية): كشف الأجسام وصناديق التحديد Bounding Boxes',
+            src: '/media/podcast-14-2.mp3',
+            vttSrc: '/media/caption-14-2.vtt',
+            durationSec: 76,
+            transcript:
+              'يا صاحبي، في فرق كبير بين إنك تقول "الصورة دي فيها عربية" وبين إنك تحدد مكانها بالمللي!\n' +
+              'تصنيف الصور Classification بيقولك الكائن موجود ولا لأ، لكن كشف الأجسام Object Detection بيرسم صندوق مستطيل ذكي.\n' +
+              'الصندوق ده اسمه Bounding Box بأربع إحداثيات ومعه نسبة تأكد Confidence Score زي Car: 97%!\n' +
+              'ده نفس التكنيك اللي بيفتح موبايلك ببصمة الوش وبيخلي عربيات القيادة الذاتية تشوف المشاة!',
+          },
+        },
+        {
           id: '14.2-compare-tabs',
           type: 'comparisonTabs',
           data: {

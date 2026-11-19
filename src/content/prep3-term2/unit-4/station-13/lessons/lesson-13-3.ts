@@ -67,6 +67,22 @@ export const LESSON_13_3: LessonPack = {
       requireInteraction: true,
       blocks: [
         {
+          id: '13.3-video',
+          type: 'mediaPlayer',
+          data: {
+            kind: 'video',
+            title: 'فيديو وايت بورد (١٢٨ ثانية): تحليل المشاعر في النصوص وبناء مصنف رقمي',
+            src: '/media/video-13-3.mp4',
+            vttSrc: '/media/caption-13-3.vtt',
+            durationSec: 128,
+            transcript:
+              'ازاي الشركات بتعرف رأي ملايين الناس في منتجاتها من غير ما تقرأ كل تعليق بالواحدة يا صاحبي؟!\n' +
+              'السر في تحليل المشاعر Sentiment Analysis! بنعمل قاموسين في بايثون: إيجابي وسلبي.\n' +
+              'بنطرح السلبي من الإيجابي؛ لو الناتج بالموجب يبقى المتعلم مبسوط، ولو بالسالب يبقى زعلان!\n' +
+              'خوارزمية ذكية بتفرز آلاف الآراء والتقييمات في ثانية واحدة بدقة متناهية!',
+          },
+        },
+        {
           id: '13.3-compare-tabs',
           type: 'comparisonTabs',
           data: {

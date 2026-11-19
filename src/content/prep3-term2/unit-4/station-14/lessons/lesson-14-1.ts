@@ -67,6 +67,22 @@ export const LESSON_14_1: LessonPack = {
       requireInteraction: true,
       blocks: [
         {
+          id: '14.1-video',
+          type: 'mediaPlayer',
+          data: {
+            kind: 'video',
+            title: 'فيديو وايت بورد (١٣٧ ثانية): كيف يرى الحاسوب الصور Pixels و RGB والتدرج الرمادي',
+            src: '/media/video-14-1.mp4',
+            vttSrc: '/media/caption-14-1.vtt',
+            durationSec: 137,
+            transcript:
+              'لما تبص على صورة قطة، بتشوف فراء وعيون وجمال.. لكن الكمبيوتر بيشوف إيه يا صاحبي؟!\n' +
+              'مصفوفة أرقام وبس! الصورة متكونة من ملايين النقط الصغيرة اسمها بكسل Pixels.\n' +
+              'في الصور الرمادية، كل بكسل بياخد رقم من 0 للأسود لـ 255 للأبيض، وفي الملونة 3 قنوات أحمر وأخضر وأزرق RGB.\n' +
+              'مزيج الأرقام التلاتة دول هو اللي بيرسم العالم كله قدام عين الكمبيوتر!',
+          },
+        },
+        {
           id: '14.1-compare-tabs',
           type: 'comparisonTabs',
           data: {

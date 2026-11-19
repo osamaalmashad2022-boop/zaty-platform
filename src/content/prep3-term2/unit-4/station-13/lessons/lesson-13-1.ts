@@ -67,6 +67,22 @@ export const LESSON_13_1: LessonPack = {
       requireInteraction: true,
       blocks: [
         {
+          id: '13.1-video',
+          type: 'mediaPlayer',
+          data: {
+            kind: 'video',
+            title: 'فيديو وايت بورد (١٤٤ ثانية): مقدمة معالجة اللغات الطبيعية NLP وتفكيك النصوص',
+            src: '/media/video-13-1.mp4',
+            vttSrc: '/media/caption-13-1.vtt',
+            durationSec: 144,
+            transcript:
+              'عمرك سألت نفسك ازاي الموبايل بيفهم كلامك لما تقول له ابعت رسالة لماما يا صاحبي؟!\n' +
+              'هنا بييجي دور معالجة اللغات الطبيعية NLP! لغة البشر مش مجرد أرقام، دي مليانة مشاعر ومجازات.\n' +
+              'بايثون بتبدأ بأبسط خطوة: دالة split() اللي بتقطع الجملة لكلمات مفردة.\n' +
+              'عشان الكمبيوتر يقدر يحلل كل كلمة لوحدها ويفهم قصدك الحقيقي بمنتهى الذكاء!',
+          },
+        },
+        {
           id: '13.1-compare-tabs',
           type: 'comparisonTabs',
           data: {
