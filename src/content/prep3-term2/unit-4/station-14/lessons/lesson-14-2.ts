@@ -145,7 +145,7 @@ export const LESSON_14_2: LessonPack = {
             prompt: 'أكمل مكان `___` بالشرط المناسب للتحقق من أن إحداثي السينات `x` يقع داخل حدود المستطيل الأفقية بين `x_min` و `x_max`.',
             starterCode: 'x_min, x_max = 10, 50\nx_target = 30\n\nis_inside_x = x_min <= x_target and x_target ___ x_max\nprint("Target in boundary:", is_inside_x)',
             solutionCode: 'x_min, x_max = 10, 50\nx_target = 30\n\nis_inside_x = x_min <= x_target and x_target <= x_max\nprint("Target in boundary:", is_inside_x)',
-            quickChips: ['<=', '>=', '==', '!='],
+            quickChips: ['<=', '>=', '==', '>'],
             checks: [
               {
                 id: 'chk-bbox',
