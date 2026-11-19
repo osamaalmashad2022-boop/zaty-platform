@@ -5,6 +5,7 @@ export interface BlockAttemptPayload {
   isCorrect: boolean;
   attemptNumber: number;
   errorKind?: string;
+  isUngraded?: boolean;
 }
 
 export interface BlockInteractionProps {

@@ -1,4 +1,9 @@
 import type { StationPack } from '@/types/curriculum';
+import { LESSON_15_1 } from './lessons/lesson-15-1';
+import { LESSON_15_2 } from './lessons/lesson-15-2';
+import { LESSON_15_3 } from './lessons/lesson-15-3';
+import { STATION_15_FLASHCARDS } from './flashcards';
+import { STATION_15_QUIZ_BANK } from './quiz-bank';
 
 export const STATION_15_PACK: StationPack = {
   id: 'station-15',
@@ -9,13 +14,13 @@ export const STATION_15_PACK: StationPack = {
     'الحساسات والأجهزة المتصلة (IoT)، ومفاهيم السحابة (Cloud)، والمهارات الرقمية والمسؤولية الأخلاقية.',
   textbookPages: '79–92',
   access: 'free',
-  status: 'draft',
+  status: 'ready',
   objectives: [
     'يعرف إنترنت الأشياء (IoT) ودور الحساسات في المدن الذكية والتحكم الآلي.',
     'يفهم الحوسبة السحابية وفوائدها التخزينية والحسابية والأمان الرقمي.',
     'يحدد المهارات التقنية والأخلاقية المطلوبة لمستقبل العمل والذكاء الاصطناعي.',
   ],
-  lessons: [],
-  quizBank: [],
-  flashcards: [],
+  lessons: [LESSON_15_1, LESSON_15_2, LESSON_15_3],
+  quizBank: STATION_15_QUIZ_BANK,
+  flashcards: STATION_15_FLASHCARDS,
 };
