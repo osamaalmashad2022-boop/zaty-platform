@@ -72,6 +72,23 @@ export const LESSON_5_2: LessonPack = {
       requireInteraction: true,
       blocks: [
         {
+          id: '5.2-video',
+          type: 'mediaPlayer',
+          data: {
+            kind: 'video',
+            title: 'فيديو وايت بورد (١٥٢ ثانية): درع الحماية try / except والتقاط أخطاء التشغيل',
+            src: '/media/video-5-2.mp4',
+            vttSrc: '/media/caption-5-2.vtt',
+            durationSec: 152,
+            aspect: 'landscape',
+            transcript:
+              'شايف الدرع ده يا صاحبي؟ ده حصن try و except!\n' +
+              'في البرمجة، لو سألت المستخدم عن عمره وكتبلك كلمة بدل رقم، الكود بينهار فوراً بـ ValueError! ولو قسم على صفر، ينهار بـ ZeroDivisionError!\n' +
+              'مع درع try، الكود بيقول لبايثون: \'أنا هجرّب أنفّذ\'، ولو حصلت فرقعة أو خطأ في السكة، باب except بيتفتح بهدوء ويصطاد الخطأ، ويقول للمستخدم بلطافة: \'يا صديقي اكتب رقم صحيح\' من غير ما البرنامج يقفل في وشه!\n' +
+              'درع الأمان اللي بيحوّل كودك من كود هش لكود محترف بيصمد ضد أي مفاجأة!',
+          },
+        },
+        {
           id: '5.2-sort',
           type: 'sortingBuckets',
           data: {

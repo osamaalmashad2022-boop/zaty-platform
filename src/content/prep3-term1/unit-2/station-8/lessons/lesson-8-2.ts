@@ -35,7 +35,7 @@ export const LESSON_8_2: LessonPack = {
             image: '/media/robot-shield.png',
             starterChallenge: {
               prompt:
-                'تحدّي البداية: للحماية من إدمان الألعاب لمن هم دون ١٨ سنة، أي قرار هو الأنجح واقعيًا؟',
+                'للحماية من إدمان الألعاب لمن هم دون ١٨ سنة، أي قرار هو الأنجح واقعيًا؟',
               options: [
                 {
                   id: 'ban',

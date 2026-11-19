@@ -67,6 +67,23 @@ export const LESSON_3_3: LessonPack = {
       requireInteraction: true,
       blocks: [
         {
+          id: '3.3-video',
+          type: 'mediaPlayer',
+          data: {
+            kind: 'video',
+            title: 'فيديو وايت بورد (١٠٠ ثانية): سر القابلية للتعديل — الصندوق الزجاجي مقابل الصندوق الخشبي',
+            src: '/media/video-3-3.mp4',
+            vttSrc: '/media/caption-3-3.vtt',
+            durationSec: 100,
+            aspect: 'landscape',
+            transcript:
+              'شايف الصندوقين دول يا صاحبي؟ الصندوق المقفول ده هو السلسلة النصية String، زي لوح زجاجي منحوت عليه كلمة \'cat\'..\n' +
+              'لو حاولت تعدل أول حرف وتقول text[0] = \'b\'، بايثون هيصرخ في وشك بـ TypeError! لأن السلاسل في بايثون Immutable، يعني غير قابلة للتعديل.\n' +
+              'أما الصندوق المفتوح ده فهو القائمة List، زي درج مكعبات.. تقدر تشيل مكعب \'c\' وتحط مكعب \'b\' بكل سلاسة وتقول letters[0] = \'b\'!\n' +
+              'افتكر دايماً: السلاسل ثابتة ومحفوظة، والقوائم مرنة وقابلة للتعديل!',
+          },
+        },
+        {
           id: '3.3-tabs',
           type: 'comparisonTabs',
           data: {
