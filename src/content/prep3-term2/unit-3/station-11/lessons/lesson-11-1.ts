@@ -67,6 +67,22 @@ export const LESSON_11_1: LessonPack = {
       requireInteraction: true,
       blocks: [
         {
+          id: '11.1-video',
+          type: 'mediaPlayer',
+          data: {
+            kind: 'video',
+            title: 'فيديو وايت بورد (١٢٩ ثانية): فتح وقراءة الملفات النصية وتفادي FileNotFoundError',
+            src: '/media/video-11-1.mp4',
+            vttSrc: '/media/caption-11-1.vtt',
+            durationSec: 129,
+            transcript:
+              'عايز تقرأ ملف نصي في بايثون يا صاحبي؟ دالة open() هي المفتاح السحري والوضع الافتراضي بتاعها هو القراءة \'r\'.\n' +
+              'لو الملف موجود، دالة read() هتجيبلك محتواه كله دفعة واحدة، أو readline() تقرأ سطر بسطر.\n' +
+              'بس خلي بالك.. لو طلبت ملف مش موجود على القرص الصلب، البرنامج هيصرخ بـ FileNotFoundError!\n' +
+              'وأهم نصيحة لمبرمج شاطر: متنساش تقفل الملف بـ close() عشان تفضي الرامات وتحمي موارد نظامك!',
+          },
+        },
+        {
           id: '11.1-compare-tabs',
           type: 'comparisonTabs',
           data: {

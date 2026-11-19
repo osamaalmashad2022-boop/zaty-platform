@@ -28,6 +28,6 @@ _____________________________________________________________________/
 # Sentry Config File
 .env.sentry-build-plugin
 
-# Scratch directory
+# Scratch & temporary downloads
 scratch/
 scratch_downloads/

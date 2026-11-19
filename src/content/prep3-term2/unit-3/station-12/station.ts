@@ -23,4 +23,12 @@ export const STATION_12_PACK: StationPack = {
   lessons: [LESSON_12_1, LESSON_12_2, LESSON_12_3],
   quizBank: STATION_12_QUIZ_BANK,
   flashcards: STATION_12_FLASHCARDS,
+  mediaAssets: [
+    '/media/video-12-1.mp4',
+    '/media/caption-12-1.vtt',
+    '/media/podcast-12-2.mp3',
+    '/media/caption-12-2.vtt',
+    '/media/video-12-3.mp4',
+    '/media/caption-12-3.vtt',
+  ],
 };
