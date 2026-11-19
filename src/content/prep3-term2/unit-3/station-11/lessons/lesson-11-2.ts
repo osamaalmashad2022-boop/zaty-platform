@@ -127,7 +127,7 @@ export const LESSON_11_2: LessonPack = {
                 id: 'chk-newline',
                 label: 'إضافة سطر جديد بنجاح',
                 stdin: [],
-                expectedOutputRegex: 'Line 1:Ahmad\\s+Line 2',
+                expectedOutputRegex: 'Line 1:Ahmad\\nLine 2',
               },
             ],
             hint: 'رمز السطر الجديد في لغة بايثون هو "\\n".',

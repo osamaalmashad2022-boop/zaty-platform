@@ -127,7 +127,7 @@ export const LESSON_11_1: LessonPack = {
                 id: 'chk-clean',
                 label: 'تنظيف أسطر النصوص بنجاح',
                 stdin: [],
-                expectedOutputRegex: 'تمت قراءة: Math: 95\\s+تمت قراءة: Science: 90',
+                expectedOutputRegex: 'تمت قراءة: Math: 95\\nتمت قراءة: Science: 90',
               },
             ],
             hint: 'دالة strip() تزيل فواصل الأسطر الزائدة \\n والمسافات من البداية والنهاية.',
