@@ -23,5 +23,11 @@ export const STATION_5_PACK: StationPack = {
   lessons: [LESSON_5_1, LESSON_5_2, LESSON_5_3],
   quizBank: STATION_5_QUIZ_BANK,
   flashcards: STATION_5_FLASHCARDS,
-  mediaAssets: ['/media/robot-shield.png'],
+  mediaAssets: [
+    '/media/robot-shield.png',
+    '/media/video-5-2.mp4',
+    '/media/caption-5-2.vtt',
+    '/media/podcast-5-3.mp3',
+    '/media/caption-5-3.vtt',
+  ],
 };
