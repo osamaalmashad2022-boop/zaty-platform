@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import posthog from 'posthog-js';
 import {
   Home,
   Layers,
@@ -80,6 +81,18 @@ export function AppShell({ children, title, backHref, backLabel }: AppShellProps
             setCloudUser((prev) =>
               prev?.id === user?.id && prev?.tier === user?.tier ? prev : user,
             );
+
+            if (
+              user &&
+              process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN &&
+              process.env.NEXT_PUBLIC_POSTHOG_HOST
+            ) {
+              posthog.identify(user.id, {
+                email: user.email,
+                name: user.name,
+                tier: user.tier,
+              });
+            }
           }
         })
         .catch(() => undefined);

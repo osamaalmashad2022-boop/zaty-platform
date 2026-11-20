@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
+import posthog from 'posthog-js';
 import {
   Check,
   Layers,
@@ -206,6 +207,22 @@ export function ReviewClient({ flashcards, stations }: ReviewClientProps) {
         undefined,
         activeCourseId,
       );
+      if (
+        process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN &&
+        process.env.NEXT_PUBLIC_POSTHOG_HOST
+      ) {
+        try {
+          posthog.capture('flashcard_reviewed', {
+            course_id: activeCourseId,
+            station_id: currentCard.stationId,
+            flashcard_id: currentCard.id,
+            result,
+            review_count: updatedStates[currentCard.id].reviewCount,
+          });
+        } catch {
+          // Analytics must not interrupt flashcard review.
+        }
+      }
     } catch {
       // Non-fatal if IndexedDB unavailable
     }

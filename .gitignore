@@ -31,3 +31,4 @@ _____________________________________________________________________/
 # Scratch & temporary downloads
 scratch/
 scratch_downloads/
+.env.local

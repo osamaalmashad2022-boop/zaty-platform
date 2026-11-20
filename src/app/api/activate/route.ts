@@ -1,5 +1,10 @@
-import { NextResponse } from 'next/server';
+import { SeverityNumber } from '@opentelemetry/api-logs';
+import { after, NextResponse } from 'next/server';
 import { getAuthenticatedUserFromRequest } from '@/lib/auth/server';
+import {
+  emitPostHogLog,
+  flushPostHogLogs,
+} from '@/lib/posthog-logs';
 import { redeemUserActivationCode } from '@/lib/sync/server';
 
 export const dynamic = 'force-dynamic';
@@ -24,6 +29,14 @@ export async function POST(request: Request) {
   }
 
   const result = await redeemUserActivationCode(auth.user.id, body?.code);
+  emitPostHogLog('activation code processed', SeverityNumber.INFO, {
+    endpoint: '/api/activate',
+    outcome: result.ok ? 'succeeded' : 'rejected',
+    status_code: result.status,
+    already_active: result.alreadyActive ?? false,
+  });
+  after(() => flushPostHogLogs().catch(() => {}));
+
   return NextResponse.json(
     {
       ok: result.ok,

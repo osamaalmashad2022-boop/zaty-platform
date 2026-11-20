@@ -3,6 +3,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import * as Sentry from '@sentry/nextjs';
+import posthog from 'posthog-js';
 import {
   ArrowLeft,
   ArrowRight,
@@ -222,6 +223,21 @@ export function LessonPlayerClient({
         durationSec,
         xpAwarded: 50,
       });
+      if (
+        process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN &&
+        process.env.NEXT_PUBLIC_POSTHOG_HOST
+      ) {
+        try {
+          posthog.capture('lesson_completed', {
+            lesson_id: lesson.id,
+            station_id: lesson.stationId,
+            duration_sec: durationSec,
+            xp_awarded: 50,
+          });
+        } catch {
+          // Analytics must not interrupt lesson completion.
+        }
+      }
       const updated = await getLearnerStats();
       setStats(updated);
       setCompleted(true);
