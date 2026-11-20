@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState } from 'react';
 import Link from 'next/link';
+import posthog from 'posthog-js';
 import {
   ArrowLeft,
   ArrowRight,
@@ -161,6 +162,23 @@ export function StationQuizClient({
     } catch {
       // Allow UI to display results even if storage is unavailable
     } finally {
+      if (
+        process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN &&
+        process.env.NEXT_PUBLIC_POSTHOG_HOST
+      ) {
+        try {
+          posthog.capture('station_quiz_submitted', {
+            station_id: stationId,
+            quiz_mode: mode,
+            score,
+            total_questions: total,
+            percentage,
+            unanswered_questions: total - answeredCount,
+          });
+        } catch {
+          // Analytics must not interrupt quiz submission.
+        }
+      }
       setSubmitted(true);
       setSubmitting(false);
       if (typeof window !== 'undefined') {

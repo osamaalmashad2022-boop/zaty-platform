@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import posthog from 'posthog-js';
 import {
   ArrowLeft,
   BookOpen,
@@ -251,6 +252,18 @@ export function HomeClient({ units, unitsByCourse }: HomeClientProps) {
 
   const handleSelectCourse = (courseId: string) => {
     const persisted = setStoredActiveCourseId(courseId);
+    if (
+      process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN &&
+      process.env.NEXT_PUBLIC_POSTHOG_HOST
+    ) {
+      try {
+        posthog.capture('course_selected', {
+          course_id: persisted,
+        });
+      } catch {
+        // Analytics must not interrupt course selection.
+      }
+    }
     setActiveCourseId(persisted);
     setCatalogOpen(false);
     getLearnerStats(undefined, { courseId: persisted })

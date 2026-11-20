@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import posthog from 'posthog-js';
 import {
   AlertTriangle,
   ArrowLeft,
@@ -419,6 +420,12 @@ export function ProgressClient({ stations }: ProgressClientProps) {
       });
       return;
     }
+    if (
+      process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN &&
+      process.env.NEXT_PUBLIC_POSTHOG_HOST
+    ) {
+      posthog.reset();
+    }
     setCloudUser(null);
     setDeleteConfirmOpen(false);
     notifyAuthChanged();
@@ -440,6 +447,12 @@ export function ProgressClient({ stations }: ProgressClientProps) {
           text: res.error ?? 'تعذّر حذف الحساب حاليًا.',
         });
         return;
+      }
+      if (
+        process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN &&
+        process.env.NEXT_PUBLIC_POSTHOG_HOST
+      ) {
+        posthog.reset();
       }
       setCloudUser(null);
       setDeleteConfirmOpen(false);
@@ -486,6 +499,19 @@ export function ProgressClient({ stations }: ProgressClientProps) {
         setCloudUser({ ...cloudUser, tier: res.tier ?? 'premium' });
       }
       setActivationInput('');
+      if (
+        process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN &&
+        process.env.NEXT_PUBLIC_POSTHOG_HOST
+      ) {
+        try {
+          posthog.capture('account_activation_redeemed', {
+            tier: res.tier ?? res.user?.tier ?? 'premium',
+            already_active: res.alreadyActive ?? false,
+          });
+        } catch {
+          // Analytics must not interrupt account activation.
+        }
+      }
       notifyAuthChanged();
       setActivationFeedback({
         kind: 'success',

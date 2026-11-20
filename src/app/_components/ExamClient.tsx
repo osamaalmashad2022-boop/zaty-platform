@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import posthog from 'posthog-js';
 import {
   ArrowLeft,
   CheckCircle2,
@@ -256,13 +257,32 @@ export function ExamClient({ stations, quizPool }: ExamClientProps) {
     } catch {
       // Continue cleanly to report
     } finally {
+      if (
+        process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN &&
+        process.env.NEXT_PUBLIC_POSTHOG_HOST
+      ) {
+        try {
+          posthog.capture('exam_submitted', {
+            course_id: activeCourseId,
+            score,
+            total_questions: total,
+            percentage,
+            unanswered_questions: examItems.filter(
+              (item) => (answers[item.id]?.length ?? 0) === 0,
+            ).length,
+            station_count: Object.keys(stationBreakdown).length,
+          });
+        } catch {
+          // Analytics must not interrupt exam submission.
+        }
+      }
       setPhase('report');
       setSubmitting(false);
       if (typeof window !== 'undefined') {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     }
-  }, [phase, submitting, examItems, answers]);
+  }, [phase, submitting, examItems, answers, activeCourseId]);
 
   useEffect(() => {
     if (phase !== 'active') return;
@@ -300,6 +320,22 @@ export function ExamClient({ stations, quizPool }: ExamClientProps) {
       questionLimit,
     );
     if (picked.length === 0) return;
+    if (
+      process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN &&
+      process.env.NEXT_PUBLIC_POSTHOG_HOST
+    ) {
+      try {
+        posthog.capture('exam_started', {
+          course_id: activeCourseId,
+          station_count: selectedStations.length,
+          question_limit: questionLimit,
+          total_questions: picked.length,
+          duration_minutes: durationMinutes,
+        });
+      } catch {
+        // Analytics must not interrupt starting an exam.
+      }
+    }
     setExamItems(picked);
     setAnswers({});
     setSecondsLeft(durationMinutes * 60);

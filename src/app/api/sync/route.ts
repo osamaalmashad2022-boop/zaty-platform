@@ -1,5 +1,10 @@
-import { NextResponse } from 'next/server';
+import { SeverityNumber } from '@opentelemetry/api-logs';
+import { after, NextResponse } from 'next/server';
 import { getAuthenticatedUserFromRequest } from '@/lib/auth/server';
+import {
+  emitPostHogLog,
+  flushPostHogLogs,
+} from '@/lib/posthog-logs';
 import { syncUserProgress, type SyncRequestPayload } from '@/lib/sync/server';
 
 export const dynamic = 'force-dynamic';
@@ -27,5 +32,12 @@ export async function POST(request: Request) {
   }
 
   const result = await syncUserProgress(auth.user.id, body);
+  emitPostHogLog('cloud progress synchronized', SeverityNumber.INFO, {
+    endpoint: '/api/sync',
+    outcome: result.ok ? 'succeeded' : 'rejected',
+    status_code: 200,
+  });
+  after(() => flushPostHogLogs().catch(() => {}));
+
   return NextResponse.json(result, { status: 200 });
 }
