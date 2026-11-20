@@ -2,7 +2,7 @@
 
 import posthog from 'posthog-js';
 import { PostHogProvider as PHProvider } from 'posthog-js/react';
-import { useEffect, Suspense } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 
 function PostHogPageView() {
@@ -26,27 +26,38 @@ function PostHogPageView() {
 }
 
 export function PostHogProvider({ children }: { children: React.ReactNode }) {
+  const [initialized, setInitialized] = useState(false);
+
   useEffect(() => {
     const posthogKey = process.env.NEXT_PUBLIC_POSTHOG_KEY;
     const posthogHost =
       process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com';
 
-    if (typeof window !== 'undefined' && posthogKey && !posthog.__loaded) {
-      posthog.init(posthogKey, {
-        api_host: posthogHost,
-        capture_pageview: false, // Handled by PostHogPageView for client route changes
-        capture_pageleave: true,
-        autocapture: true,
-        person_profiles: 'identified_only',
-      });
+    if (typeof window !== 'undefined' && posthogKey) {
+      if (!posthog.__loaded) {
+        posthog.init(posthogKey, {
+          api_host: posthogHost,
+          capture_pageview: false, // Handled by PostHogPageView for client route changes
+          capture_pageleave: true,
+          autocapture: true,
+          person_profiles: 'identified_only',
+          loaded: () => {
+            setInitialized(true);
+          },
+        });
+      } else {
+        setInitialized(true);
+      }
     }
   }, []);
 
   return (
     <PHProvider client={posthog}>
-      <Suspense fallback={null}>
-        <PostHogPageView />
-      </Suspense>
+      {initialized && (
+        <Suspense fallback={null}>
+          <PostHogPageView />
+        </Suspense>
+      )}
       {children}
     </PHProvider>
   );

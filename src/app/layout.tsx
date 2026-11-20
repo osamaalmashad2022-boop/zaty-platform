@@ -51,12 +51,11 @@ export const metadata: Metadata = {
     telephone: false,
   },
   alternates: {
-    canonical: SITE_URL,
+    canonical: './',
   },
   openGraph: {
     type: 'website',
     locale: SITE_LOCALE,
-    url: SITE_URL,
     siteName: SITE_NAME,
     title: SITE_TITLE_DEFAULT,
     description: SITE_DESCRIPTION,
