@@ -146,7 +146,7 @@ describe('ICT Prep 3 Term 1 curriculum integrity & importer', () => {
       expect(blocks.some((b) => b.type === 'mediaPlayer' && b.data.kind === 'audio')).toBe(true);
       expect(
         blocks.some((b) => b.type === 'imageBlock') ||
-          Boolean(lesson.cards[0]?.blocks[0]?.type === 'heroHook' && lesson.cards[0].blocks[0].data.image),
+        Boolean(lesson.cards[0]?.blocks[0]?.type === 'heroHook' && lesson.cards[0].blocks[0].data.image),
       ).toBe(true);
       expect(
         blocks.some((b) => b.type === 'flipCards' || b.type === 'comparisonTabs'),

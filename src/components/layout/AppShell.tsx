@@ -15,6 +15,7 @@ import {
   Crown,
 } from 'lucide-react';
 import { fetchCurrentUser, type CloudUser } from '@/lib/sync/cloudSync';
+import { ZatyEmblem } from '@/components/brand/ZatyEmblem';
 
 interface NavItem {
   href: string;
@@ -144,14 +145,23 @@ export function AppShell({ children, title, backHref, backLabel }: AppShellProps
             ) : (
               <Link
                 href="/"
-                className="flex items-center gap-3 min-h-[48px] focus-visible:rounded-lg"
+                className="flex items-center gap-3 min-h-[48px] focus-visible:rounded-lg group"
               >
-                <span className="w-10 h-10 rounded-xl bg-[#006E5A] text-white flex items-center justify-center shadow-sm shrink-0">
-                  <Code2 className="w-5 h-5" />
-                </span>
+                <div className="shrink-0 transition-transform group-hover:scale-105 active:scale-95">
+                  <ZatyEmblem size={40} withSparkAnimation />
+                </div>
                 <span className="flex flex-col leading-tight">
-                  <span className="text-base sm:text-lg font-bold text-[#163A3A]">
-                    {title ?? 'ذاتي'}
+                  <span className="flex items-center gap-1.5 text-base sm:text-lg font-bold text-[#163A3A] group-hover:text-[#006E5A] transition-colors">
+                    {title ? (
+                      title
+                    ) : (
+                      <>
+                        <span>ذاتي</span>
+                        <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-[#E5F1EE] text-[#006E5A] uppercase tracking-wider">
+                          Zaty
+                        </span>
+                      </>
+                    )}
                   </span>
                   <span className="text-xs text-[#3B5A58]">
                     منصتك للتعلّم الذاتي · ٣ إعدادي

@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" fill="none">
+  <defs>
+    <!-- Master Calligraphic Gradient -->
+    <linearGradient id="c3-grad" x1="50" y1="150" x2="140" y2="50" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#005B4A" />
+      <stop offset="40%" stop-color="#008A72" />
+      <stop offset="75%" stop-color="#00D2B2" />
+      <stop offset="100%" stop-color="#34F5D7" />
+    </linearGradient>
+
+    <!-- Star Core -->
+    <radialGradient id="c3-spark" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFF9DB" />
+      <stop offset="30%" stop-color="#FFD13B" />
+      <stop offset="70%" stop-color="#FF7A59" />
+      <stop offset="100%" stop-color="#E13552" />
+    </radialGradient>
+
+    <filter id="c3-shadow" x="-20%" y="-15%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#00352B" flood-opacity="0.32" />
+    </filter>
+  </defs>
+
+  <circle cx="100" cy="105" r="75" fill="#00D2B2" fill-opacity="0.08" />
+
+  <!-- The Architectural 'ذ' Monogram -->
+  <g filter="url(#c3-shadow)">
+    <!-- Single Pure Elegant Sweep:
+         Starts from bottom horizon (x=50, y=142),
+         extends smoothly to corner (x=136, y=142),
+         rounds with golden radius,
+         and ascents gracefully to apex (x=120, y=62) -->
+    <path d="M 54 142 L 132 142 C 144 142 149 135 144 124 L 118 64" 
+          stroke="url(#c3-grad)" 
+          stroke-width="22" 
+          stroke-linecap="round" 
+          stroke-linejoin="round" />
+
+    <!-- Pure inner sheen line -->
+    <path d="M 64 142 L 130 142 C 137 142 140 137 137 129 L 116 75" 
+          stroke="#FFFFFF" 
+          stroke-width="3" 
+          stroke-linecap="round" 
+          stroke-linejoin="round" 
+          stroke-opacity="0.5" />
+  </g>
+
+  <!-- The AI Spark ✦ Dot of the 'ذ' -->
+  <!-- Positioned at optimal calligraphic balance (x=114, y=32) -->
+  <g transform="translate(114, 32)">
+    <path d="M 0 -17 C 1.2 -4.5 4.5 -1.2 17 0 C 4.5 1.2 1.2 4.5 0 17 C -1.2 4.5 -4.5 1.2 -17 0 C -4.5 -1.2 -1.2 -4.5 0 -17 Z" 
+          fill="url(#c3-spark)" />
+    <circle cx="0" cy="0" r="3.5" fill="#FFFFFF" />
+  </g>
+</svg>

@@ -1,0 +1,188 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" fill="none">
+  <defs>
+    <!-- Cinematic Dark Emerald Background -->
+    <linearGradient id="og2-bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#041B18" />
+      <stop offset="35%" stop-color="#082A25" />
+      <stop offset="75%" stop-color="#0D3B34" />
+      <stop offset="100%" stop-color="#05201C" />
+    </linearGradient>
+
+    <radialGradient id="og2-glow-mint" cx="82%" cy="32%" r="55%">
+      <stop offset="0%" stop-color="#00E5C0" stop-opacity="0.32" />
+      <stop offset="50%" stop-color="#006E5A" stop-opacity="0.08" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+    </radialGradient>
+
+    <radialGradient id="og2-glow-coral" cx="18%" cy="75%" r="48%">
+      <stop offset="0%" stop-color="#FF7A59" stop-opacity="0.22" />
+      <stop offset="60%" stop-color="#E13552" stop-opacity="0.04" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Master Gradients for Hero Emblem -->
+    <linearGradient id="og2-emblem-primary" x1="145" y1="45" x2="45" y2="165" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#67FCE4" />
+      <stop offset="25%" stop-color="#00E5C0" />
+      <stop offset="70%" stop-color="#008C73" />
+      <stop offset="100%" stop-color="#03483B" />
+    </linearGradient>
+
+    <linearGradient id="og2-emblem-base" x1="150" y1="130" x2="35" y2="155" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00E5C0" />
+      <stop offset="50%" stop-color="#00806A" />
+      <stop offset="100%" stop-color="#043C31" />
+    </linearGradient>
+
+    <radialGradient id="og2-spark-core" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFFDF5" />
+      <stop offset="25%" stop-color="#FFD54F" />
+      <stop offset="65%" stop-color="#FF6B4A" />
+      <stop offset="100%" stop-color="#E13552" />
+    </radialGradient>
+
+    <filter id="og2-hero-shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="24" stdDeviation="30" flood-color="#001410" flood-opacity="0.75" />
+    </filter>
+
+    <filter id="og2-spark-bloom" x="-60%" y="-60%" width="220%" height="220%">
+      <feDropShadow dx="0" dy="0" stdDeviation="16" flood-color="#FF7A59" flood-opacity="0.9" />
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#FFD54F" flood-opacity="0.95" />
+    </filter>
+  </defs>
+
+  <!-- Background Canvas -->
+  <rect width="1200" height="630" fill="url(#og2-bg)" />
+  <rect width="1200" height="630" fill="url(#og2-glow-mint)" />
+  <rect width="1200" height="630" fill="url(#og2-glow-coral)" />
+
+  <!-- Geometric Subtle Grid Mesh -->
+  <g opacity="0.05" stroke="#00E5C0" stroke-width="1.2">
+    <line x1="0" y1="126" x2="1200" y2="126" />
+    <line x1="0" y1="252" x2="1200" y2="252" />
+    <line x1="0" y1="378" x2="1200" y2="378" />
+    <line x1="0" y1="504" x2="1200" y2="504" />
+    <line x1="240" y1="0" x2="240" y2="630" />
+    <line x1="480" y1="0" x2="480" y2="630" />
+    <line x1="720" y1="0" x2="720" y2="630" />
+    <line x1="960" y1="0" x2="960" y2="630" />
+  </g>
+
+  <!-- Right Side: Hero Sculptural Emblem -->
+  <g transform="translate(860, 95) scale(2.05)" filter="url(#og2-hero-shadow)">
+    <!-- Ambient Behind Halo -->
+    <circle cx="106" cy="110" r="85" fill="#00E5C0" fill-opacity="0.12" />
+
+    <!-- Horizon Base -->
+    <path d="M 148 132 C 142 142 130 148 116 148 L 52 148 C 40 148 34 139 42 132 C 50 125 64 126 78 126 L 132 126 C 142 126 151 127 148 132 Z"
+          fill="url(#og2-emblem-base)" />
+
+    <!-- Main Ascender Ribbon -->
+    <path d="M 132 54 C 141 54 148 62 146 73 C 143 89 135 110 120 128 C 114 135 106 142 96 146 L 58 146 C 46 146 44 135 52 127 C 66 113 96 83 118 63 C 123 58 127 54 132 54 Z"
+          fill="url(#og2-emblem-primary)" />
+
+    <!-- Sheen Ridge -->
+    <path d="M 130 57 C 134 57 137 60 137 65 C 134 82 124 105 108 124 C 98 136 84 142 66 144"
+          stroke="#FFFFFF" stroke-opacity="0.85" stroke-width="3.5" stroke-linecap="round" />
+
+    <!-- AI Spark with Celestial Flare -->
+    <g transform="translate(128, 30)">
+      <circle cx="0" cy="0" r="28" fill="#FF7A59" fill-opacity="0.3" />
+      <g filter="url(#og2-spark-bloom)">
+        <path d="M 0 -22 C 1.8 -7 7 -1.8 22 0 C 7 1.8 1.8 7 0 22 C -1.8 7 -7 1.8 -22 0 C -7 -1.8 -1.8 -7 0 -22 Z"
+              fill="url(#og2-spark-core)" />
+        <circle cx="0" cy="0" r="4.5" fill="#FFFFFF" />
+      </g>
+    </g>
+  </g>
+
+  <!-- Left Side: Content & Typography (Safe Zone 600x600 Centered) -->
+  
+  <!-- Audience / Level Pill -->
+  <g transform="translate(790, 75)">
+    <rect x="-370" y="0" width="370" height="44" rx="22" fill="#00E5C0" fill-opacity="0.14" stroke="#00E5C0" stroke-opacity="0.35" />
+    <circle cx="-20" cy="22" r="5" fill="#00E5C0" />
+    <text x="-36" y="29" 
+          font-family="'IBM Plex Sans Arabic', 'Segoe UI', Tahoma, sans-serif" 
+          font-size="17" 
+          font-weight="700" 
+          text-anchor="end" 
+          fill="#67FCE4">تعلّم ذاتي تفاعلي · الصف الثالث الإعدادي</text>
+  </g>
+
+  <!-- Headline: Single "ذاتي" without duplication -->
+  <text x="790" y="195" 
+        font-family="'IBM Plex Sans Arabic', 'Segoe UI', Tahoma, sans-serif" 
+        font-size="58" 
+        font-weight="800" 
+        text-anchor="end" 
+        fill="#FFFFFF" 
+        letter-spacing="-1">
+    منصة ذاتي <tspan fill="#00E5C0">(Zaty)</tspan>
+  </text>
+
+  <text x="790" y="260" 
+        font-family="'IBM Plex Sans Arabic', 'Segoe UI', Tahoma, sans-serif" 
+        font-size="34" 
+        font-weight="700" 
+        text-anchor="end" 
+        fill="#E5F5F2">
+    تعلّم البرمجة والذكاء الاصطناعي مجاناً وبدون إنترنت
+  </text>
+
+  <text x="790" y="315" 
+        font-family="'IBM Plex Sans Arabic', 'Segoe UI', Tahoma, sans-serif" 
+        font-size="21" 
+        font-weight="400" 
+        text-anchor="end" 
+        fill="#A6DDD4">
+    محرر بايثون حقيقي في المتصفح، محطات تدريب ذكية، وتحديات تفاعلية مصممة لنجاحك.
+  </text>
+
+  <!-- Feature Pills -->
+  <g transform="translate(790, 375)">
+    <g transform="translate(0, 0)">
+      <rect x="-230" y="0" width="230" height="52" rx="14" fill="#FFFFFF" fill-opacity="0.08" stroke="#FFFFFF" stroke-opacity="0.15" />
+      <text x="-30" y="33" 
+            font-family="'IBM Plex Sans Arabic', 'Segoe UI', Tahoma, sans-serif" 
+            font-size="17" font-weight="700" text-anchor="end" fill="#FFFFFF">🐍 كود بايثون أوفلاين</text>
+    </g>
+
+    <g transform="translate(-250, 0)">
+      <rect x="-230" y="0" width="230" height="52" rx="14" fill="#FFFFFF" fill-opacity="0.08" stroke="#FFFFFF" stroke-opacity="0.15" />
+      <text x="-30" y="33" 
+            font-family="'IBM Plex Sans Arabic', 'Segoe UI', Tahoma, sans-serif" 
+            font-size="17" font-weight="700" text-anchor="end" fill="#FFFFFF">⚡ ذكاء اصطناعي عملي</text>
+    </g>
+
+    <g transform="translate(-500, 0)">
+      <rect x="-220" y="0" width="220" height="52" rx="14" fill="#FFFFFF" fill-opacity="0.08" stroke="#FFFFFF" stroke-opacity="0.15" />
+      <text x="-30" y="33" 
+            font-family="'IBM Plex Sans Arabic', 'Segoe UI', Tahoma, sans-serif" 
+            font-size="17" font-weight="700" text-anchor="end" fill="#FFFFFF">📱 يعمل بدون إنترنت</text>
+    </g>
+  </g>
+
+  <!-- Bottom Trust Bar -->
+  <g transform="translate(75, 520)">
+    <rect width="1050" height="66" rx="18" fill="#FFFFFF" fill-opacity="0.05" stroke="#FFFFFF" stroke-opacity="0.1" />
+
+    <text x="35" y="40" 
+          font-family="'JetBrains Mono', 'Segoe UI', monospace" 
+          font-size="19" font-weight="700" fill="#67FCE4">zaty.app</text>
+
+    <text x="525" y="40" 
+          font-family="'IBM Plex Sans Arabic', 'Segoe UI', Tahoma, sans-serif" 
+          font-size="17" font-weight="600" text-anchor="middle" fill="#E5F5F2">
+      ابدأ رحلتك التعليمية الآن مجاناً — لا حاجة لتسجيل مسبق
+    </text>
+
+    <g transform="translate(990, 34)">
+      <circle cx="0" cy="0" r="6" fill="#00E5C0" />
+      <circle cx="0" cy="0" r="13" fill="#00E5C0" fill-opacity="0.25" />
+    </g>
+    <text x="975" y="40" 
+          font-family="'IBM Plex Sans Arabic', 'Segoe UI', Tahoma, sans-serif" 
+          font-size="15" font-weight="700" text-anchor="end" fill="#00E5C0">متاح أوفلاين</text>
+  </g>
+</svg>

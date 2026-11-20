@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" fill="none">
+  <defs>
+    <!-- Background Canvas Gradients -->
+    <linearGradient id="sq-bg" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#082924" />
+      <stop offset="45%" stop-color="#0B3E36" />
+      <stop offset="100%" stop-color="#005B4A" />
+    </linearGradient>
+
+    <radialGradient id="sq-top-glow" cx="35%" cy="20%" r="65%">
+      <stop offset="0%" stop-color="#00E5C0" stop-opacity="0.3" />
+      <stop offset="50%" stop-color="#006E5A" stop-opacity="0.08" />
+      <stop offset="100%" stop-color="#082924" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Squircle Border Subtle Sheen -->
+    <linearGradient id="sq-border-sheen" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00E5C0" stop-opacity="0.55" />
+      <stop offset="40%" stop-color="#FFFFFF" stop-opacity="0.12" />
+      <stop offset="100%" stop-color="#00E5C0" stop-opacity="0.1" />
+    </linearGradient>
+
+    <!-- Emblem Gradients inside 512 icon -->
+    <linearGradient id="sq-dazzle-primary" x1="145" y1="45" x2="45" y2="165" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#67FCE4" />
+      <stop offset="25%" stop-color="#00E5C0" />
+      <stop offset="65%" stop-color="#00967A" />
+      <stop offset="100%" stop-color="#044D3E" />
+    </linearGradient>
+
+    <linearGradient id="sq-dazzle-base" x1="150" y1="130" x2="35" y2="155" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00E5C0" />
+      <stop offset="50%" stop-color="#00806A" />
+      <stop offset="100%" stop-color="#043C31" />
+    </linearGradient>
+
+    <linearGradient id="sq-dazzle-sheen" x1="135" y1="55" x2="55" y2="145" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.95" />
+      <stop offset="40%" stop-color="#C5FFF7" stop-opacity="0.7" />
+      <stop offset="85%" stop-color="#00D2B2" stop-opacity="0.15" />
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0" />
+    </linearGradient>
+
+    <radialGradient id="sq-spark-core" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFFDF5" />
+      <stop offset="25%" stop-color="#FFD54F" />
+      <stop offset="65%" stop-color="#FF6B4A" />
+      <stop offset="100%" stop-color="#E13552" />
+    </radialGradient>
+
+    <radialGradient id="sq-spark-halo" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FF7A59" stop-opacity="0.55" />
+      <stop offset="50%" stop-color="#FFB020" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#FF7A59" stop-opacity="0" />
+    </radialGradient>
+
+    <filter id="sq-emblem-shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="20" stdDeviation="24" flood-color="#001814" flood-opacity="0.65" />
+    </filter>
+
+    <filter id="sq-spark-bloom" x="-60%" y="-60%" width="220%" height="220%">
+      <feDropShadow dx="0" dy="0" stdDeviation="10" flood-color="#FF7A59" flood-opacity="0.85" />
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#FFD54F" flood-opacity="0.9" />
+    </filter>
+  </defs>
+
+  <!-- Squircle Base (rx=116 for iOS/macOS/Android Adaptive Perfection) -->
+  <rect width="512" height="512" rx="116" fill="url(#sq-bg)" />
+  <rect width="512" height="512" rx="116" fill="url(#sq-top-glow)" />
+  <rect x="2" y="2" width="508" height="508" rx="114" stroke="url(#sq-border-sheen)" stroke-width="3" />
+
+  <!-- Center Group Scaled 2.32x (centered around 256, 256) -->
+  <g transform="translate(24, 18) scale(2.32)" filter="url(#sq-emblem-shadow)">
+    <!-- Base Horizon Stroke -->
+    <path d="M 148 132
+             C 142 142 130 148 116 148
+             L 52 148
+             C 40 148 34 139 42 132
+             C 50 125 64 126 78 126
+             L 132 126
+             C 142 126 151 127 148 132 Z"
+          fill="url(#sq-dazzle-base)" />
+
+    <!-- Main Dynamic Ascender Ribbon -->
+    <path d="M 132 54
+             C 141 54 148 62 146 73
+             C 143 89 135 110 120 128
+             C 114 135 106 142 96 146
+             L 58 146
+             C 46 146 44 135 52 127
+             C 66 113 96 83 118 63
+             C 123 58 127 54 132 54 Z"
+          fill="url(#sq-dazzle-primary)" />
+
+    <!-- Specular Light Ridge -->
+    <path d="M 130 57
+             C 134 57 137 60 137 65
+             C 134 82 124 105 108 124
+             C 98 136 84 142 66 144"
+          stroke="url(#sq-dazzle-sheen)"
+          stroke-width="3.5"
+          stroke-linecap="round" />
+
+    <!-- The AI Spark -->
+    <g transform="translate(128, 30)">
+      <circle cx="0" cy="0" r="26" fill="url(#sq-spark-halo)" />
+      <g filter="url(#sq-spark-bloom)">
+        <path d="M 0 -22
+                 C 1.8 -7 7 -1.8 22 0
+                 C 7 1.8 1.8 7 0 22
+                 C -1.8 7 -7 1.8 -22 0
+                 C -7 -1.8 -1.8 -7 0 -22 Z"
+              fill="url(#sq-spark-core)" />
+        <circle cx="0" cy="0" r="4.5" fill="#FFFFFF" />
+      </g>
+      <g transform="scale(0.4) rotate(45)">
+        <path d="M 0 -18 C 1 -5 5 -1 18 0 C 5 1 1 5 0 18 C -1 5 -5 1 -18 0 C -5 -1 -1 -5 0 -18 Z"
+              fill="#FFFFFF" />
+      </g>
+    </g>
+  </g>
+</svg>
