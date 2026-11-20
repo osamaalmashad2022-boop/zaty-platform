@@ -1,16 +1,22 @@
 import type { MetadataRoute } from 'next';
+import {
+  SITE_NAME,
+  SITE_NAME_AR,
+  SITE_DESCRIPTION,
+  THEME_COLOR,
+  THEME_COLOR_LIGHT,
+} from '@/constants/seo';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'ذاتي (Zaty) | منصتك للتعلّم الذاتي التفاعلي',
-    short_name: 'ذاتي',
-    description:
-      'منصة ذاتي للتعلّم الذاتي التفاعلي لمختلف الصفوف والمواد الدراسية، وتبدأ بمقرر الكمبيوتر وتكنولوجيا المعلومات للصف الثالث الإعدادي (الترم الأول) بدون إنترنت.',
+    name: SITE_NAME,
+    short_name: SITE_NAME_AR,
+    description: SITE_DESCRIPTION,
     start_url: '/',
     display: 'standalone',
     orientation: 'portrait-primary',
-    background_color: '#F6FAF9',
-    theme_color: '#006E5A',
+    background_color: THEME_COLOR_LIGHT,
+    theme_color: THEME_COLOR,
     dir: 'rtl',
     lang: 'ar',
     categories: ['education', 'utilities'],
@@ -20,6 +26,12 @@ export default function manifest(): MetadataRoute.Manifest {
         sizes: 'any',
         type: 'image/svg+xml',
         purpose: 'any',
+      },
+      {
+        src: '/brand/zaty-icon-512.png',
+        sizes: '512x512',
+        type: 'image/png',
+        purpose: 'maskable',
       },
       {
         src: '/media/robot-puzzle.png',

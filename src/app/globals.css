@@ -12,6 +12,19 @@
   --color-orchid-secondary-light: #FBEAEC;
   --color-orchid-code: #0F2929;
 
+  /* Zaty Modern Brand Tokens */
+  --color-zaty-primary: #006E5A;
+  --color-zaty-primary-deep: #003D32;
+  --color-zaty-primary-light: #E6F4F1;
+  --color-zaty-accent: #00D2B2;
+  --color-zaty-streak-from: #FF5A1F;
+  --color-zaty-streak-to: #FFA800;
+  --color-zaty-success: #10B981;
+  --color-zaty-code-bg: #0B131B;
+  --color-zaty-canvas: #F8FAF9;
+  --color-zaty-header: #112927;
+  --color-zaty-body: #334D4A;
+
   --font-sans: var(--font-ibm-plex-sans-arabic), "IBM Plex Sans Arabic", system-ui, -apple-system, sans-serif;
   --font-mono: var(--font-jetbrains-mono), "JetBrains Mono", ui-monospace, monospace;
 }
@@ -28,7 +41,22 @@
   --orchid-secondary: #E14B63;
   --orchid-secondary-light: #FBEAEC;
   --orchid-code: #0F2929;
-  --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+
+  /* Zaty Design Tokens */
+  --zaty-primary: #006E5A;
+  --zaty-primary-deep: #003D32;
+  --zaty-primary-light: #E6F4F1;
+  --zaty-accent: #00D2B2;
+  --zaty-streak-from: #FF5A1F;
+  --zaty-streak-to: #FFA800;
+  --zaty-success: #10B981;
+  --zaty-code-bg: #0B131B;
+  --zaty-canvas: #F8FAF9;
+  --zaty-header: #112927;
+  --zaty-body: #334D4A;
+
+  --card-shadow: 0 10px 25px -5px rgba(0, 110, 90, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+  --clay-shadow: 0 10px 25px -5px rgba(0, 110, 90, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03), inset 0 1.5px 0 0 rgba(255, 255, 255, 0.95);
 }
 
 @layer base {
@@ -73,38 +101,55 @@
   }
 }
 
-.orchid-card {
+.orchid-card,
+.zaty-card-clay {
   background-color: var(--orchid-card);
   border: 1px solid var(--orchid-border);
-  border-radius: 0.75rem;
-  box-shadow: var(--card-shadow);
+  border-radius: 1rem;
+  box-shadow: var(--clay-shadow);
+  transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 180ms ease;
 }
 
-.orchid-btn-primary {
+.orchid-card:hover,
+.zaty-card-clay:hover {
+  box-shadow: 0 14px 28px -6px rgba(0, 110, 90, 0.08), 0 10px 12px -5px rgba(0, 0, 0, 0.04), inset 0 1.5px 0 0 rgba(255, 255, 255, 1);
+}
+
+.orchid-btn-primary,
+.zaty-btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
   min-height: 48px;
-  padding: 0.75rem 1.25rem;
-  border-radius: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
   background-color: var(--orchid-accent);
   color: #FFFFFF;
-  font-weight: 600;
-  transition: background-color 150ms ease, transform 120ms ease;
+  font-weight: 700;
+  box-shadow: 0 4px 0 var(--zaty-primary-deep);
+  transition: all 120ms cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
 }
 
-.orchid-btn-primary:hover:not(:disabled) {
+.orchid-btn-primary:hover:not(:disabled),
+.zaty-btn-primary:hover:not(:disabled) {
   background-color: #007A66;
+  box-shadow: 0 4px 0 var(--zaty-primary-deep);
 }
 
-.orchid-btn-primary:active:not(:disabled) {
-  transform: scale(0.98);
+.orchid-btn-primary:active:not(:disabled),
+.zaty-btn-primary:active:not(:disabled) {
+  transform: translateY(4px);
+  box-shadow: 0 0 0 var(--zaty-primary-deep);
 }
 
-.orchid-btn-primary:disabled {
+.orchid-btn-primary:disabled,
+.zaty-btn-primary:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
 }
 
 .orchid-btn-secondary {
@@ -158,4 +203,19 @@
 
 .rotate-y-180 {
   transform: rotateY(180deg);
+}
+
+@keyframes streakPulse {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 4px rgba(255, 122, 89, 0.4));
+  }
+  50% {
+    transform: scale(1.08);
+    filter: drop-shadow(0 0 10px rgba(255, 122, 89, 0.75));
+  }
+}
+
+.streak-flame-pulse {
+  animation: streakPulse 2s ease-in-out infinite;
 }

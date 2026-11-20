@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" fill="none">
+  <defs>
+    <!-- Top Face: Electric Mint to Radiant Cyan -->
+    <linearGradient id="c1-top" x1="45" y1="40" x2="155" y2="105" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#34F5D7" />
+      <stop offset="60%" stop-color="#00D2B2" />
+      <stop offset="100%" stop-color="#00A896" />
+    </linearGradient>
+
+    <!-- Right Face: Royal Emerald to Forest -->
+    <linearGradient id="c1-right" x1="100" y1="75" x2="155" y2="170" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00B494" />
+      <stop offset="60%" stop-color="#006E5A" />
+      <stop offset="100%" stop-color="#02473A" />
+    </linearGradient>
+
+    <!-- Left Face: Deep Code Navy / Emerald -->
+    <linearGradient id="c1-left" x1="100" y1="105" x2="45" y2="170" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#005B4A" />
+      <stop offset="50%" stop-color="#093E34" />
+      <stop offset="100%" stop-color="#062620" />
+    </linearGradient>
+
+    <!-- Top Highlight Sheen -->
+    <linearGradient id="c1-sheen" x1="100" y1="40" x2="100" y2="105" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.85" />
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0" />
+    </linearGradient>
+
+    <!-- Celestial AI Spark Core: Gold to Sunset Amber -->
+    <radialGradient id="c1-spark" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFF9DB" />
+      <stop offset="35%" stop-color="#FFD13B" />
+      <stop offset="70%" stop-color="#FF7A59" />
+      <stop offset="100%" stop-color="#E13552" />
+    </radialGradient>
+
+    <!-- Soft Depth Filter -->
+    <filter id="c1-shadow" x="-20%" y="-15%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#002E26" flood-opacity="0.35" />
+    </filter>
+
+    <filter id="c1-glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#FF7A59" flood-opacity="0.7" />
+    </filter>
+  </defs>
+
+  <!-- Ambient Light Reflection -->
+  <circle cx="100" cy="105" r="75" fill="#00D2B2" fill-opacity="0.12" />
+
+  <!-- Isometric Prism Body -->
+  <g filter="url(#c1-shadow)">
+    <!-- 1. Left Face (Code Terminal Engine) -->
+    <path d="M 100 105 L 100 168 L 46 137 L 46 74 Z" fill="url(#c1-left)" />
+    
+    <!-- Code prompt symbol `>` embossed on Left Face -->
+    <path d="M 64 100 L 78 111 L 64 122" 
+          stroke="#00E5C0" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
+    <!-- Terminal underline cursor -->
+    <path d="M 76 128 L 86 128" 
+          stroke="#34F5D7" stroke-width="3.5" stroke-linecap="round" />
+
+    <!-- 2. Right Face (Digital Screen / Knowledge Matrix) -->
+    <path d="M 100 105 L 154 74 L 154 137 L 100 168 Z" fill="url(#c1-right)" />
+    
+    <!-- Micro Knowledge Grid on Right Face -->
+    <path d="M 116 98 L 138 85 M 116 114 L 138 101 M 116 130 L 138 117" 
+          stroke="#FFFFFF" stroke-opacity="0.25" stroke-width="2" stroke-linecap="round" />
+
+    <!-- 3. Top Face (Sky / Autonomous Learning Plane) -->
+    <path d="M 100 42 L 154 74 L 100 105 L 46 74 Z" fill="url(#c1-top)" />
+    <path d="M 100 42 L 154 74 L 100 105 L 46 74 Z" stroke="url(#c1-sheen)" stroke-width="1.5" />
+
+    <!-- Isometric Axis Highlights (Beveled edges) -->
+    <path d="M 100 42 L 100 105 M 46 74 L 100 105 M 154 74 L 100 105 M 100 105 L 100 168" 
+          stroke="#FFFFFF" stroke-opacity="0.4" stroke-width="1.5" stroke-linecap="round" />
+  </g>
+
+  <!-- Floating Radiant AI Spark ✦ hovering above the prism -->
+  <g transform="translate(100, 36)" filter="url(#c1-glow)">
+    <!-- 4-point radiant star -->
+    <path d="M 0 -18 C 1.2 -5 5 -1.2 18 0 C 5 1.2 1.2 5 0 18 C -1.2 5 -5 1.2 -18 0 C -5 -1.2 -1.2 -5 0 -18 Z"
+          fill="url(#c1-spark)" />
+    <!-- Pure white energy diamond center -->
+    <circle cx="0" cy="0" r="3.5" fill="#FFFFFF" />
+  </g>
+</svg>
